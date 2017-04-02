@@ -3,6 +3,10 @@
 #include <glfw\glfw3.h>
 #include <FreeImage.h>
 
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
+
 #include "Shader.h"
 
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -153,6 +157,15 @@ int main(int argc, char* argv[])
 	
 	glUniform1f(glGetUniformLocation(ourShader.Program, "blend"), 0.0f);
 
+	// Transform
+	//	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+//	glm::mat4 trans;
+	//	trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
+//	trans = glm::rotate(trans, 90.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+//	trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+	//	vec = trans * vec;
+	//	std::cout << vec.x << " " << vec.y << " " << vec.z << std::endl;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
@@ -162,7 +175,8 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		ourShader.Use();
-		
+
+		// use Texture
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
@@ -173,10 +187,29 @@ int main(int argc, char* argv[])
 
 		glUniform1f(glGetUniformLocation(ourShader.Program, "blend"), blend);
 		
-		// 6. 进行渲染的时候，绑定对应的VAO
+		// 进行渲染的时候，绑定对应的VAO
 		glBindVertexArray(VAO);
+
+		// use Transform
+		glm::mat4 trans;
+		trans = glm::translate(trans, glm::vec3(0.5, -0.5, 0.0f));
+		trans = glm::rotate(trans, (GLfloat)glfwGetTime()*1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+		//trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+		GLuint transformLoc = glGetUniformLocation(ourShader.Program, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-		// 7. 使用完毕之后清除绑定
+		
+		// use Transform
+		trans = glm::mat4();
+		trans = glm::translate(trans, glm::vec3(-0.5, 0.5, 0.0f));
+		GLfloat scale = sin(glfwGetTime());
+		trans = glm::scale(trans, glm::vec3(scale, scale, scale));
+		GLuint transformLoc2 = glGetUniformLocation(ourShader.Program, "transform");
+		glUniformMatrix4fv(transformLoc2, 1, GL_FALSE, glm::value_ptr(trans));
+
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		// 使用完毕之后清除绑定
 		glBindVertexArray(0);
 		// ---loop end---
 

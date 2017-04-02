@@ -15,8 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="default.vs" />
-    <None Include="default.frag" />
+    <None Include="default.frag">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="default.vs">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="happy.jpeg">

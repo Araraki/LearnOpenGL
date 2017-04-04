@@ -12,6 +12,12 @@
 
 const GLuint WIDTH = 800, HEIGHT = 600;
 
+GLfloat currentFrame;
+GLfloat deltaTime = 0.0f, lastFrame = 0.0f;
+
+bool keys[1024];
+float texBlend = 0.5f;
+
 // Vertex
 GLfloat vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -70,25 +76,8 @@ glm::vec3 cubePositions[] = {
 	glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
-float blend = 0.5f;
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-	std::cout << key << std::endl;
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-
-	if (key == GLFW_KEY_UP && action == GLFW_REPEAT)
-	{
-		if (blend >= 1.0f)	return;
-		blend += 0.01f;
-	}
-	if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT)
-	{
-		if (blend <= 0.0f)	return;
-		blend -= 0.01f;
-	}
-}
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void do_movement();
 
 GLuint VAO, VBO;
 Shader ourShader;
@@ -189,15 +178,15 @@ void setTextures()
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture2"), 1);
 
-	glUniform1f(glGetUniformLocation(ourShader.Program, "blend"), blend);
+	glUniform1f(glGetUniformLocation(ourShader.Program, "texBlend"), texBlend);
 }
 
-glm::vec3 cameraPos;
-glm::vec3 cameraTarget;
+//glm::vec3 cameraTarget;
 
-glm::vec3 cameraDirection;
-glm::vec3 cameraRight;
-glm::vec3 cameraUp;
+//glm::vec3 cameraRight;
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);;
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 
 glm::mat4 model;
 glm::mat4 view;
@@ -209,41 +198,32 @@ GLuint projLoc;
 
 void setTransform()
 {
-	cameraPos = glm::vec3();
-	cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-	cameraDirection = glm::normalize(cameraPos - cameraTarget);
-
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-	cameraUp = glm::cross(cameraDirection, cameraRight);
-
-	view = glm::mat4();
 	proj = glm::mat4();
 
-	GLfloat radius = 10.0f,
-			camX = sin(glfwGetTime())*radius,
-			camZ = cos(glfwGetTime())*radius;
+	//cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+	//glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
+	//cameraRight = glm::normalize(glm::cross(cameraUp, cameraDirection));
 
-	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-	view = glm::lookAt(glm::vec3(camX, 0.0f, camZ),
-					   glm::vec3(0.0f, 0.0f, 0.0f),
-					   glm::vec3(0.0f, 1.0f, 0.0f));
+	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 	proj = glm::perspective(45.0f, (float)screenWidth / screenHeight, 0.1f, 100.0f);
 
 	modelLoc = glGetUniformLocation(ourShader.Program, "model");
 	viewLoc = glGetUniformLocation(ourShader.Program, "view");
 	projLoc = glGetUniformLocation(ourShader.Program, "proj");
 
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 }
 
-void useTransform(int index)
+void TransformUpdate(int index)
 {
+	view = glm::mat4();
+	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
 	model = glm::mat4();
 	model = glm::translate(model, cubePositions[index]);
 	model = glm::rotate(model, glm::radians((GLfloat)glfwGetTime() * 20.0f * (index + 1)), glm::vec3(1.0f, 0.3f, 0.5f));
 
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 }
 
@@ -261,10 +241,16 @@ int main(int argc, char* argv[])
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
+
+		currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		// background color
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		do_movement();
 		ourShader.Use();
 		setTextures();
 		setTransform();
@@ -274,7 +260,7 @@ int main(int argc, char* argv[])
 		
 		for (GLuint i = 0; i < 10; ++i)
 		{
-			useTransform(i);
+			TransformUpdate(i);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		// 使用完毕之后清除绑定
@@ -290,4 +276,47 @@ int main(int argc, char* argv[])
 	glfwTerminate();
 
 	return 0;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	std::cout << key << std::endl;
+
+	if (action == GLFW_PRESS)
+		keys[key] = true;
+	else if (action == GLFW_RELEASE)
+		keys[key] = false;
+}
+
+void do_movement()
+{
+	float cameraSpeed = 5.0f * deltaTime;
+
+	if (keys[GLFW_KEY_ESCAPE])
+		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	if (keys[GLFW_KEY_W])
+		cameraPos += cameraSpeed*cameraFront;
+	if (keys[GLFW_KEY_S])
+		cameraPos -= cameraSpeed*cameraFront;
+	if (keys[GLFW_KEY_A])
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (keys[GLFW_KEY_D])
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (keys[GLFW_KEY_E])
+		cameraPos += cameraSpeed*cameraUp;
+	if (keys[GLFW_KEY_Q])
+		cameraPos -= cameraSpeed*cameraUp;
+
+
+	if (keys[GLFW_KEY_UP])
+	{
+		if (texBlend >= 1.0f)	return;
+		texBlend += 0.01f;
+	}
+	if (keys[GLFW_KEY_DOWN])
+	{
+		if (texBlend <= 0.0f)	return;
+		texBlend -= 0.01f;
+	}
 }

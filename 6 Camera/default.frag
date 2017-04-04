@@ -7,12 +7,12 @@ out vec4 color;
 
 uniform sampler2D ourTexture1;
 uniform sampler2D ourTexture2;
-uniform float blend;
+uniform float texBlend;
 
 void main()
 {
 	//color = texture(ourTexture, TexCoord);
 	color = mix(texture(ourTexture1, TexCoord),
 				texture(ourTexture2, TexCoord),
-				blend);
+				texBlend);
 }

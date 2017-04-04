@@ -192,6 +192,13 @@ void setTextures()
 	glUniform1f(glGetUniformLocation(ourShader.Program, "blend"), blend);
 }
 
+glm::vec3 cameraPos;
+glm::vec3 cameraTarget;
+
+glm::vec3 cameraDirection;
+glm::vec3 cameraRight;
+glm::vec3 cameraUp;
+
 glm::mat4 model;
 glm::mat4 view;
 glm::mat4 proj;
@@ -202,10 +209,25 @@ GLuint projLoc;
 
 void setTransform()
 {
+	cameraPos = glm::vec3();
+	cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+	cameraDirection = glm::normalize(cameraPos - cameraTarget);
+
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+	cameraUp = glm::cross(cameraDirection, cameraRight);
+
 	view = glm::mat4();
 	proj = glm::mat4();
 
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	GLfloat radius = 10.0f,
+			camX = sin(glfwGetTime())*radius,
+			camZ = cos(glfwGetTime())*radius;
+
+	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	view = glm::lookAt(glm::vec3(camX, 0.0f, camZ),
+					   glm::vec3(0.0f, 0.0f, 0.0f),
+					   glm::vec3(0.0f, 1.0f, 0.0f));
 	proj = glm::perspective(45.0f, (float)screenWidth / screenHeight, 0.1f, 100.0f);
 
 	modelLoc = glGetUniformLocation(ourShader.Program, "model");

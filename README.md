@@ -4,9 +4,12 @@ Learn OpenGL with Tutorial
 
 # Resources
 
+http://www.learnopengl.com/
+
+https://learnopengl-cn.github.io
+
 http://bullteacher.com/category/zh_learnopengl_com
 
-http://www.learnopengl.com/
 
 [ VAO / VBO / EBO ]
 

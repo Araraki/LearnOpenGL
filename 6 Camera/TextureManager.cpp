@@ -134,11 +134,11 @@ bool TextureManager::BindTexture(const unsigned int texID)
 void TextureManager::UnloadAllTextures()
 {
 	//start at the begginning of the texture map
-	std::map<unsigned int, GLuint>::iterator i = m_texID.begin();
+	std::map<unsigned int, GLuint>::iterator i;
 
 	//Unload the textures untill the end of the texture map is found
-	while(i != m_texID.end())
-		UnloadTexture(i->first);
+	for (i = m_texID.begin(); i != m_texID.end(); ++i)
+		glDeleteTextures(1, &(m_texID[i->first]));
 
 	//clear the texture map
 	m_texID.clear();

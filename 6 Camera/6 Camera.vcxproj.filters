@@ -15,25 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="default.frag" />
-    <None Include="default.vs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="happy.jpeg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="ok.jpeg">
-      <Filter>资源文件</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,5 +35,20 @@
     <ClInclude Include="TextureManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="default.frag" />
+    <None Include="default.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="happy.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="ok.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

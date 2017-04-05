@@ -15,23 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="ok.jpeg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="happy.jpeg">
-      <Filter>资源文件</Filter>
-    </Image>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -42,11 +34,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="default.frag">
-      <Filter>源文件</Filter>
-    </None>
-    <None Include="default.vs">
-      <Filter>源文件</Filter>
-    </None>
+    <None Include="default.frag" />
+    <None Include="default.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="happy.jpeg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="ok.jpeg">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

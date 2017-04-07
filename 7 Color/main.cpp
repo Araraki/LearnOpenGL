@@ -111,7 +111,7 @@ GLuint modelVAO, modelVBO;
 GLuint lampVAO;
 
 // Shader
-Shader lightingShader;
+Shader baselightingShader;
 Shader lampShader;
 
 // transform
@@ -120,8 +120,8 @@ GLuint modelLoc, viewLoc, projLoc;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 // light
-GLint objectColorLoc, lightColorLoc;
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+GLint objectColorLoc, lampColorLoc;
+glm::vec3 lampPos(1.2f, 1.0f, 2.0f);
 
 // --- main code ---
 GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
 	glBindVertexArray(0);
 
 	// shader 
-	lightingShader = Shader("lighting.vs", "lighting.frag");
+	baselightingShader = Shader("lighting.vs", "lighting.frag");
 	lampShader = Shader("lamp.vs", "lamp.frag");
 
 	while (!glfwWindowShouldClose(window))
@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
 		keysProcess();
 
 		// cube ªÊ÷∆«∞≈‰÷√
-		lightingShader.Use();
+		baselightingShader.Use();
 
 		model = glm::mat4();
 		model = glm::translate(model, cubePositions[0]);
@@ -184,19 +184,19 @@ int main(int argc, char* argv[])
 		proj = glm::mat4();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
-		modelLoc = glGetUniformLocation(lightingShader.Program, "model");
-		viewLoc = glGetUniformLocation(lightingShader.Program, "view");
-		projLoc = glGetUniformLocation(lightingShader.Program, "proj");
+		modelLoc = glGetUniformLocation(baselightingShader.Program, "model");
+		viewLoc = glGetUniformLocation(baselightingShader.Program, "view");
+		projLoc = glGetUniformLocation(baselightingShader.Program, "proj");
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
-		objectColorLoc = glGetUniformLocation(lightingShader.Program, "objectColor");
-		lightColorLoc = glGetUniformLocation(lightingShader.Program, "lightColor");
+		objectColorLoc = glGetUniformLocation(baselightingShader.Program, "objectColor");
+		lampColorLoc = glGetUniformLocation(baselightingShader.Program, "lightColor");
 
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.3f);
-		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+		glUniform3f(lampColorLoc, 1.0f, 1.0f, 1.0f);
 		
 		// ªÊ÷∆ cube
 		glBindVertexArray(modelVAO);
@@ -207,7 +207,7 @@ int main(int argc, char* argv[])
 		lampShader.Use();
 
 		model = glm::mat4();
-		model = glm::translate(model, lightPos);
+		model = glm::translate(model, lampPos);
 		model = glm::scale(model, glm::vec3(0.2f));
 
 		modelLoc = glGetUniformLocation(lampShader.Program, "model");

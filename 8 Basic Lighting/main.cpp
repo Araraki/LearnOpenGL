@@ -112,7 +112,7 @@ GLuint modelVAO, modelVBO;
 GLuint lampVAO;
 
 // Shader
-Shader lightingShader;
+Shader baselightingShader;
 Shader lampShader;
 
 // transform
@@ -121,8 +121,8 @@ GLuint modelLoc, viewLoc, projLoc;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 // light
-GLint objectColorLoc, lightColorLoc, lightPosLoc, viewPosLoc;
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+GLint objectColorLoc, lampColorLoc, lampPosLoc, viewPosLoc;
+glm::vec3 lampPos(1.2f, 1.0f, 2.0f);
 
 // --- main code ---
 GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 	glInit();
 
 	// shader 
-	lightingShader = Shader("baselighting.vs", "baselighting.frag");
+	baselightingShader = Shader("baselighting.vs", "baselighting.frag");
 	lampShader = Shader("lamp.vs", "lamp.frag");
 
 	// model VAO/VBO
@@ -175,10 +175,10 @@ int main(int argc, char* argv[])
 		keysProcess();
 
 		// 移动光源
-		lightPos = glm::vec3(1.0f + sin(lastFrame) * 2.0f, sin(lastFrame / 2.0f) * 1.0f, 2.0f);
+		lampPos = glm::vec3(1.0f + sin(lastFrame) * 2.0f, sin(lastFrame / 2.0f) * 1.0f, 2.0f);
 
 		// cube 绘制前配置
-		lightingShader.Use();
+		baselightingShader.Use();
 
 		view = glm::mat4();
 		view = camera.GetViewMatrix();
@@ -186,18 +186,18 @@ int main(int argc, char* argv[])
 		proj = glm::mat4();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
-		viewLoc = glGetUniformLocation(lightingShader.Program, "view");
-		projLoc = glGetUniformLocation(lightingShader.Program, "proj");
-		viewPosLoc = glGetUniformLocation(lightingShader.Program, "viewPos");
-		lightPosLoc = glGetUniformLocation(lightingShader.Program, "lightPos");
-		lightColorLoc = glGetUniformLocation(lightingShader.Program, "lightColor");
-		objectColorLoc = glGetUniformLocation(lightingShader.Program, "objectColor");
+		viewLoc = glGetUniformLocation(baselightingShader.Program, "view");
+		projLoc = glGetUniformLocation(baselightingShader.Program, "proj");
+		viewPosLoc = glGetUniformLocation(baselightingShader.Program, "viewPos");
+		lampPosLoc = glGetUniformLocation(baselightingShader.Program, "lightPos");
+		lampColorLoc = glGetUniformLocation(baselightingShader.Program, "lightColor");
+		objectColorLoc = glGetUniformLocation(baselightingShader.Program, "objectColor");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
-		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+		glUniform3f(lampPosLoc, lampPos.x, lampPos.y, lampPos.z);
+		glUniform3f(lampColorLoc, 1.0f, 1.0f, 1.0f);
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.3f);
 
 		
@@ -208,7 +208,7 @@ int main(int argc, char* argv[])
 			model = glm::mat4();
 			model = glm::translate(model, cubePositions[i]);
 			model = glm::rotate(model, glm::radians(GLfloat(glfwGetTime()) * 20.0f) + i, glm::vec3(1.0f, 0.3f, 0.5f));
-			modelLoc = glGetUniformLocation(lightingShader.Program, "model");
+			modelLoc = glGetUniformLocation(baselightingShader.Program, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
@@ -218,7 +218,7 @@ int main(int argc, char* argv[])
 		lampShader.Use();
 
 		model = glm::mat4();
-		model = glm::translate(model, lightPos);
+		model = glm::translate(model, lampPos);
 		model = glm::scale(model, glm::vec3(0.2f));
 
 		modelLoc = glGetUniformLocation(lampShader.Program, "model");

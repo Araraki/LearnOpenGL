@@ -10,6 +10,10 @@ https://learnopengl-cn.github.io
 
 http://bullteacher.com/category/zh_learnopengl_com
 
+http://www.opengl-tutorial.org/
+
+https://github.com/cybercser/OpenGL_3_3_Tutorial_Translation
+
 [ VAO/VBO/EBO detail ]
 
 http://www.zwqxin.com/archives/opengl/vao-and-vbo-stuff.html

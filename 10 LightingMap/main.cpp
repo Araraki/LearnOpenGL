@@ -176,6 +176,14 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	TextureManager::Inst()->LoadTexture("matrix.png", 2, GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
 	while (!glfwWindowShouldClose(window))
 	{
 		// calculate deltaTime
@@ -204,6 +212,8 @@ int main(int argc, char* argv[])
 		TextureManager::Inst()->BindTexture(0);
 		glActiveTexture(GL_TEXTURE1);
 		TextureManager::Inst()->BindTexture(1);
+		glActiveTexture(GL_TEXTURE2);
+		TextureManager::Inst()->BindTexture(2);
 
 		// transform
 		glUniformMatrix4fv(glGetUniformLocation(baselightingShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -221,6 +231,7 @@ int main(int argc, char* argv[])
 		// shader.material
 		glUniform1i(glGetUniformLocation(baselightingShader.Program, "material.diffuse"), 0);
 		glUniform1i(glGetUniformLocation(baselightingShader.Program, "material.specular"), 1);
+		glUniform1i(glGetUniformLocation(baselightingShader.Program, "material.emission"), 2);
 		glUniform1f(glGetUniformLocation(baselightingShader.Program, "material.shininess"), 64.0f);
 		
 		// »æÖÆ cube

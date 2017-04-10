@@ -60,5 +60,11 @@
     <Image Include="box_specular.png">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="box_specular_color.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="matrix.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

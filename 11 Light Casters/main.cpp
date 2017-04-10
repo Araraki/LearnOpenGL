@@ -123,6 +123,8 @@ Shader baselightingShader;
 Shader lampShader;
 glm::vec3 lampPos;
 glm::vec4 lightVector;
+glm::vec3 spotDir;
+float cutOff, outerCutOff;
 
 // --- main code ---
 GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
@@ -191,11 +193,24 @@ int main(int argc, char* argv[])
 		keysProcess();		
 
 		// 光源设置
-		//lightVector = glm::vec4(-0.2f, -1.0f, -0.3f, 0.0f);// w分量为0.0是平行光		xyz为平行光方向
-		//lampPos = -lightVector;				   // w分量为1.0时是点光源	xyz为点光源position
-		lightVector = glm::vec4(1.2f, 1.0f, sin(lastFrame)*4-8.0f, 1.0f);	
-		lampPos = lightVector;
-
+		// lightVector.w == 0.0 平行光	xyz为平行光方向
+		// lightVector.w == 0.5 聚光灯	xyz为聚光灯position
+		// lightVector.w == 1.0 点光源	xyz为点光源position
+		
+		//平行光
+		//lightVector = glm::vec4(-0.2f, -1.0f, -0.3f, 0.0f);
+		//lampPos = -lightVector;							 
+		
+		//点光源
+		//lightVector = glm::vec4(1.2f, 1.0f, sin(lastFrame)*4-8.0f, 1.0f);
+		//lampPos = lightVector;
+		
+		//聚光灯
+		lightVector = glm::vec4(camera.Position.x, camera.Position.y, camera.Position.z, 0.5f);
+		lampPos = glm::vec3(camera.Position.x, camera.Position.y, camera.Position.z) - 0.1f*camera.Front;
+		spotDir = glm::vec3(camera.Front.x, camera.Front.y, camera.Front.z);
+		cutOff = glm::cos(glm::radians(12.5f));
+		outerCutOff = glm::cos(glm::radians(17.5f));
 		// 观察/投影矩阵配置
 		view = glm::mat4();
 		proj = glm::mat4();
@@ -217,6 +232,10 @@ int main(int argc, char* argv[])
 		// shader.lightingCalculate
 		glUniform3f(glGetUniformLocation(baselightingShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 		glUniform4f(glGetUniformLocation(baselightingShader.Program, "light.lightVector"), lightVector.x, lightVector.y, lightVector.z, lightVector.w);
+
+		glUniform3f(glGetUniformLocation(baselightingShader.Program, "light.spotDir"), spotDir.x, spotDir.y, spotDir.z);
+		glUniform1f(glGetUniformLocation(baselightingShader.Program, "light.cutOff"), cutOff);		
+		glUniform1f(glGetUniformLocation(baselightingShader.Program, "light.outerCutOff"), outerCutOff);
 
 		glUniform1f(glGetUniformLocation(baselightingShader.Program, "light.constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(baselightingShader.Program, "light.linear"), 0.09f);

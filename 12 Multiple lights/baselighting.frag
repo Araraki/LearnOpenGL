@@ -75,7 +75,7 @@ void main()
 	for(int i = 0; i < NR_POINT_LIGHT; ++i)
 		result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
 
-	result += CalcSpotLight();
+	result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
 
 	color = vec4(result, 1.0f);
 }
@@ -121,4 +121,29 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
 	vec3 lightDir = normalize(light.position - FragPos);
+	
+	float diff = max(dot(normal, lightDir), 0.0f);
+	vec3 reflectDir = reflect(-lightDir, normal);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
+
+	vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
+	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));	
+	vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+	
+	float theta = dot(lightDir, normalize(-light.spotDir)); // 计算 光源到片段向量 与 光源正前方向量 形成夹角的cos值
+	float epsilon = light.cutOff - light.outerCutOff;
+	float spotIntensity = clamp((theta - light.outerCutOff) / epsilon, 0.0f, 1.0f);
+
+	ambient *= spotIntensity;
+	diffuse *= spotIntensity;
+	specular *= spotIntensity;
+
+	float distance = length(light.position - FragPos);
+	float attenuation = 1.0f / (light.constant + light.linear*distance + light.quadratic*(distance*distance));
+
+	ambient *= attenuation;
+	diffuse *= attenuation;
+	specular *= attenuation;
+
+    return (ambient + diffuse + specular);
 }

@@ -275,6 +275,17 @@ int main(int argc, char* argv[])
 		glUniform1f(glGetUniformLocation(baselightingShader.Program, "pointLights[3].constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(baselightingShader.Program, "pointLights[3].linear"), 0.09);
 		glUniform1f(glGetUniformLocation(baselightingShader.Program, "pointLights[3].quadratic"), 0.032);
+		// shader.spotLight
+		glUniform3f(glGetUniformLocation(baselightingShader.Program, "spotLight.position"), lampPos.x, lampPos.y, lampPos.z);
+		glUniform3f(glGetUniformLocation(baselightingShader.Program, "spotLight.spotDir"), spotDir.x, spotDir.y, spotDir.z);
+		glUniform1f(glGetUniformLocation(baselightingShader.Program, "spotLight.cutOff"), cutOff);
+		glUniform1f(glGetUniformLocation(baselightingShader.Program, "spotLight.outerCutOff"), outerCutOff);
+		glUniform3f(glGetUniformLocation(baselightingShader.Program, "spotLight.ambient"), 0.05f, 0.05f, 0.05f);
+		glUniform3f(glGetUniformLocation(baselightingShader.Program, "spotLight.diffuse"), 0.8f, 0.8f, 0.8f);
+		glUniform3f(glGetUniformLocation(baselightingShader.Program, "spotLight.specular"), 1.0f, 1.0f, 1.0f);		
+		glUniform1f(glGetUniformLocation(baselightingShader.Program, "spotLight.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(baselightingShader.Program, "spotLight.linear"), 0.09f);
+		glUniform1f(glGetUniformLocation(baselightingShader.Program, "spotLight.quadratic"), 0.032f);
 		// shader.material
 		glUniform1i(glGetUniformLocation(baselightingShader.Program, "material.diffuse"), 0);
 		glUniform1i(glGetUniformLocation(baselightingShader.Program, "material.specular"), 1);

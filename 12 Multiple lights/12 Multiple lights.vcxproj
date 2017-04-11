@@ -164,8 +164,6 @@
   <ItemGroup>
     <None Include="baselighting.frag" />
     <None Include="baselighting.vs" />
-    <None Include="old_baselighting.frag" />
-    <None Include="old_baselighting.vs" />
     <None Include="lamp.frag" />
     <None Include="lamp.vs" />
   </ItemGroup>

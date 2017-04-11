@@ -54,12 +54,6 @@
     <None Include="lamp.vs">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="old_baselighting.frag">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="old_baselighting.vs">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="baselighting.frag">
       <Filter>资源文件</Filter>
     </None>

@@ -18,12 +18,21 @@ void keysProcess();
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-// opengl
+// transform Matrix
+glm::mat4 model, view, proj;
+
+// camera
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
+// --- main code ---
 GLFWwindow* window;
 int screenWidth, screenHeight;
+GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
 
-void glInit ()
-{
+int main(int argc, char* argv[])
+{	
+	// opengl Init
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -32,11 +41,11 @@ void glInit ()
 
 	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
-	
+
 	// input callback
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetKeyCallback(window, key_callback);
-	
+
 	// hide cursor
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -46,36 +55,20 @@ void glInit ()
 
 	glEnable(GL_DEPTH_TEST);
 
-	glViewport(0, 0, screenWidth, screenHeight);
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
+	glViewport(0, 0, screenWidth, screenHeight);
 
 	// Ïß¿ò»òÌî³ä
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
 
-// transform
-glm::mat4 model, view, proj;
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-
-// model
-Shader lightingShader;
-
-// light
-glm::vec3 pointLightPositions[] =
-{
-	glm::vec3(2.3f, -1.6f, -3.0f),
-	glm::vec3(-1.7f, 0.9f,  1.0f)
-};
-
-// --- main code ---
-GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
-
-int main(int argc, char* argv[])
-{	
-	glInit();
+	glm::vec3 pointLightPositions[] =
+	{
+		glm::vec3(2.3f, -1.6f, -3.0f),
+		glm::vec3(-1.7f, 0.9f,  1.0f)
+	};
 
 	// shader 
-	lightingShader = Shader("baselighting.vs", "baselighting.frag");
+	Shader lightingShader = Shader("baselighting.vs", "baselighting.frag");
 	
 	Model ourModel = Model("Nanosuit/nanosuit.obj");
 
@@ -92,18 +85,15 @@ int main(int argc, char* argv[])
 
 		keysProcess();		
 
-		// model »æÖÆ
 		lightingShader.Use();
 		
-		// matrix
 		view = glm::mat4();
 		proj = glm::mat4();
 		model = glm::mat4();
-
 		view = camera.GetViewMatrix();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));	// Translate it down a bit so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));			// It's a bit too big for our scene, so scale it down
+		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	
 
 		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));

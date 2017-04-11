@@ -39,31 +39,29 @@ public:
 
 	void Draw(Shader shader)
 	{
-		GLuint diffuseNr = 1;
-		GLuint specularNr = 1;
+		GLuint diffuseNr = 1, specularNr = 1;
 
-		for (GLuint i = 0; i < this->textures.size(); i++)
+		for (GLuint i = 0; i < this->textures.size(); ++i)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
 
 			stringstream ss;
 			string number;
 			string name = this->textures[i].type;
-
-			if (name == "diffuse")
+			if (name == "texture_diffuse")
 				ss << diffuseNr++;
-			else if (name == "specular")
+			else if (name == "texture_specular")
 				ss << specularNr++;
 			number = ss.str();
 
-			glUniform1f(glGetUniformLocation(shader.Program, ("material." + name + number).c_str()), i);
+			glUniform1i(glGetUniformLocation(shader.Program, (name + number).c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 		}
 
 		glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 16.0f);
 
 		glBindVertexArray(this->VAO);
-		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
 
 		for (GLuint i = 0; i < this->textures.size(); i++)
@@ -73,9 +71,9 @@ public:
 		}
 	}
 
+
 private:
 	GLuint VAO, VBO, EBO;
-
 	void setupMesh()
 	{
 		glGenVertexArrays(1, &this->VAO);
@@ -91,7 +89,7 @@ private:
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(GLuint), &this->indices[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Normal));

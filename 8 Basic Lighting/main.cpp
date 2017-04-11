@@ -112,7 +112,7 @@ GLuint modelVAO, modelVBO;
 GLuint lampVAO;
 
 // Shader
-Shader baselightingShader;
+Shader lightingShader;
 Shader lampShader;
 
 // transform
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 	glInit();
 
 	// shader 
-	baselightingShader = Shader("baselighting.vs", "baselighting.frag");
+	lightingShader = Shader("baselighting.vs", "baselighting.frag");
 	lampShader = Shader("lamp.vs", "lamp.frag");
 
 	// model VAO/VBO
@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
 		lampPos = glm::vec3(1.0f + sin(lastFrame) * 2.0f, sin(lastFrame / 2.0f) * 1.0f, 2.0f);
 
 		// cube ªÊ÷∆«∞≈‰÷√
-		baselightingShader.Use();
+		lightingShader.Use();
 
 		view = glm::mat4();
 		view = camera.GetViewMatrix();
@@ -186,12 +186,12 @@ int main(int argc, char* argv[])
 		proj = glm::mat4();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
-		viewLoc = glGetUniformLocation(baselightingShader.Program, "view");
-		projLoc = glGetUniformLocation(baselightingShader.Program, "proj");
-		viewPosLoc = glGetUniformLocation(baselightingShader.Program, "viewPos");
-		lampPosLoc = glGetUniformLocation(baselightingShader.Program, "lightPos");
-		lampColorLoc = glGetUniformLocation(baselightingShader.Program, "lightColor");
-		objectColorLoc = glGetUniformLocation(baselightingShader.Program, "objectColor");
+		viewLoc = glGetUniformLocation(lightingShader.Program, "view");
+		projLoc = glGetUniformLocation(lightingShader.Program, "proj");
+		viewPosLoc = glGetUniformLocation(lightingShader.Program, "viewPos");
+		lampPosLoc = glGetUniformLocation(lightingShader.Program, "lightPos");
+		lampColorLoc = glGetUniformLocation(lightingShader.Program, "lightColor");
+		objectColorLoc = glGetUniformLocation(lightingShader.Program, "objectColor");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
@@ -208,7 +208,7 @@ int main(int argc, char* argv[])
 			model = glm::mat4();
 			model = glm::translate(model, cubePositions[i]);
 			model = glm::rotate(model, glm::radians(GLfloat(glfwGetTime()) * 20.0f) + i, glm::vec3(1.0f, 0.3f, 0.5f));
-			modelLoc = glGetUniformLocation(baselightingShader.Program, "model");
+			modelLoc = glGetUniformLocation(lightingShader.Program, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}

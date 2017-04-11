@@ -3,8 +3,8 @@
 
 struct Material
 {
-	sampler2D diffuse;
-	sampler2D specular;
+	sampler2D diffuse1;
+	sampler2D specular1;
 	float shininess;
 }; 
 
@@ -49,18 +49,18 @@ void main()
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
 	vec3 lightDir = normalize(light.position - FragPos);
-	// 计算漫反射强度
+	
 	float diff = max(dot(normal, lightDir), 0.0f);
-	// 计算镜面反射强度
+	
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-	// 计算衰减
+	
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-	// 将各个分量合并
-    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+	
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse1, TexCoords));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse1, TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular1, TexCoords));
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;

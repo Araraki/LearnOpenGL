@@ -50,20 +50,27 @@ public:
 			string number;
 			string name = this->textures[i].type;
 
-			if (name == "texture_diffuse")
+			if (name == "diffuse")
 				ss << diffuseNr++;
-			else if (name == "texture_specular")
+			else if (name == "specular")
 				ss << specularNr++;
 			number = ss.str();
 
 			glUniform1f(glGetUniformLocation(shader.Program, ("material." + name + number).c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 		}
-		glActiveTexture(GL_TEXTURE0);
+
+		glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 16.0f);
 
 		glBindVertexArray(this->VAO);
 		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
+
+		for (GLuint i = 0; i < this->textures.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 
 private:

@@ -41,7 +41,7 @@ TextureManager::~TextureManager()
 	m_inst = 0;
 }
 
-bool TextureManager::LoadTexture(const char* filename, const unsigned int texID, GLenum image_format, GLint internal_format, GLint level, GLint border)
+GLuint TextureManager::LoadTexture(const char* filename, GLenum image_format, GLint internal_format, GLint level, GLint border)
 {
 	//image format
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
@@ -61,14 +61,14 @@ bool TextureManager::LoadTexture(const char* filename, const unsigned int texID,
 		fif = FreeImage_GetFIFFromFilename(filename);
 	//if still unkown, return failure
 	if(fif == FIF_UNKNOWN)
-		return false;
+		return -1;
 
 	//check that the plugin has reading capabilities and load the file
 	if(FreeImage_FIFSupportsReading(fif))
 		dib = FreeImage_Load(fif, filename);
 	//if the image failed to load, return failure
 	if(!dib)
-		return false;
+		return -1;
 
 	//retrieve the image data
 	bits = FreeImage_GetBits(dib);
@@ -77,16 +77,12 @@ bool TextureManager::LoadTexture(const char* filename, const unsigned int texID,
 	height = FreeImage_GetHeight(dib);
 	//if this somehow one of these failed (they shouldn't), return failure
 	if((bits == 0) || (width == 0) || (height == 0))
-		return false;
+		return -1;
 	
-	//if this texture ID is in use, unload the current texture
-	if(m_texID.find(texID) != m_texID.end())
-		glDeleteTextures(1, &(m_texID[texID]));
-
 	//generate an OpenGL texture ID for this texture
 	glGenTextures(1, &gl_texID);
 	//store the texture ID mapping
-	m_texID[texID] = gl_texID;
+	m_texID[gl_texID] = gl_texID;
 	//bind to the new texture ID
 	glBindTexture(GL_TEXTURE_2D, gl_texID);
 	//store the texture data for OpenGL use
@@ -97,7 +93,7 @@ bool TextureManager::LoadTexture(const char* filename, const unsigned int texID,
 	FreeImage_Unload(dib);
 
 	//return success
-	return true;
+	return gl_texID;
 }
 
 bool TextureManager::UnloadTexture(const unsigned int texID)

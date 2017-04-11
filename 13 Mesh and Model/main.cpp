@@ -16,7 +16,6 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 // Input
 void keysProcess();
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // opengl
@@ -36,7 +35,6 @@ void glInit ()
 	
 	// input callback
 	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetKeyCallback(window, key_callback);
 	
 	// hide cursor
@@ -79,8 +77,7 @@ int main(int argc, char* argv[])
 	// shader 
 	lightingShader = Shader("baselighting.vs", "baselighting.frag");
 	
-	Model ourModel = Model();
-	ourModel.Load("Nanosuit/nanosuit.obj");
+	Model ourModel = Model("Nanosuit/nanosuit.obj");
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -99,9 +96,9 @@ int main(int argc, char* argv[])
 		lightingShader.Use();
 		
 		// matrix
-		model = glm::mat4();
 		view = glm::mat4();
 		proj = glm::mat4();
+		model = glm::mat4();
 
 		view = camera.GetViewMatrix();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
@@ -114,7 +111,6 @@ int main(int argc, char* argv[])
 
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 
-		// Point light 1
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].ambient"), 0.05f, 0.05f, 0.05f);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].diffuse"), 1.0f, 1.0f, 1.0f);
@@ -122,7 +118,7 @@ int main(int argc, char* argv[])
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].linear"), 0.009);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].quadratic"), 0.0032);
-		// Point light 2
+		
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].ambient"), 0.05f, 0.05f, 0.05f);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].diffuse"), 1.0f, 1.0f, 1.0f);
@@ -186,11 +182,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastY = ypos;
 
 	camera.ProcessMouseMovement(xoffset, yoffset);
-}
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	camera.ProcessMouseScroll(yoffset);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)

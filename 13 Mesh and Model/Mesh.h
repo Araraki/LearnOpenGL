@@ -45,11 +45,11 @@ public:
 		for (GLuint i = 0; i < this->textures.size(); ++i)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
-
+			 
 			stringstream ss;
 			string number;
 			string name = this->textures[i].type;
-			if (name == "texture_diffuse")
+			if (name == "texture_diffuse") 
 				ss << diffuseNr++;
 			else if (name == "texture_specular")
 				ss << specularNr++;

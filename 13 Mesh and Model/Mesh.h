@@ -6,6 +6,7 @@ using namespace std;
 #include <glm/glm.hpp>
 
 #include "Shader.h"
+#include "TextureManager.h"
 
 struct Vertex
 {
@@ -55,7 +56,9 @@ public:
 			number = ss.str();
 
 			glUniform1i(glGetUniformLocation(shader.Program, (name + number).c_str()), i);
-			glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
+			// TODO ÐèÒªÌæ»»
+			//glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
+			TextureManager::Inst()->BindTexture(this->textures[i].id);
 		}
 
 		glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 16.0f);

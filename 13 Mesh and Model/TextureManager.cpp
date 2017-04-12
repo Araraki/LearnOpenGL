@@ -53,21 +53,21 @@ GLuint TextureManager::LoadTexture(const char* filename, GLenum image_format, GL
 	unsigned int width(0), height(0);
 	//OpenGL's image ID to map to
 	GLuint gl_texID;
-	
+
 	//check the file signature and deduce its format
 	fif = FreeImage_GetFileType(filename, 0);
 	//if still unknown, try to guess the file format from the file extension
-	if(fif == FIF_UNKNOWN) 
+	if (fif == FIF_UNKNOWN)
 		fif = FreeImage_GetFIFFromFilename(filename);
 	//if still unkown, return failure
-	if(fif == FIF_UNKNOWN)
+	if (fif == FIF_UNKNOWN)
 		return -1;
 
 	//check that the plugin has reading capabilities and load the file
-	if(FreeImage_FIFSupportsReading(fif))
+	if (FreeImage_FIFSupportsReading(fif))
 		dib = FreeImage_Load(fif, filename);
 	//if the image failed to load, return failure
-	if(!dib)
+	if (!dib)
 		return -1;
 
 	//retrieve the image data
@@ -76,9 +76,9 @@ GLuint TextureManager::LoadTexture(const char* filename, GLenum image_format, GL
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
 	//if this somehow one of these failed (they shouldn't), return failure
-	if((bits == 0) || (width == 0) || (height == 0))
+	if ((bits == 0) || (width == 0) || (height == 0))
 		return -1;
-	
+
 	//generate an OpenGL texture ID for this texture
 	glGenTextures(1, &gl_texID);
 	//store the texture ID mapping

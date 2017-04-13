@@ -11,6 +11,8 @@
 #include "Shader.h"
 #include "TextureManager.h"
 
+GLuint TextureFromFile(const char* path, std::string directory);
+
 class Model
 {
 public:
@@ -26,17 +28,17 @@ public:
 	}
 
 private:
-	string directory;
-	vector<Mesh> meshes;
-	vector<Texture> textures_loaded;
+	std::string directory;
+	std::vector<Mesh> meshes;
+	std::vector<Texture> textures_loaded;
 
-	void loadModel(string path)
+	void loadModel(std::string path)
 	{
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
 		if(!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
-			cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
+			std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
 			return;
 		}
 		this->directory = path.substr(0, path.find_last_of('/'));
@@ -51,16 +53,14 @@ private:
 			this->meshes.push_back(this->processMesh(mesh, scene));
 		}
 		for (GLuint i = 0; i < node->mNumChildren; i++)
-		{
 			this->processNode(node->mChildren[i], scene);
-		}
 	}
 
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene)
 	{
-		vector<Vertex> vertices;
-		vector<GLuint> indices;
-		vector<Texture> textures;
+		std::vector<Vertex> vertices;
+		std::vector<GLuint> indices;
+		std::vector<Texture> textures;
 
 		for(GLuint i = 0; i < mesh->mNumVertices; i++)
 		{
@@ -84,17 +84,17 @@ private:
 		if (mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-			vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+			std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-			vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_specular");
+			std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_specular");
 			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 		}
 		return Mesh(vertices, indices, textures);
 	}
 
-	vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)
+	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 	{
-		vector<Texture> textures;
+		std::vector<Texture> textures;
 		for (GLuint i = 0; i < mat->GetTextureCount(type); i++)
 		{
 			aiString str;
@@ -121,18 +121,16 @@ private:
 		}
 		return textures;
 	}
-
-	GLuint TextureFromFile(const char* path, string directory)
-	{
-		string filename = string(path);
-		filename = directory + '/' + filename;
-		GLuint textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_BGRA, GL_RGBA, 0, 0);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		return textureID;
-	}
 };
 
+inline GLuint TextureFromFile(const char* path, std::string directory)
+{
+	std::string filename = directory + '/' + std::string(path);
+	GLuint textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	return textureID;
+}

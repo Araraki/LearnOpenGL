@@ -1,8 +1,6 @@
 #pragma once
 #include <vector>
-using namespace std;
 
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
 #include "Shader.h"
@@ -18,18 +16,18 @@ struct Vertex
 struct Texture
 {
 	GLuint id;
-	string type;
+	std::string type;
 	aiString path;
 };
 
 class Mesh
 {
 public:
-	vector<Vertex> vertices;
-	vector<GLuint> indices;
-	vector<Texture> textures;
+	std::vector<Vertex> vertices;
+	std::vector<GLuint> indices;
+	std::vector<Texture> textures;
 
-	Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures)
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures)
 	{
 		this->vertices = vertices;
 		this->indices = indices;
@@ -45,10 +43,10 @@ public:
 		for (GLuint i = 0; i < this->textures.size(); ++i)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
-			 
-			stringstream ss;
-			string number;
-			string name = this->textures[i].type;
+
+			std::stringstream ss;
+			std::string number;
+			std::string name = this->textures[i].type;
 			if (name == "texture_diffuse") 
 				ss << diffuseNr++;
 			else if (name == "texture_specular")
@@ -56,7 +54,6 @@ public:
 			number = ss.str();
 
 			glUniform1i(glGetUniformLocation(shader.Program, (name + number).c_str()), i);
-			// TODO ÐèÒªÌæ»»
 			TextureManager::Inst()->BindTexture(this->textures[i].id);
 		}
 
@@ -91,8 +88,7 @@ private:
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(GLuint), &this->indices[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
-
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Normal));
 

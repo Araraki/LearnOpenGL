@@ -57,7 +57,6 @@ public:
 
 			glUniform1i(glGetUniformLocation(shader.Program, (name + number).c_str()), i);
 			// TODO ĞèÒªÌæ»»
-			//glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 			TextureManager::Inst()->BindTexture(this->textures[i].id);
 		}
 

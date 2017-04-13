@@ -12,7 +12,7 @@
 #include <windows.h>
 #include <gl/gl.h>
 #include "FreeImage.h"
-#include <map>
+#include <vector>
 
 class TextureManager
 {
@@ -29,10 +29,10 @@ public:
 		GLint border = 0);					//border size
 
 	//free the memory for a texture
-	bool UnloadTexture(const unsigned int texID);
+	void UnloadTexture(const unsigned int texID);
 
 	//set the current texture
-	bool BindTexture(const unsigned int texID);
+	void BindTexture(const unsigned int texID);
 
 	//free all texture memory
 	void UnloadAllTextures();
@@ -43,7 +43,7 @@ protected:
 	TextureManager& operator=(const TextureManager& tm);
 
 	static TextureManager* m_inst;
-	std::map<unsigned int, GLuint> m_texID;
+	std::vector<GLuint> m_texID;
 };
 
 #endif

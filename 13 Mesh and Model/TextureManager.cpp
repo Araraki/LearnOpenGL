@@ -82,7 +82,7 @@ GLuint TextureManager::LoadTexture(const char* filename, GLenum image_format, GL
 	//generate an OpenGL texture ID for this texture
 	glGenTextures(1, &gl_texID);
 	//store the texture ID mapping
-	m_texID[gl_texID] = gl_texID;
+	m_texID.push_back(gl_texID);
 	//bind to the new texture ID
 	glBindTexture(GL_TEXTURE_2D, gl_texID);
 	//store the texture data for OpenGL use
@@ -96,45 +96,28 @@ GLuint TextureManager::LoadTexture(const char* filename, GLenum image_format, GL
 	return gl_texID;
 }
 
-bool TextureManager::UnloadTexture(const unsigned int texID)
+void TextureManager::UnloadTexture(const unsigned int texID)
 {
-	bool result(true);
-	//if this texture ID mapped, unload it's texture, and remove it from the map
-	if(m_texID.find(texID) != m_texID.end())
-	{
-		glDeleteTextures(1, &(m_texID[texID]));
-		m_texID.erase(texID);
-	}
-	//otherwise, unload failed
-	else
-	{
-		result = false;
-	}
-
-	return result;
+	auto id = find(m_texID.begin(), m_texID.end(), texID);
+	glDeleteTextures(1, &texID);
+	m_texID.erase(id);
 }
 
-bool TextureManager::BindTexture(const unsigned int texID)
+void TextureManager::BindTexture(const unsigned int texID)
 {
-	bool result(true);
-	//if this texture ID mapped, bind it's texture as current
-	if(m_texID.find(texID) != m_texID.end())
-		glBindTexture(GL_TEXTURE_2D, m_texID[texID]);
-	//otherwise, binding failed
-	else
-		result = false;
-
-	return result;
+	glBindTexture(GL_TEXTURE_2D, texID);
 }
 
 void TextureManager::UnloadAllTextures()
 {
 	//start at the begginning of the texture map
-	std::map<unsigned int, GLuint>::iterator i = m_texID.begin();
+	auto i = m_texID.begin();
 
-	//Unload the textures untill the end of the texture map is found
-	for (i = m_texID.begin(); i != m_texID.end(); ++i)
-		glDeleteTextures(1, &(m_texID[i->first]));
+	while (m_texID.size() != 0)
+	{
+		glDeleteTextures(1, &m_texID[0]);
+		m_texID.erase(m_texID.begin());
+	}
 
 	//clear the texture map
 	m_texID.clear();

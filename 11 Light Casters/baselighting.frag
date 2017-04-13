@@ -40,20 +40,15 @@ uniform Light light;
 void main()
 {
 	// base value
-	vec3 norm;	
-	vec3 viewDir;
-	vec3 reflectDir;
-	vec3 lightDir;
-	
-	norm = normalize(Normal);
-	viewDir = normalize(viewPos - FragPos);
-	reflectDir = reflect(-lightDir, norm);
+	vec3 norm = normalize(Normal);
+	vec3 viewDir = normalize(viewPos - FragPos);
 
+	vec3 lightDir;
 	if(light.lightVector.w == 0.0f)
 		lightDir = normalize(-light.lightVector.xyz);
 	else if(light.lightVector.w == 1.0f || light.lightVector.w == 0.5f)	// point light or spotlight
 		lightDir = normalize(light.lightVector.xyz - FragPos);
-
+	vec3 reflectDir = reflect(-lightDir, norm);
 
 	// phong lighting
 	float diff;

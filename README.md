@@ -42,6 +42,10 @@ http://blog.csdn.net/xiajun07061225/article/details/7628146
 
 http://www.cnblogs.com/iRidescent-ZONE/p/5475337.html
 
+[ Stencil testing detail ]
+
+https://community.arm.com/cn/b/blog/posts/stencil-test
+
 [ MOOC ]
 
 https://www.udacity.com/wiki/cs291

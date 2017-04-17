@@ -109,7 +109,6 @@ void glInit ()
 	glDepthFunc(GL_LESS);
 
 	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_NOTEQUAL, 1, 0xff);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -219,7 +218,8 @@ int main(int argc, char* argv[])
 		
 
 		// lamp ªÊ÷∆«∞≈‰÷√
-		glStencilMask(0x00);
+		glStencilFunc(GL_ALWAYS, 1, 0x00);
+		glStencilMask(0xff);
 		lampShader.Use();
 
 		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));

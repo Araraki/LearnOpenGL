@@ -218,8 +218,8 @@ int main(int argc, char* argv[])
 		
 
 		// lamp 绘制前配置
-		glStencilFunc(GL_ALWAYS, 1, 0x00);
-		glStencilMask(0xff);
+		glStencilFunc(GL_ALWAYS, 1, 0xff);
+		//glStencilMask(0xff);
 		lampShader.Use();
 
 		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -241,7 +241,7 @@ int main(int argc, char* argv[])
 
 		// cube 绘制前配置
 		glStencilFunc(GL_ALWAYS, 1, 0xff);
-		glStencilMask(0xff);
+		//glStencilMask(0xff);
 		lightingShader.Use();
 
 		glActiveTexture(GL_TEXTURE0);
@@ -323,7 +323,8 @@ int main(int argc, char* argv[])
 
 		// outlining
 		glStencilFunc(GL_NOTEQUAL, 1, 0xff);
-		glStencilMask(0xff);
+		//glStencilFunc(GL_NOTEQUAL, 5, 0x03);
+		//glStencilMask(0xff);
 		glDisable(GL_DEPTH_TEST);
 		outliningShader.Use();
 		glBindVertexArray(modelVAO);

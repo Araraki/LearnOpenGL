@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E5FF58E3-4A13-49D3-8172-DC6394021D8B}</ProjectGuid>
+    <ProjectGuid>{0F2805D8-4F55-45C0-B55F-45C1F61172AC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>My14DepthtestingAndStenciltesting</RootNamespace>
+    <RootNamespace>My14Depthtesting</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -95,8 +95,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;freeimage.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OpenGL_libs);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -147,16 +147,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="baselighting.frag" />
-    <None Include="baselighting.vs" />
     <None Include="depth.frag" />
     <None Include="depth.vs" />
     <None Include="lamp.frag" />
     <None Include="lamp.vs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="box.png" />
-    <Image Include="box_specular.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

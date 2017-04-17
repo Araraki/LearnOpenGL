@@ -21,12 +21,6 @@
     <None Include="depth.vs">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="baselighting.frag">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="baselighting.vs">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="lamp.frag">
       <Filter>资源文件</Filter>
     </None>
@@ -35,19 +29,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="box.png">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="box_specular.png">
-      <Filter>资源文件</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Mesh.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -58,9 +47,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

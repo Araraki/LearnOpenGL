@@ -152,6 +152,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="box.png" />
+    <Image Include="grass.png" />
+    <Image Include="window.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

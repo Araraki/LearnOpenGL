@@ -26,6 +26,12 @@
     <Image Include="box.png">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="grass.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="window.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">

@@ -108,11 +108,11 @@ void glInit ()
 }
 
 // VAO & VBO
-GLuint modelVAO, modelVBO;
-GLuint lampVAO;
+GLuint cubeVAO, cubeVBO;
+GLuint planeVAO;
 
 // model
-Shader lightingShader;
+Shader depthShader;
 // material
 GLint  matSpecularLoc, matShineLoc;
 // lightParameter
@@ -138,17 +138,17 @@ int main(int argc, char* argv[])
 	glInit();
 
 	// shader 
-	lightingShader = Shader("baselighting.vs", "baselighting.frag");
+	depthShader = Shader("baselighting.vs", "baselighting.frag");
 	lampShader = Shader("lamp.vs", "lamp.frag");
 
 	// model VAO/VBO
-	glGenVertexArrays(1, &modelVAO);
-	glGenBuffers(1, &modelVBO);
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, modelVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
-	glBindVertexArray(modelVAO);
+	glBindVertexArray(cubeVAO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), nullptr);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
@@ -157,10 +157,10 @@ int main(int argc, char* argv[])
 	glBindVertexArray(0);
 	
 	// light VAO/VBO
-	glGenVertexArrays(1, &lampVAO);
-	glBindVertexArray(lampVAO);
+	glGenVertexArrays(1, &planeVAO);
+	glBindVertexArray(planeVAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, modelVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), nullptr);
 	glEnableVertexAttribArray(0);
 
@@ -207,13 +207,13 @@ int main(int argc, char* argv[])
 		glUniform3f(lampColorLoc, lightColor.x, lightColor.y, lightColor.z);
 
 		// 绘制 lamp
-		glBindVertexArray(lampVAO);
+		glBindVertexArray(planeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 
 
 		// cube 绘制前配置
-		lightingShader.Use();
+		depthShader.Use();
 		// transform
 		view = glm::mat4();
 		view = camera.GetViewMatrix();
@@ -221,38 +221,38 @@ int main(int argc, char* argv[])
 		proj = glm::mat4();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
-		viewLoc = glGetUniformLocation(lightingShader.Program, "view");
-		projLoc = glGetUniformLocation(lightingShader.Program, "proj");
+		viewLoc = glGetUniformLocation(depthShader.Program, "view");
+		projLoc = glGetUniformLocation(depthShader.Program, "proj");
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
 		// shader.lightingCalculate
-		viewPosLoc = glGetUniformLocation(lightingShader.Program, "viewPos");
-		lampPosLoc = glGetUniformLocation(lightingShader.Program, "light.position");
+		viewPosLoc = glGetUniformLocation(depthShader.Program, "viewPos");
+		lampPosLoc = glGetUniformLocation(depthShader.Program, "light.position");
 
 		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
 		glUniform3f(lampPosLoc, lampPos.x, lampPos.y, lampPos.z);
 
 		//shader.lightParameter		
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "light.ambient"), ambientColor.x, ambientColor.y, ambientColor.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "light.diffuse"), diffuseColor.x, diffuseColor.y, diffuseColor.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "light.ambient"), ambientColor.x, ambientColor.y, ambientColor.z);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "light.diffuse"), diffuseColor.x, diffuseColor.y, diffuseColor.z);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
 
 		// shader.material
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "material.ambient"), 1.0f, 0.5f, 0.31f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "material.diffuse"), 1.0f, 0.5f, 0.31f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "material.specular"), 0.5f, 0.5f, 0.5f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 32.0f);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "material.ambient"), 1.0f, 0.5f, 0.31f);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "material.diffuse"), 1.0f, 0.5f, 0.31f);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "material.specular"), 0.5f, 0.5f, 0.5f);
+		glUniform1f(glGetUniformLocation(depthShader.Program, "material.shininess"), 32.0f);
 		
 		// 绘制 cube
-		glBindVertexArray(modelVAO);
+		glBindVertexArray(cubeVAO);
 		for (int i = 0; i < 10; i++)
 		{
 			model = glm::mat4();
 			model = glm::translate(model, cubePositions[i]);
 			model = glm::rotate(model, glm::radians(GLfloat(glfwGetTime()) * 20.0f) + i, glm::vec3(1.0f, 0.3f, 0.5f));
-			modelLoc = glGetUniformLocation(lightingShader.Program, "model");
+			modelLoc = glGetUniformLocation(depthShader.Program, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
@@ -262,9 +262,9 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &lampVAO);
-	glDeleteVertexArrays(1, &modelVAO);
-	glDeleteBuffers(1, &modelVBO);
+	glDeleteVertexArrays(1, &planeVAO);
+	glDeleteVertexArrays(1, &cubeVAO);
+	glDeleteBuffers(1, &cubeVBO);
 	glfwTerminate();
 
 	return 0;

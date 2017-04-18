@@ -109,15 +109,15 @@ void glInit ()
 }
 
 // VAO & VBO
-GLuint modelVAO, modelVBO;
-GLuint lampVAO;
+GLuint cubeVAO, cubeVBO;
+GLuint planeVAO;
 
 // transform
 glm::mat4 model, view, proj;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 // model
-Shader lightingShader;
+Shader depthShader;
 
 // lamp
 Shader lampShader;
@@ -134,17 +134,17 @@ int main(int argc, char* argv[])
 	glInit();
 
 	// shader 
-	lightingShader = Shader("baselighting.vs", "baselighting.frag");
+	depthShader = Shader("baselighting.vs", "baselighting.frag");
 	lampShader = Shader("lamp.vs", "lamp.frag");
 
 	// model VAO/VBO
-	glGenVertexArrays(1, &modelVAO);
-	glGenBuffers(1, &modelVBO);
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, modelVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
-	glBindVertexArray(modelVAO);
+	glBindVertexArray(cubeVAO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), nullptr);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
@@ -155,10 +155,10 @@ int main(int argc, char* argv[])
 	glBindVertexArray(0);
 	
 	// light VAO/VBO
-	glGenVertexArrays(1, &lampVAO);
-	glBindVertexArray(lampVAO);
+	glGenVertexArrays(1, &planeVAO);
+	glBindVertexArray(planeVAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, modelVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), nullptr);
 	glEnableVertexAttribArray(0);
 
@@ -218,7 +218,7 @@ int main(int argc, char* argv[])
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
 		// cube 绘制前配置
-		lightingShader.Use();
+		depthShader.Use();
 
 		glActiveTexture(GL_TEXTURE0);
 		TextureManager::Inst()->BindTexture(0);
@@ -226,40 +226,40 @@ int main(int argc, char* argv[])
 		TextureManager::Inst()->BindTexture(1);
 
 		// transform
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+		glUniformMatrix4fv(glGetUniformLocation(depthShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(depthShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 
 		// shader.lightingCalculate
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-		glUniform4f(glGetUniformLocation(lightingShader.Program, "light.lightVector"), lightVector.x, lightVector.y, lightVector.z, lightVector.w);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+		glUniform4f(glGetUniformLocation(depthShader.Program, "light.lightVector"), lightVector.x, lightVector.y, lightVector.z, lightVector.w);
 
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "light.spotDir"), spotDir.x, spotDir.y, spotDir.z);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "light.cutOff"), cutOff);		
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "light.outerCutOff"), outerCutOff);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "light.spotDir"), spotDir.x, spotDir.y, spotDir.z);
+		glUniform1f(glGetUniformLocation(depthShader.Program, "light.cutOff"), cutOff);		
+		glUniform1f(glGetUniformLocation(depthShader.Program, "light.outerCutOff"), outerCutOff);
 
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "light.constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "light.linear"), 0.09f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "light.quadratic"), 0.032f);
+		glUniform1f(glGetUniformLocation(depthShader.Program, "light.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(depthShader.Program, "light.linear"), 0.09f);
+		glUniform1f(glGetUniformLocation(depthShader.Program, "light.quadratic"), 0.032f);
 				
 		//shader.lightParameter		
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "light.ambient"), 0.2f, 0.2f, 0.2f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "light.diffuse"), 0.5f, 0.5f, 0.5f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "light.ambient"), 0.2f, 0.2f, 0.2f);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "light.diffuse"), 0.5f, 0.5f, 0.5f);
+		glUniform3f(glGetUniformLocation(depthShader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
 
 		// shader.material
-		glUniform1i(glGetUniformLocation(lightingShader.Program, "material.diffuse"), 0);
-		glUniform1i(glGetUniformLocation(lightingShader.Program, "material.specular"), 1);
-		glUniform1i(glGetUniformLocation(lightingShader.Program, "material.emission"), 2);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 64.0f);
+		glUniform1i(glGetUniformLocation(depthShader.Program, "material.diffuse"), 0);
+		glUniform1i(glGetUniformLocation(depthShader.Program, "material.specular"), 1);
+		glUniform1i(glGetUniformLocation(depthShader.Program, "material.emission"), 2);
+		glUniform1f(glGetUniformLocation(depthShader.Program, "material.shininess"), 64.0f);
 		
 		// 绘制 cube
-		glBindVertexArray(modelVAO);
+		glBindVertexArray(cubeVAO);
 		for (int i = 0; i < 10; i++)
 		{
 			model = glm::mat4();
 			model = glm::translate(model, cubePositions[i]);
 			model = glm::rotate(model, (glm::radians(lastFrame) * 20) + i, glm::vec3(1.0f, 0.5f, 0.2f));
-			glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(glGetUniformLocation(depthShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		glBindVertexArray(0);
@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
 		glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
 
 		// 绘制 lamp
-		glBindVertexArray(lampVAO);
+		glBindVertexArray(planeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		
@@ -285,9 +285,9 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &lampVAO);
-	glDeleteVertexArrays(1, &modelVAO);
-	glDeleteBuffers(1, &modelVBO);
+	glDeleteVertexArrays(1, &planeVAO);
+	glDeleteVertexArrays(1, &cubeVAO);
+	glDeleteBuffers(1, &cubeVBO);
 	FreeImage_DeInitialise();
 	glfwTerminate();
 

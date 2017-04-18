@@ -35,17 +35,8 @@
     <Image Include="box.png">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="box_specular.png">
-      <Filter>资源文件</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lamp.frag">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="lamp.vs">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="baselighting.vs">
       <Filter>资源文件</Filter>
     </None>

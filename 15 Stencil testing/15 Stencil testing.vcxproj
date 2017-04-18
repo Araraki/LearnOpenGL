@@ -27,13 +27,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="box.png" />
-    <Image Include="box_specular.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="baselighting.frag" />
     <None Include="baselighting.vs" />
-    <None Include="lamp.frag" />
-    <None Include="lamp.vs" />
     <None Include="outlining.frag" />
     <None Include="outlining.vs" />
   </ItemGroup>

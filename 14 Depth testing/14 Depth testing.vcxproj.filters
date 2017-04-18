@@ -21,12 +21,6 @@
     <None Include="depth.vs">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="lamp.frag">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="lamp.vs">
-      <Filter>资源文件</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -49,5 +43,10 @@
     <ClInclude Include="Camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="box.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

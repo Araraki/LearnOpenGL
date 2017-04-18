@@ -107,11 +107,11 @@ void glInit ()
 }
 
 // VAO & VBO
-GLuint modelVAO, modelVBO;
-GLuint lampVAO;
+GLuint cubeVAO, cubeVBO;
+GLuint planeVAO;
 
 // Shader
-Shader lightingShader;
+Shader depthShader;
 Shader lampShader;
 
 // transform
@@ -131,30 +131,30 @@ int main(int argc, char* argv[])
 	glInit();
 
 	// model VAO/VBO
-	glGenVertexArrays(1, &modelVAO);
-	glGenBuffers(1, &modelVBO);
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, modelVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
-	glBindVertexArray(modelVAO);
+	glBindVertexArray(cubeVAO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
 	
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 	
 	// light VAO/VBO
-	glGenVertexArrays(1, &lampVAO);
-	glBindVertexArray(lampVAO);
+	glGenVertexArrays(1, &planeVAO);
+	glBindVertexArray(planeVAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, modelVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
 
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 
 	// shader 
-	lightingShader = Shader("lighting.vs", "lighting.frag");
+	depthShader = Shader("lighting.vs", "lighting.frag");
 	lampShader = Shader("lamp.vs", "lamp.frag");
 
 	while (!glfwWindowShouldClose(window))
@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
 		keysProcess();
 
 		// cube 绘制前配置
-		lightingShader.Use();
+		depthShader.Use();
 
 		model = glm::mat4();
 		model = glm::translate(model, cubePositions[0]);
@@ -184,22 +184,22 @@ int main(int argc, char* argv[])
 		proj = glm::mat4();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
-		modelLoc = glGetUniformLocation(lightingShader.Program, "model");
-		viewLoc = glGetUniformLocation(lightingShader.Program, "view");
-		projLoc = glGetUniformLocation(lightingShader.Program, "proj");
+		modelLoc = glGetUniformLocation(depthShader.Program, "model");
+		viewLoc = glGetUniformLocation(depthShader.Program, "view");
+		projLoc = glGetUniformLocation(depthShader.Program, "proj");
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
-		objectColorLoc = glGetUniformLocation(lightingShader.Program, "objectColor");
-		lampColorLoc = glGetUniformLocation(lightingShader.Program, "lightColor");
+		objectColorLoc = glGetUniformLocation(depthShader.Program, "objectColor");
+		lampColorLoc = glGetUniformLocation(depthShader.Program, "lightColor");
 
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.3f);
 		glUniform3f(lampColorLoc, 1.0f, 1.0f, 1.0f);
 		
 		// 绘制 cube
-		glBindVertexArray(modelVAO);
+		glBindVertexArray(cubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 
@@ -219,7 +219,7 @@ int main(int argc, char* argv[])
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
 		// 绘制 lamp
-		glBindVertexArray(lampVAO);
+		glBindVertexArray(planeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		
@@ -227,9 +227,9 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &lampVAO);
-	glDeleteVertexArrays(1, &modelVAO);
-	glDeleteBuffers(1, &modelVBO);
+	glDeleteVertexArrays(1, &planeVAO);
+	glDeleteVertexArrays(1, &cubeVAO);
+	glDeleteBuffers(1, &cubeVBO);
 	glfwTerminate();
 
 	return 0;

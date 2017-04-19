@@ -122,18 +122,6 @@ void glInit ()
 	
 	glEnable(GL_DEPTH_TEST);
 	
-	glEnable(GL_CULL_FACE);
-	//glFrontFace(GL_CCW);
-	glFrontFace(GL_CW);
-	//glCullFace(GL_FRONT);
-	glCullFace(GL_BACK);
-
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	//glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-	
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
@@ -145,9 +133,7 @@ void glInit ()
 
 // VAO & VBO
 GLuint cubeVAO, cubeVBO,
-	   planeVAO, planeVBO,
-//	   grassVAO, grassVBO,
-	   windowVAO, windowVBO;
+	   planeVAO, planeVBO;
 
 void initVAOandVBO()
 {
@@ -174,36 +160,6 @@ void initVAOandVBO()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
 
 	glBindVertexArray(planeVAO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
-
-	glBindVertexArray(0);
-/*
-	// grass VAO/VBO
-	glGenVertexArrays(1, &grassVAO);
-	glGenBuffers(1, &grassVBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, grassVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
-
-	glBindVertexArray(grassVAO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
-	
-	glBindVertexArray(0);
-*/
-	// window VAO/VBO
-	glGenVertexArrays(1, &windowVAO);
-	glGenBuffers(1, &windowVBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, windowVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
-
-	glBindVertexArray(windowVAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
@@ -242,23 +198,6 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	//glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, -1.5f);
-
-	GLuint grassTex = TextureManager::Inst()->LoadTexture("grass.png", GL_BGRA, GL_RGBA, 0, 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-	GLuint windowTex = TextureManager::Inst()->LoadTexture("window.png", GL_BGRA, GL_RGBA, 0, 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -318,54 +257,6 @@ int main(int argc, char* argv[])
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
 		glBindVertexArray(0);
-
-/*		// 3.grass
-		glBindVertexArray(grassVAO);
-		
-		windowShader.Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		TextureManager::Inst()->BindTexture(grassTex);
-		
-		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-		for (GLuint i = 0; i < vegetation.size(); i++)
-		{
-			model = glm::mat4();
-			model = glm::translate(model, vegetation[i] + glm::vec3(0.0f, 0.0f, 1.0f));
-			glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-		}
-
-		glBindVertexArray(0);
-*/
-		// 4.window
-		glBindVertexArray(windowVAO);
-
-		windowShader.Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		TextureManager::Inst()->BindTexture(windowTex);
-
-		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-
-		std::map<float, glm::vec3> sorted;
-		for (GLuint i = 0; i < windows.size(); i++)
-		{
-			GLfloat distance = glm::length(camera.Position - windows[i]);
-			sorted[distance] = windows[i];
-		}
-		for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
-		{
-			model = glm::mat4();
-			model = glm::translate(model, it->second);
-			glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-		}
-
-		glBindVertexArray(0);
-		
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -373,10 +264,6 @@ int main(int argc, char* argv[])
 
 	glDeleteVertexArrays(1, &planeVAO);
 	glDeleteVertexArrays(1, &cubeVAO);
-//	glDeleteVertexArrays(1, &grassVAO);
-	glDeleteVertexArrays(1, &windowVAO);
-	glDeleteBuffers(1, &windowVBO);
-//	glDeleteBuffers(1, &grassVBO);
 	glDeleteBuffers(1, &planeVBO);
 	glDeleteBuffers(1, &cubeVBO);
 

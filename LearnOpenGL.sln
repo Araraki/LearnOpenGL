@@ -39,6 +39,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16 Blending", "16 Blending\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "17 Face Culling", "17 Face Culling\17 Face Culling.vcxproj", "{980586D1-546B-4031-A4B0-03F7389D9358}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "18 Framebuffers", "18 Framebuffers\18 Framebuffers.vcxproj", "{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -191,6 +193,14 @@ Global
 		{980586D1-546B-4031-A4B0-03F7389D9358}.Release|x64.Build.0 = Release|x64
 		{980586D1-546B-4031-A4B0-03F7389D9358}.Release|x86.ActiveCfg = Release|Win32
 		{980586D1-546B-4031-A4B0-03F7389D9358}.Release|x86.Build.0 = Release|Win32
+		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Debug|x64.ActiveCfg = Debug|x64
+		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Debug|x64.Build.0 = Debug|x64
+		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Debug|x86.ActiveCfg = Debug|Win32
+		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Debug|x86.Build.0 = Debug|Win32
+		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Release|x64.ActiveCfg = Release|x64
+		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Release|x64.Build.0 = Release|x64
+		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Release|x86.ActiveCfg = Release|Win32
+		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

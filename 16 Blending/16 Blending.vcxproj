@@ -149,6 +149,10 @@
   <ItemGroup>
     <None Include="base.frag" />
     <None Include="base.vs" />
+    <None Include="grass.frag" />
+    <None Include="grass.vs" />
+    <None Include="window.frag" />
+    <None Include="window.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="box.png" />

@@ -11,7 +11,7 @@ class Shader
 public:
 	GLuint Program;
 	Shader(){}
-	Shader::Shader(const std::string vertexPath, const std::string fragmentPath)
+	Shader(const std::string vertexPath, const std::string fragmentPath)
 	{
 		std::string vertexCode;
 		std::string fragmentCode;
@@ -87,7 +87,7 @@ public:
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 	}
-	void Shader::Use()
+	void Use()
 	{
 		glUseProgram(this->Program);
 	}

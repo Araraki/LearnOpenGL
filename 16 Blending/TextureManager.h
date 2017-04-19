@@ -34,8 +34,6 @@ public:
 		BYTE* bits(0);
 		//image width and height
 		unsigned int width(0), height(0);
-		//OpenGL's image ID to map to
-		GLuint gl_texID;
 
 		//check the file signature and deduce its format
 		fif = FreeImage_GetFileType(filename, 0);
@@ -62,6 +60,8 @@ public:
 		if ((bits == 0) || (width == 0) || (height == 0))
 			return -1;
 
+		//OpenGL's image ID to map to
+		GLuint gl_texID;
 		//generate an OpenGL texture ID for this texture
 		glGenTextures(1, &gl_texID);
 		//store the texture ID mapping

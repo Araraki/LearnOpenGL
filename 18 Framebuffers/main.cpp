@@ -17,16 +17,16 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 GLfloat cubeVertices[] = {
 	// Positions          // Texture Coords
 	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+	0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+	0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+	0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
 	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
 	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
 
 	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+	0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+	0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
 	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
 	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
 
@@ -37,24 +37,24 @@ GLfloat cubeVertices[] = {
 	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
 	-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
 
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+	0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+	0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+	0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+	0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+	0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
 
 	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+	0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+	0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+	0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
 	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
 	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
 
 	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+	0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+	0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
 	-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f
 };
@@ -78,12 +78,22 @@ GLfloat transparentVertices[] = {
 	1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
 	1.0f,  0.5f,  0.0f,  1.0f,  1.0f
 };
+GLfloat screenVertices[] = {
+	// Positions         // Texture Coords
+	-1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+	-1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+	 1.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+
+	-1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+	 1.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+	 1.0f,  1.0f,  0.0f,  1.0f,  1.0f
+};
 std::vector<glm::vec3> vegetation = {
 	glm::vec3(-1.5f, 0.0f, -0.48f),
-	glm::vec3( 1.5f, 0.0f,  0.51f),
-	glm::vec3( 0.0f, 0.0f,  0.7f),
+	glm::vec3(1.5f, 0.0f,  0.51f),
+	glm::vec3(0.0f, 0.0f,  0.7f),
 	glm::vec3(-0.3f, 0.0f, -2.3f),
-	glm::vec3( 0.5f, 0.0f, -0.6f)
+	glm::vec3(0.5f, 0.0f, -0.6f)
 };
 std::vector<glm::vec3> windows = {
 	glm::vec3(-1.5f, 0.0f, -0.48f),
@@ -103,7 +113,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 GLFWwindow* window;
 int screenWidth, screenHeight;
 
-void glInit ()
+void glInit()
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -119,9 +129,15 @@ void glInit ()
 
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);
-	
+
 	glEnable(GL_DEPTH_TEST);
-	
+
+	glEnable(GL_BLEND);
+	glBlendEquation(GL_FUNC_ADD);
+	//glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
@@ -133,7 +149,9 @@ void glInit ()
 
 // VAO & VBO
 GLuint cubeVAO, cubeVBO,
-	   planeVAO, planeVBO;
+	   planeVAO, planeVBO,
+	   quadVAO, quadVBO,
+	   windowVAO, windowVBO;
 
 void initVAOandVBO()
 {
@@ -166,38 +184,227 @@ void initVAOandVBO()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
 
 	glBindVertexArray(0);
+
+	// window VAO/VBO
+	glGenVertexArrays(1, &windowVAO);
+	glGenBuffers(1, &windowVBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, windowVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(windowVAO);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
+
+	glBindVertexArray(0);
+
+	// quad VAO/VBO
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertices), screenVertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(quadVAO);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
+
+	glBindVertexArray(0);
 }
 
-// shader
-Shader baseShader, windowShader;// , grassShader;
+// FBO/RBO
+GLuint framebuffer;
+GLuint texColorBuffer;
+GLuint rbo;
+
+void initFBO()
+{
+	// framebuffer
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+	// generate texture
+	glGenTextures(1, &texColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	// Attach
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
+
+	// generate renderbuffer
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	// Attach
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	// check framebuffer
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-// --- main code ---
-float currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
 
-int main(int argc, char* argv[])
-{	
-	glInit();
-	
-	initVAOandVBO();
-
-	// matrix
-	glm::mat4 model, view, proj;
-		
+// shader
+Shader baseShader, windowShader, screenShader;
+// texture
+GLuint boxTex, grassTex, windowTex;
+void LoadResources()
+{
 	// shader 
 	baseShader = Shader("base.vs", "base.frag");
-	//grassShader = Shader("grass.vs", "grass.frag");
 	windowShader = Shader("window.vs", "window.frag");
-
+	screenShader = Shader("fbo.vs", "fbo.frag");
 	// texture
-	GLuint boxTex = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
+	boxTex = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	//glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, -1.5f);
+
+	grassTex = TextureManager::Inst()->LoadTexture("grass.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	windowTex = TextureManager::Inst()->LoadTexture("window.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+}
+
+// matrix
+glm::mat4 model, view, proj;
+void DrawScene()
+{
+	view = glm::mat4();
+	proj = glm::mat4();
+	model = glm::mat4();
+
+	view = camera.GetViewMatrix();
+	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
+
+	// 1.plane
+	glBindVertexArray(planeVAO);
+
+	baseShader.Use();
+
+	glActiveTexture(GL_TEXTURE0);
+	TextureManager::Inst()->BindTexture(boxTex);
+
+	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glBindVertexArray(0);
+
+	// 2.cube
+	glBindVertexArray(cubeVAO);
+
+	baseShader.Use();
+
+	glActiveTexture(GL_TEXTURE0);
+	TextureManager::Inst()->BindTexture(boxTex);
+
+	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	glBindVertexArray(0);
+
+	// 3.window
+	glBindVertexArray(windowVAO);
+
+	windowShader.Use();
+
+	glActiveTexture(GL_TEXTURE0);
+	TextureManager::Inst()->BindTexture(windowTex);
+
+	glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+
+	std::map<float, glm::vec3> sorted;
+	for (GLuint i = 0; i < windows.size(); i++)
+	{
+		GLfloat distance = glm::length(camera.Position - windows[i]);
+		sorted[distance] = windows[i];
+	}
+	for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
+	{
+		model = glm::mat4();
+		model = glm::translate(model, it->second);
+		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
+
+	glBindVertexArray(0);
+}
+
+// --- main code ---
+float currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
+int main(int argc, char* argv[])
+{
+	glInit();
+
+	initVAOandVBO();
+	/*
+	// matrix
+	glm::mat4 model, view, proj;
+
+	// shader
+	baseShader = Shader("base.vs", "base.frag");
+	windowShader = Shader("window.vs", "window.frag");
+
+	// texture
+	GLuint boxTex = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, -1.5f);
+
+	GLuint grassTex = TextureManager::Inst()->LoadTexture("grass.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	GLuint windowTex = TextureManager::Inst()->LoadTexture("window.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -210,7 +417,7 @@ int main(int argc, char* argv[])
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		keysProcess();		
+		keysProcess();
 
 		// matrix
 		view = glm::mat4();
@@ -232,7 +439,7 @@ int main(int argc, char* argv[])
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-		
+
 		glBindVertexArray(0);
 
 		// 2.cube
@@ -255,17 +462,90 @@ int main(int argc, char* argv[])
 		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		
+
 		glBindVertexArray(0);
-		
+
+		// 3.window
+		glBindVertexArray(windowVAO);
+
+		windowShader.Use();
+
+		glActiveTexture(GL_TEXTURE0);
+		TextureManager::Inst()->BindTexture(windowTex);
+
+		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+
+		std::map<float, glm::vec3> sorted;
+		for (GLuint i = 0; i < windows.size(); i++)
+		{
+		GLfloat distance = glm::length(camera.Position - windows[i]);
+		sorted[distance] = windows[i];
+		}
+		for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
+		{
+		model = glm::mat4();
+		model = glm::translate(model, it->second);
+		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		}
+
+		glBindVertexArray(0);
+
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+	*/
+
+	initFBO();
+
+	LoadResources();
+
+	while (!glfwWindowShouldClose(window))
+	{
+		// calculate deltaTime
+		currentTime = float(glfwGetTime());
+		deltaTime = currentTime - lastFrame;
+		lastFrame = currentTime;
+
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+
+		keysProcess();
+
+		DrawScene();
+
+		// ªÊ÷∆Framebuffer µΩquad…œ
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		screenShader.Use();
+		glBindVertexArray(quadVAO);
+		glDisable(GL_DEPTH_TEST);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
 	glDeleteVertexArrays(1, &planeVAO);
 	glDeleteVertexArrays(1, &cubeVAO);
+	glDeleteVertexArrays(1, &windowVAO);
+	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteBuffers(1, &quadVBO);
+	glDeleteBuffers(1, &windowVBO);
 	glDeleteBuffers(1, &planeVBO);
 	glDeleteBuffers(1, &cubeVBO);
+
+	glDeleteFramebuffers(1, &framebuffer);
 
 	FreeImage_DeInitialise();
 	glfwTerminate();
@@ -331,7 +611,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		keys[key] = true;
 	else if (action == GLFW_RELEASE)
 		keys[key] = false;
-	
+
 	if (key == GLFW_KEY_L && action == GLFW_PRESS)
 		camera.FPS_Camera = !camera.FPS_Camera;
 }

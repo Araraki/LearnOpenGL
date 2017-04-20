@@ -35,16 +35,16 @@
     <None Include="base.vs">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="grass.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="grass.vs">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="window.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="window.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="fbo.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="fbo.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

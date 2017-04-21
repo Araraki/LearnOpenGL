@@ -32,19 +32,19 @@
     <None Include="base.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="base.vs">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="window.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="window.vs">
       <Filter>Shaders</Filter>
     </None>
     <None Include="fbo.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="fbo.vs">
+    <None Include="base.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="window.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="fbo.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

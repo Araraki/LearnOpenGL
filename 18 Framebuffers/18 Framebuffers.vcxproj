@@ -153,11 +153,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="base.frag" />
-    <None Include="base.vs" />
+    <None Include="base.vert" />
     <None Include="fbo.frag" />
-    <None Include="fbo.vs" />
+    <None Include="fbo.vert" />
     <None Include="window.frag" />
-    <None Include="window.vs" />
+    <None Include="window.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

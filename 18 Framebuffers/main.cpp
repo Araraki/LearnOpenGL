@@ -80,13 +80,13 @@ GLfloat transparentVertices[] = {
 };
 GLfloat screenVertices[] = {
 	// Positions         // Texture Coords
-	-1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-	-1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-	 1.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+	-0.4f,  1.0f,  0.0f,  0.0f,  1.0f,
+	-0.4f,  0.6f,  0.0f,  0.0f,  0.0f,
+	 0.4f,  0.6f,  0.0f,  1.0f,  0.0f,
 
-	-1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-	 1.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-	 1.0f,  1.0f,  0.0f,  1.0f,  1.0f
+	-0.4f,  1.0f,  0.0f,  0.0f,  1.0f,
+	 0.4f,  0.6f,  0.0f,  1.0f,  0.0f,
+	 0.4f,  1.0f,  0.0f,  1.0f,  1.0f
 };
 std::vector<glm::vec3> vegetation = {
 	glm::vec3(-1.5f, 0.0f, -0.48f),
@@ -263,9 +263,9 @@ GLuint boxTex, grassTex, windowTex;
 void LoadResources()
 {
 	// shader 
-	baseShader = Shader("base.vs", "base.frag");
-	windowShader = Shader("window.vs", "window.frag");
-	screenShader = Shader("fbo.vs", "fbo.frag");
+	baseShader = Shader("base.vert", "base.frag");
+	windowShader = Shader("window.vert", "window.frag");
+	screenShader = Shader("fbo.vert", "fbo.frag");
 	// texture
 	boxTex = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -292,12 +292,15 @@ void LoadResources()
 
 // matrix
 glm::mat4 model, view, proj;
-void DrawScene()
+void DrawScene(bool isBackMirror)
 {
+	if (isBackMirror)
+		camera.Front = -camera.Front;
+
 	view = glm::mat4();
 	proj = glm::mat4();
 	model = glm::mat4();
-
+	
 	view = camera.GetViewMatrix();
 	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
@@ -365,6 +368,9 @@ void DrawScene()
 	}
 
 	glBindVertexArray(0);
+
+	if (isBackMirror)
+		camera.Front = -camera.Front;
 }
 
 // --- main code ---
@@ -374,129 +380,6 @@ int main(int argc, char* argv[])
 	glInit();
 
 	initVAOandVBO();
-	/*
-	// matrix
-	glm::mat4 model, view, proj;
-
-	// shader
-	baseShader = Shader("base.vs", "base.frag");
-	windowShader = Shader("window.vs", "window.frag");
-
-	// texture
-	GLuint boxTex = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, -1.5f);
-
-	GLuint grassTex = TextureManager::Inst()->LoadTexture("grass.png", GL_BGRA, GL_RGBA, 0, 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-	GLuint windowTex = TextureManager::Inst()->LoadTexture("window.png", GL_BGRA, GL_RGBA, 0, 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-
-	while (!glfwWindowShouldClose(window))
-	{
-		// calculate deltaTime
-		currentTime = float(glfwGetTime());
-		deltaTime = currentTime - lastFrame;
-		lastFrame = currentTime;
-
-		// Start Draw
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		keysProcess();
-
-		// matrix
-		view = glm::mat4();
-		proj = glm::mat4();
-		model = glm::mat4();
-
-		view = camera.GetViewMatrix();
-		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
-
-		// 1.plane
-		glBindVertexArray(planeVAO);
-
-		baseShader.Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		TextureManager::Inst()->BindTexture(boxTex);
-
-		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glBindVertexArray(0);
-
-		// 2.cube
-		glBindVertexArray(cubeVAO);
-
-		baseShader.Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		TextureManager::Inst()->BindTexture(boxTex);
-
-		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		glBindVertexArray(0);
-
-		// 3.window
-		glBindVertexArray(windowVAO);
-
-		windowShader.Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		TextureManager::Inst()->BindTexture(windowTex);
-
-		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-
-		std::map<float, glm::vec3> sorted;
-		for (GLuint i = 0; i < windows.size(); i++)
-		{
-		GLfloat distance = glm::length(camera.Position - windows[i]);
-		sorted[distance] = windows[i];
-		}
-		for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
-		{
-		model = glm::mat4();
-		model = glm::translate(model, it->second);
-		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		}
-
-		glBindVertexArray(0);
-
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-	*/
 
 	initFBO();
 
@@ -508,21 +391,29 @@ int main(int argc, char* argv[])
 		currentTime = float(glfwGetTime());
 		deltaTime = currentTime - lastFrame;
 		lastFrame = currentTime;
+		
+		keysProcess();
 
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+//		绘制正常场景
+
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 
-		keysProcess();
+		DrawScene(false);
 
-		DrawScene();
+//		绘制后视镜场景
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+		
+		DrawScene(true);
 
 		// 绘制Framebuffer 到quad上
-
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+//		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+//		glClear(GL_COLOR_BUFFER_BIT);
 
 		screenShader.Use();
 		glBindVertexArray(quadVAO);

@@ -59,3 +59,17 @@ https://www.khronos.org/opengl/wiki/Getting_Started#Tutorials_and_How_To_Guides
 [ math ]
 
 http://www.songho.ca/opengl/index.html
+
+[ tools ]
+
+visual studio 2013/2015/2017 syntax highlighting extension for shader languages
+
+https://github.com/samizzo/nshader
+
+http://www.horsedrawngames.com/shader-syntax-highlighting-in-visual-studio-2013/
+
+how to write a syntax highlighting extension for visual studio
+
+http://www.cnblogs.com/aanbpsd/p/3920067.html
+
+http://www.cnblogs.com/bitzhuwei/p/glsl-syntax-highlight-in-visual-studio.html

@@ -18,16 +18,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lamp.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="lamp.vert">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="base.frag">
       <Filter>Shader</Filter>
     </None>
     <None Include="base.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="skybox.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="skybox.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="reflect.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="reflect.vert">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

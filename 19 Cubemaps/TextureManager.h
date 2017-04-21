@@ -4,6 +4,7 @@
 #include <gl/gl.h>
 #include "FreeImage.h"
 #include <vector>
+#include <iterator>
 
 class TextureManager
 {
@@ -77,6 +78,74 @@ public:
 
 		//return success
 		return gl_texID;
+	}
+	
+	GLuint LoadCubemapTexture(std::vector<const char*> filenames, GLenum image_format = GL_RGB, GLint internal_format = GL_RGB, GLint level = 0, GLint border = 0)
+	{
+		GLuint cubemapTex;
+		glGenTextures(1, &cubemapTex);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTex);
+
+		FREE_IMAGE_FORMAT fif;
+		FIBITMAP *dib;
+		BYTE* bits;
+		unsigned int width, height;
+		
+		int i = 0;
+		for (auto filename = filenames.begin(); filename != filenames.end(); ++filename, ++i)
+		{
+			// init
+			fif = FIF_UNKNOWN;
+			dib = nullptr;
+			bits = nullptr;
+			width = 0;
+			height = 0;
+
+			// load
+			fif = FreeImage_GetFileType(*filename, 0);
+			if (fif == FIF_UNKNOWN)
+				fif = FreeImage_GetFIFFromFilename(*filename);
+			if (fif == FIF_UNKNOWN)
+			{
+				std::cout << "cubemap load error: " << *filename << std::endl;
+				return -1;
+			}
+
+			if (FreeImage_FIFSupportsReading(fif))
+				dib = FreeImage_Load(fif, *filename);
+			if (!dib)
+			{
+				std::cout << "cubemap load error: " << *filename << std::endl;
+				return -1;
+			}
+
+			bits = FreeImage_GetBits(dib);
+			width = FreeImage_GetWidth(dib);
+			height = FreeImage_GetHeight(dib);
+
+			if (bits == nullptr || width == 0 || height == 0)
+			{
+				std::cout << "cubemap load error: " << *filename << std::endl;
+				return -1;
+			}
+			
+			// set: right - left - top - bottom - front - back
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				level, internal_format, width, height,
+				border, image_format, GL_UNSIGNED_BYTE, bits);
+
+			FreeImage_Unload(dib);
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+		m_texID.push_back(cubemapTex);
+
+		return cubemapTex;
 	}
 
 	//free the memory for a texture

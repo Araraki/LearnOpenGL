@@ -20,49 +20,95 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 // Resources
 GLfloat cubeVertices[] = {
-	// Positions          // Texture Coords
-	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+	// Positions          // Normals
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-	-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
+
+GLfloat skyboxVertices[] = {
+	// Positions          
+	-1.0f,  1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	-1.0f,  1.0f, -1.0f,
+	 1.0f,  1.0f, -1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	 1.0f, -1.0f,  1.0f
+};
+
 struct PointLight
 {
 	glm::vec3 position;
@@ -74,8 +120,8 @@ struct PointLight
 	float constant;
 	float linear;
 	float quadratic;
-};
-PointLight lamp[] = {
+}
+lamp[] = {
 	{
 		glm::vec3(2.3f, -1.6f, -3.0f),
 		glm::vec3(0.05f),
@@ -91,6 +137,17 @@ PointLight lamp[] = {
 		1.0f, 0.009f, 0.0032f
 	}
 };
+
+std::vector<const char*> cubemapTexturePaths = {
+	// right - left - bottom - top - back - front
+	"skybox/right.jpg",
+	"skybox/left.jpg",
+	"skybox/bottom.jpg",
+	"skybox/top.jpg",
+	"skybox/back.jpg",
+	"skybox/front.jpg"
+};
+
 
 // OpenGL
 GLFWwindow* window;
@@ -125,32 +182,51 @@ void glInit()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-GLuint lampVAO, lampVBO;
+GLuint skyboxVAO, skyboxVBO,
+	   cubeVAO, cubeVBO;
 void initVAOandVBO()
 {
-	glGenVertexArrays(1, &lampVAO);
-	glGenBuffers(1, &lampVBO);
+	// skybox
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, lampVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof skyboxVertices, skyboxVertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(skyboxVAO);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
+
+	glBindVertexArray(0);
+	
+	// cube
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
 
-	glBindVertexArray(lampVAO);
+	glBindVertexArray(cubeVAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof GLfloat, nullptr);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof GLfloat, (GLvoid *)(3*sizeof GLfloat));
-
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof GLfloat, nullptr);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
+	
 	glBindVertexArray(0);
 }
 
-Shader nanosuitShader, lampShader;
+Shader nanosuitShader, reflectShader, skyboxShader;
 Model nanosuitModel;
+GLuint skyboxTexture;
 void LoadResources()
 {
 	nanosuitShader = Shader("base.vert", "base.frag");
-	lampShader = Shader("lamp.vert", "lamp.frag");
+	reflectShader = Shader("reflect.vert", "reflect.frag");
+	skyboxShader = Shader("skybox.vert", "skybox.frag");
 
-	nanosuitModel = Model("Nanosuit/nanosuit.obj");
+//	nanosuitModel = Model("Nanosuit/nanosuit.obj");
+
+	skyboxTexture = TextureManager::Inst()->LoadCubemapTexture(cubemapTexturePaths, GL_BGR, GL_RGB, 0, 0);
 }
 
 // camera
@@ -164,7 +240,7 @@ void DrawScene()
 	model = glm::mat4();
 	view = camera.GetViewMatrix();
 	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
-
+/*
 	// nanosuit model
 	model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
@@ -194,24 +270,37 @@ void DrawScene()
 	glUniform1f(glGetUniformLocation(nanosuitShader.Program, "pointLights[1].quadratic"),	lamp[1].quadratic);
 
 	nanosuitModel.Draw(nanosuitShader);
+*/
+	// cube
+	reflectShader.Use();
 
-	// lamp
-	glBindVertexArray(lampVAO);
-	lampShader.Use();
-
-	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(reflectShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(glGetUniformLocation(reflectShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(reflectShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	
-	for (int i = 0; i < 2; ++i)
-	{
-		model = glm::mat4();
-		model = glm::translate(model, lamp[i].position);
-		model = glm::scale(model, glm::vec3(0.2f));
-		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), lamp[i].diffuse.x, lamp[i].diffuse.y, lamp[i].diffuse.z);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
+	glUniform3f(glGetUniformLocation(reflectShader.Program, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+	
+	glBindVertexArray(cubeVAO);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
+
+	// skybox
+	glDepthFunc(GL_LEQUAL);
+	skyboxShader.Use();
+
+	glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.GetViewMatrix()));	// È¥³ýÆ½ÒÆ
+	glUniformMatrix4fv(glGetUniformLocation(skyboxShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(glGetUniformLocation(skyboxShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(skyboxView));
+
+	glBindVertexArray(skyboxVAO);
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(skyboxShader.Program, "texture_diffuse1"), 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	glBindVertexArray(0);
+	glDepthFunc(GL_LESS);
 }
 
 // --- main code ---
@@ -232,7 +321,6 @@ int main(int argc, char* argv[])
 		lastFrame = currentTime;
 
 		// Start Draw
-		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		keysProcess();		
@@ -243,8 +331,8 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	glDeleteBuffers(1, &lampVBO);
-	glDeleteVertexArrays(1, &lampVAO);
+	glDeleteBuffers(1, &skyboxVBO);
+	glDeleteVertexArrays(1, &skyboxVAO);
 
 	FreeImage_DeInitialise();
 	TextureManager::Inst()->UnloadAllTextures();

@@ -41,6 +41,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "17 Face Culling", "17 Face 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "18 Framebuffers", "18 Framebuffers\18 Framebuffers.vcxproj", "{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "19 Cubemaps", "19 Cubemaps\19 Cubemaps.vcxproj", "{4DE42A34-2B7C-4FD5-8252-7F8CC8EC39D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -201,6 +203,14 @@ Global
 		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Release|x64.Build.0 = Release|x64
 		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Release|x86.ActiveCfg = Release|Win32
 		{89EACDFB-8463-4C6D-AA53-EBDDFF8472B4}.Release|x86.Build.0 = Release|Win32
+		{4DE42A34-2B7C-4FD5-8252-7F8CC8EC39D1}.Debug|x64.ActiveCfg = Debug|x64
+		{4DE42A34-2B7C-4FD5-8252-7F8CC8EC39D1}.Debug|x64.Build.0 = Debug|x64
+		{4DE42A34-2B7C-4FD5-8252-7F8CC8EC39D1}.Debug|x86.ActiveCfg = Debug|Win32
+		{4DE42A34-2B7C-4FD5-8252-7F8CC8EC39D1}.Debug|x86.Build.0 = Debug|Win32
+		{4DE42A34-2B7C-4FD5-8252-7F8CC8EC39D1}.Release|x64.ActiveCfg = Release|x64
+		{4DE42A34-2B7C-4FD5-8252-7F8CC8EC39D1}.Release|x64.Build.0 = Release|x64
+		{4DE42A34-2B7C-4FD5-8252-7F8CC8EC39D1}.Release|x86.ActiveCfg = Release|Win32
+		{4DE42A34-2B7C-4FD5-8252-7F8CC8EC39D1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

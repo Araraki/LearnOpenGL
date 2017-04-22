@@ -38,7 +38,7 @@ public:
 
 	void Draw(Shader shader)
 	{
-		GLuint diffuseNr = 1, specularNr = 1;
+		GLuint diffuseNr = 1, specularNr = 1, reflectionNr = 1;
 
 		for (GLuint i = 0; i < this->textures.size(); ++i)
 		{
@@ -47,27 +47,30 @@ public:
 			std::stringstream ss;
 			std::string number;
 			std::string name = this->textures[i].type;
-			if (name == "texture_diffuse") 
+			if (name == "texture_diffuse")
 				ss << diffuseNr++;
 			else if (name == "texture_specular")
 				ss << specularNr++;
+			else if (name == "texture_reflection")
+				ss << reflectionNr++;
 			number = ss.str();
 
 			glUniform1i(glGetUniformLocation(shader.Program, (name + number).c_str()), i);
 			TextureManager::Inst()->BindTexture(this->textures[i].id);
 		}
-
-		glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 16.0f);
+		glActiveTexture(GL_TEXTURE0);
+		//glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 16.0f);
 
 		glBindVertexArray(this->VAO);
 		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
-
+		/*
 		for (GLuint i = 0; i < this->textures.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
+		*/
 	}
 
 

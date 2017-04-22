@@ -87,8 +87,14 @@ private:
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-			std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_specular");
+			std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+			std::vector<Texture> reflectionMaps = this->loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_reflection");
+			textures.insert(textures.end(), reflectionMaps.begin(), reflectionMaps.end());
+			if (textures.size() < 3)
+			{
+				textures.insert(textures.end(), reflectionMaps.begin(), reflectionMaps.end());
+			}
 		}
 		return Mesh(vertices, indices, textures);
 	}

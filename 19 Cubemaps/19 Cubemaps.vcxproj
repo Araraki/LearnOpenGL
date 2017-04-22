@@ -152,12 +152,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="advance.frag" />
+    <None Include="advance.vert" />
     <None Include="base.frag" />
     <None Include="base.vert" />
     <None Include="reflect.frag" />
     <None Include="reflect.vert" />
-    <None Include="refraction.frag" />
-    <None Include="refraction.vert" />
+    <None Include="refract.frag" />
+    <None Include="refract.vert" />
     <None Include="skybox.frag" />
     <None Include="skybox.vert" />
   </ItemGroup>

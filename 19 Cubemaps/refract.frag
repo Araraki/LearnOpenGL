@@ -11,7 +11,6 @@ uniform samplerCube skybox;
 float refractionRatio = 1.0f / 1.52f;
 void main()
 {
-
 	vec3 I = normalize(Position - cameraPos);
 	vec3 R = refract(I, normalize(Normal), refractionRatio);
 	color = texture(skybox, vec3(-R.x, -R.y, R.z));

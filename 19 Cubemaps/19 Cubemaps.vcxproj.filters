@@ -36,10 +36,16 @@
     <None Include="reflect.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="refraction.vert">
+    <None Include="refract.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="refraction.frag">
+    <None Include="refract.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="advance.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="advance.frag">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

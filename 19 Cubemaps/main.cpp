@@ -171,6 +171,7 @@ void glInit()
 	glViewport(0, 0, screenWidth, screenHeight);
 
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	// input callback
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -198,36 +199,20 @@ void initVAOandVBO()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
 
 	glBindVertexArray(0);
-	
-	/*
-	// cube
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
-
-	glBindVertexArray(cubeVAO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof GLfloat, nullptr);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
-	
-	glBindVertexArray(0);
-	*/
 }
 
-Shader nanosuitShader, reflectShader, refractionShader, skyboxShader;
+Shader nanosuitShader, nanosuitReflectShader, reflectShader, refractShader, skyboxShader;
 Model nanosuitModel;
 GLuint skyboxTexture;
 void LoadResources()
 {
-	nanosuitShader = Shader("base.vert", "base.frag");
-	reflectShader = Shader("reflect.vert", "reflect.frag");
-	refractionShader = Shader("refraction.vert", "refraction.frag");
+//	nanosuitShader = Shader("base.vert", "base.frag");
+	nanosuitReflectShader = Shader("advance.vert", "advance.frag");
+//	reflectShader = Shader("reflect.vert", "reflect.frag");
+//	refractShader = Shader("refract.vert", "refract.frag");
 	skyboxShader = Shader("skybox.vert", "skybox.frag");
 
-	nanosuitModel = Model("Nanosuit/nanosuit.obj");
+	nanosuitModel = Model("Nanosuit_reflection/nanosuit.obj");
 
 	skyboxTexture = TextureManager::Inst()->LoadCubemapTexture(cubemapTexturePaths, GL_BGR, GL_RGB, 0, 0);
 }
@@ -247,13 +232,29 @@ void DrawScene()
 	// nanosuit model
 	model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-	
-	refractionShader.Use();
-/*
+
+	nanosuitReflectShader.Use();
+
+	glUniformMatrix4fv(glGetUniformLocation(nanosuitReflectShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(glGetUniformLocation(nanosuitReflectShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(nanosuitReflectShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+	glUniform3f(glGetUniformLocation(nanosuitReflectShader.Program, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+
+	glActiveTexture(GL_TEXTURE3);
+	glUniform1i(glGetUniformLocation(nanosuitReflectShader.Program, "skybox"), 3);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+
+	nanosuitModel.Draw(nanosuitReflectShader);
+
+	// 2 point light base
+	/*
+	nanosuitShader.Use();
+
 	glUniformMatrix4fv(glGetUniformLocation(nanosuitShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(glGetUniformLocation(nanosuitShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(glGetUniformLocation(nanosuitShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	
+
 	glUniform3f(glGetUniformLocation(nanosuitShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 
 	glUniform3f(glGetUniformLocation(nanosuitShader.Program, "pointLights[0].position"),	lamp[0].position.x, lamp[0].position.y, lamp[0].position.z);
@@ -272,28 +273,26 @@ void DrawScene()
 	glUniform1f(glGetUniformLocation(nanosuitShader.Program, "pointLights[1].linear"),		lamp[1].linear);
 	glUniform1f(glGetUniformLocation(nanosuitShader.Program, "pointLights[1].quadratic"),	lamp[1].quadratic);
 	*/
-	glUniformMatrix4fv(glGetUniformLocation(refractionShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-	glUniformMatrix4fv(glGetUniformLocation(refractionShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(refractionShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
-	glUniform3f(glGetUniformLocation(refractionShader.Program, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-	
-	nanosuitModel.Draw(nanosuitShader);
-/*
-	// cube
-	reflectShader.Use();
+	//	refract
+	/*
+	glUniformMatrix4fv(glGetUniformLocation(refractShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(glGetUniformLocation(refractShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(refractShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
+	glUniform3f(glGetUniformLocation(refractShader.Program, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+	*/	
+
+	//	reflect
+	/*
 	glUniformMatrix4fv(glGetUniformLocation(reflectShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(glGetUniformLocation(reflectShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(glGetUniformLocation(reflectShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	
 	glUniform3f(glGetUniformLocation(reflectShader.Program, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-	
-	glBindVertexArray(cubeVAO);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(0);
-*/
+	*/
+
+
 	// skybox
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader.Use();

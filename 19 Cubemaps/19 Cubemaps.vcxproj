@@ -156,6 +156,8 @@
     <None Include="base.vert" />
     <None Include="reflect.frag" />
     <None Include="reflect.vert" />
+    <None Include="refraction.frag" />
+    <None Include="refraction.vert" />
     <None Include="skybox.frag" />
     <None Include="skybox.vert" />
   </ItemGroup>

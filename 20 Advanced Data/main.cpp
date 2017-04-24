@@ -8,62 +8,106 @@
 
 #include "Camera.h"
 #include "Shader.h"
+#include "TextureManager.h"
 
 const GLuint WIDTH = 800, HEIGHT = 600;
 
-// res
+// resources
 GLfloat cubeVertices[] = {
-	// Positions          // Normals
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	// Positions           // Normals           // Texture Coords
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+	0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+	0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
 
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+	0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
+
+// opengl
+void glInit();
+void initVAOandVBO();
+void deleteVAOandVBO();
+void DrawScene();
+
+// resources
+void loadResources();
 
 // input
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void keysProcess();
 
-// opengl
 GLFWwindow* window;
+GLfloat currentTime, deltaTime, lastFrame;
+int main(int argc, char* argv[])
+{
+	glInit();
+
+	initVAOandVBO();
+
+	loadResources();
+	
+	currentTime = deltaTime = lastFrame = 0.0f;
+	while (!glfwWindowShouldClose(window))
+	{
+		currentTime = float(glfwGetTime());
+		deltaTime = currentTime - lastFrame;
+		lastFrame = currentTime;
+
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		keysProcess();
+
+		DrawScene();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	deleteVAOandVBO();
+
+	glfwTerminate();
+
+	return 0;
+}
+
+// opengl
 int screenWidth, screenHeight;
 void glInit()
 {
@@ -72,7 +116,7 @@ void glInit()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	
+
 	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
@@ -102,8 +146,10 @@ void initVAOandVBO()
 	glBindVertexArray(cubeVAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof GL_FLOAT, nullptr);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof GL_FLOAT, (GLvoid*)(3 * sizeof GL_FLOAT));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, nullptr);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, (GLvoid*)(3 * sizeof GL_FLOAT));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, (GLvoid*)(6 * sizeof GL_FLOAT));
 
 	glBindVertexArray(0);
 }
@@ -115,13 +161,28 @@ void deleteVAOandVBO()
 }
 
 Shader baseShader;
+GLuint boxTexture, specTexture;
 void loadResources()
 {
 	baseShader = Shader("base.vert", "base.frag");
+
+	boxTexture = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	specTexture = TextureManager::Inst()->LoadTexture("box_specular.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 glm::mat4 model, view, proj;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 void DrawScene()
 {
 	view = glm::mat4();
@@ -130,13 +191,14 @@ void DrawScene()
 
 	view = camera.GetViewMatrix();
 	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
-	
+	model = glm::rotate(model, glm::radians(lastFrame) * 20, glm::vec3(1.0f, 0.2f, 0.5f));
+
 	baseShader.Use();
-	
+
 	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	
+
 	// shader.viewPos
 	glUniform3f(glGetUniformLocation(baseShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 
@@ -178,10 +240,12 @@ void DrawScene()
 	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[3].linear"), 0.09);
 	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[3].quadratic"), 0.032);
 	// shader.spotLight
-	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.spotDir"), camera.Front.x, camera.Front.y, camera.Front.z);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "spotLight.cutOff"), glm::radians(12.5f));
-	glUniform1f(glGetUniformLocation(baseShader.Program, "spotLight.outerCutOff"), glm::radians(17.5f));
+	glm::vec3 lampPos = glm::vec3(camera.Position.x, camera.Position.y, camera.Position.z) - 0.1f*camera.Front;
+	glm::vec3 spotDir = glm::vec3(camera.Front.x, camera.Front.y, camera.Front.z);
+	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.position"), lampPos.x, lampPos.y, lampPos.z);
+	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.spotDir"), spotDir.x, spotDir.y, spotDir.z);
+	glUniform1f(glGetUniformLocation(baseShader.Program, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
+	glUniform1f(glGetUniformLocation(baseShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(17.5f)));
 	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.ambient"), 0.05f, 0.05f, 0.05f);
 	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.diffuse"), 0.8f, 0.8f, 0.8f);
 	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
@@ -192,46 +256,17 @@ void DrawScene()
 	glUniform1i(glGetUniformLocation(baseShader.Program, "material.diffuse"), 0);
 	glUniform1i(glGetUniformLocation(baseShader.Program, "material.specular"), 1);
 	glUniform1f(glGetUniformLocation(baseShader.Program, "material.shininess"), 64.0f);
-	
+
 	glBindVertexArray(cubeVAO);
+	glActiveTexture(GL_TEXTURE0);
+	TextureManager::Inst()->BindTexture(boxTexture);
+	glActiveTexture(GL_TEXTURE1);
+	TextureManager::Inst()->BindTexture(specTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 }
 
-GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
-int main(int argc, char* argv[])
-{
-	glInit();
-
-	initVAOandVBO();
-
-	loadResources();
-
-	while (!glfwWindowShouldClose(window))
-	{
-		currentTime = float(glfwGetTime());
-		deltaTime = currentTime - lastFrame;
-		lastFrame = currentTime;
-
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		keysProcess();
-
-		DrawScene();
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-
-	deleteVAOandVBO();
-
-	glfwTerminate();
-
-	return 0;
-}
-
-
+// input
 bool firstMouse = true;
 GLfloat lastX = WIDTH / 2;
 GLfloat	lastY = HEIGHT / 2;
@@ -265,6 +300,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_L && action == GLFW_PRESS)
 		camera.FPS_Camera = !camera.FPS_Camera;
 }
+
 void keysProcess()
 {
 	float cameraSpeed = 5.0f * deltaTime;

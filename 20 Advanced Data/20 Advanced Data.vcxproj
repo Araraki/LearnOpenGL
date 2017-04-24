@@ -159,6 +159,8 @@
   <ItemGroup>
     <None Include="base.frag" />
     <None Include="base.vert" />
+    <None Include="lamp.frag" />
+    <None Include="lamp.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="box.png" />

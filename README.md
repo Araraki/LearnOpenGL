@@ -73,3 +73,7 @@ how to write a syntax highlighting extension for visual studio
 http://www.cnblogs.com/aanbpsd/p/3920067.html
 
 http://www.cnblogs.com/bitzhuwei/p/glsl-syntax-highlight-in-visual-studio.html
+
+[OpenGL documentation]
+
+http://docs.gl/

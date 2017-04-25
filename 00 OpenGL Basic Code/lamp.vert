@@ -1,9 +1,12 @@
 #version 330 core
 layout (location = 0) in vec3 position;
 
+layout (std140) uniform Matrices
+{
+	mat4 proj;
+	mat4 view;
+};
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 proj;
 
 void main()
 {

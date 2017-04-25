@@ -14,13 +14,13 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 
 // resources
 GLfloat cubeVertices[] = {
-	// Positions          // Normals          // Texture Coords
+	// Positions          // Normals           // Texture Coords
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
 	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
 	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
 
 	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
 	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
@@ -37,11 +37,11 @@ GLfloat cubeVertices[] = {
 	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
 	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
 	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
 	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
 	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
 
 	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
@@ -51,26 +51,26 @@ GLfloat cubeVertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
 	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
 	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f
 };
 
 GLfloat cubePosition[] = {
 	// Positions        
 	-0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f,  0.5f, -0.5f,
-	0.5f,  0.5f, -0.5f,
-	-0.5f,  0.5f, -0.5f,
+	 0.5f,  0.5f, -0.5f,
+	 0.5f, -0.5f, -0.5f,
+	 0.5f,  0.5f, -0.5f,
 	-0.5f, -0.5f, -0.5f,
+	-0.5f,  0.5f, -0.5f,
 
 	-0.5f, -0.5f,  0.5f,
-	0.5f, -0.5f,  0.5f,
-	0.5f,  0.5f,  0.5f,
-	0.5f,  0.5f,  0.5f,
+	 0.5f, -0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,
 	-0.5f,  0.5f,  0.5f,
 	-0.5f, -0.5f,  0.5f,
 
@@ -81,27 +81,26 @@ GLfloat cubePosition[] = {
 	-0.5f, -0.5f,  0.5f,
 	-0.5f,  0.5f,  0.5f,
 
-	0.5f,  0.5f,  0.5f,
-	0.5f,  0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f,  0.5f,
-	0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,
+	 0.5f, -0.5f, -0.5f,
+	 0.5f,  0.5f, -0.5f,
+	 0.5f, -0.5f, -0.5f,
+	 0.5f,  0.5f,  0.5f,
+	 0.5f, -0.5f,  0.5f,
 
 	-0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f,  0.5f,
-	0.5f, -0.5f,  0.5f,
+	 0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f,  0.5f,
+	 0.5f, -0.5f,  0.5f,
 	-0.5f, -0.5f,  0.5f,
 	-0.5f, -0.5f, -0.5f,
 
 	-0.5f,  0.5f, -0.5f,
-	0.5f,  0.5f, -0.5f,
-	0.5f,  0.5f,  0.5f,
-	0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f, -0.5f,
+	 0.5f,  0.5f,  0.5f,
 	-0.5f,  0.5f, -0.5f,
-
+	-0.5f,  0.5f,  0.5f
 };
 GLfloat cubeNormal[] = {
 	// Normals          
@@ -119,13 +118,6 @@ GLfloat cubeNormal[] = {
 	0.0f,  0.0f,  1.0f,
 	0.0f,  0.0f,  1.0f,
 
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-
 	1.0f,  0.0f,  0.0f,
 	1.0f,  0.0f,  0.0f,
 	1.0f,  0.0f,  0.0f,
@@ -133,6 +125,13 @@ GLfloat cubeNormal[] = {
 	1.0f,  0.0f,  0.0f,
 	1.0f,  0.0f,  0.0f,
 
+	1.0f,  0.0f,  0.0f,
+	1.0f,  0.0f,  0.0f,
+	1.0f,  0.0f,  0.0f,
+	1.0f,  0.0f,  0.0f,
+	1.0f,  0.0f,  0.0f,
+	1.0f,  0.0f,  0.0f,
+
 	0.0f, -1.0f,  0.0f,
 	0.0f, -1.0f,  0.0f,
 	0.0f, -1.0f,  0.0f,
@@ -145,17 +144,16 @@ GLfloat cubeNormal[] = {
 	0.0f,  1.0f,  0.0f,
 	0.0f,  1.0f,  0.0f,
 	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-
+	0.0f,  1.0f,  0.0f
 };
 GLfloat cubeTexCoords[] = {
 	// Texture Coords
 	0.0f, 0.0f,
+	1.0f, 1.0f,
 	1.0f, 0.0f,
 	1.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
 	0.0f, 0.0f,
+	0.0f, 1.0f,
 
 	0.0f, 0.0f,
 	1.0f, 0.0f,
@@ -163,13 +161,6 @@ GLfloat cubeTexCoords[] = {
 	1.0f, 1.0f,
 	0.0f, 1.0f,
 	0.0f, 0.0f,
-
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 0.0f,
 
 	1.0f, 0.0f,
 	1.0f, 1.0f,
@@ -178,6 +169,13 @@ GLfloat cubeTexCoords[] = {
 	0.0f, 0.0f,
 	1.0f, 0.0f,
 
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	0.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+
 	0.0f, 1.0f,
 	1.0f, 1.0f,
 	1.0f, 0.0f,
@@ -186,11 +184,11 @@ GLfloat cubeTexCoords[] = {
 	0.0f, 1.0f,
 
 	0.0f, 1.0f,
+	1.0f, 0.0f,
 	1.0f, 1.0f,
 	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f
+	0.0f, 1.0f,
+	0.0f, 0.0f
 };
 
 glm::vec3 dirLight = glm::vec3(-1.0f, -1.0f, -1.0f);
@@ -205,6 +203,7 @@ glm::vec3 lampPosition[] = {
 void glInit();
 void initVAOandVBO();
 void deleteVAOandVBO();
+void loadShader();
 void DrawScene();
 
 // resources
@@ -222,7 +221,9 @@ int main(int argc, char* argv[])
 	glInit();
 
 	initVAOandVBO();
-
+	
+	loadShader();
+	
 	loadResources();
 	
 	currentTime = deltaTime = lastFrame = 0.0f;
@@ -275,6 +276,8 @@ void glInit()
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 GLuint cubeVAO, cubeVBO, lampVAO, lampVBO;
@@ -283,23 +286,20 @@ void initVAOandVBO()
 	// cube
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &cubeVBO);
-
+	
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
 
-	glBindVertexArray(cubeVAO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, nullptr);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, (GLvoid*)(3 * sizeof GL_FLOAT));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, (GLvoid*)(6 * sizeof GL_FLOAT));
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, nullptr);
+
 	glBindVertexArray(0);
 
 	// lamp
 	glGenVertexArrays(1, &lampVAO);
 	glGenBuffers(1, &lampVBO);
-	
+
 	//glBindBuffer(GL_COPY_READ_BUFFER, cubeVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBindBuffer(GL_COPY_WRITE_BUFFER, lampVBO);
@@ -324,12 +324,28 @@ void deleteVAOandVBO()
 }
 
 Shader baseShader, lampShader;
-GLuint boxTexture, specTexture;
-void loadResources()
+GLuint uboMatrices;
+void loadShader()
 {
 	baseShader = Shader("base.vert", "base.frag");
 	lampShader = Shader("lamp.vert", "lamp.frag");
 
+	glUniformBlockBinding(baseShader.Program, glGetUniformBlockIndex(baseShader.Program, "Matrices"), 0);
+	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);
+
+	// (proj/view) ubo
+	glGenBuffers(1, &uboMatrices);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof glm::mat4, nullptr, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
+}
+
+GLuint boxTexture, specTexture;
+void loadResources()
+{
 	boxTexture = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -349,18 +365,23 @@ glm::mat4 model, view, proj;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 void DrawScene()
 {
-	view = glm::mat4();
 	proj = glm::mat4();
-	model = glm::mat4();
+	view = glm::mat4();
+
+	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof glm::mat4, glm::value_ptr(proj));
 
 	view = camera.GetViewMatrix();
-	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
-	model = glm::rotate(model, glm::radians(lastFrame) * 20, glm::vec3(1.0f, 0.2f, 0.5f));
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
 
+
+	// cube
 	baseShader.Use();
 
-	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+	model = glm::mat4();
+	model = glm::rotate(model, glm::radians(lastFrame) * 20, glm::vec3(1.0f, 0.2f, 0.5f));
 	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 	// shader.viewPos
@@ -435,10 +456,7 @@ void DrawScene()
 	// lamp
 	lampShader.Use();
 
-	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 
-	glBindVertexArray(lampVAO);
 
 	model = glm::mat4();
 	model = glm::translate(model, -dirLight*5.0f);
@@ -446,22 +464,21 @@ void DrawScene()
 	// rotate
 	float xz = acos(glm::dot(glm::normalize(glm::vec3(dirLight.x, 0.0f, dirLight.z)), glm::vec3(0.0f, 0.0f, 1.0f)));
 	model = glm::rotate(model, xz, glm::vec3(0.0f, 1.0f, 0.0f));
-
 	float yz = acos(glm::dot(glm::normalize(glm::vec3(0.0f, dirLight.y, dirLight.z)), glm::vec3(0.0f, 0.0f, 1.0f)));
 	model = glm::rotate(model, yz, glm::vec3(1.0f, 0.0f, 0.0f));
 
 	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 0.2f, 0.2f);
 	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+	
+	glBindVertexArray(lampVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	
+	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
 	for(int i = 1; i < 4 ; ++i)
 	{
 		model = glm::mat4();
 		model = glm::translate(model, lampPosition[i]);
 		model = glm::scale(model, glm::vec3(0.2f));
-		
-		glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
 		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		
 		glDrawArrays(GL_TRIANGLES, 0, 36);

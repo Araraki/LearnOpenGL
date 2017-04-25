@@ -14,13 +14,13 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 
 // resources
 GLfloat cubeVertices[] = {
-	// Positions          // Normals           // Texture Coords
+	// Positions          // Normals          // Texture Coords
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
 	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
 	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
 	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
 	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
@@ -37,11 +37,11 @@ GLfloat cubeVertices[] = {
 	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
 	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
 	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
 	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
 	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
 	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
@@ -51,26 +51,26 @@ GLfloat cubeVertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
 	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
 	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
 
 GLfloat cubePosition[] = {
 	// Positions        
 	-0.5f, -0.5f, -0.5f,
-	 0.5f,  0.5f, -0.5f,
-	 0.5f, -0.5f, -0.5f,
-	 0.5f,  0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f, -0.5f,
+	0.5f,  0.5f, -0.5f,
+	0.5f,  0.5f, -0.5f,
 	-0.5f,  0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,
 
 	-0.5f, -0.5f,  0.5f,
-	 0.5f, -0.5f,  0.5f,
-	 0.5f,  0.5f,  0.5f,
-	 0.5f,  0.5f,  0.5f,
+	0.5f, -0.5f,  0.5f,
+	0.5f,  0.5f,  0.5f,
+	0.5f,  0.5f,  0.5f,
 	-0.5f,  0.5f,  0.5f,
 	-0.5f, -0.5f,  0.5f,
 
@@ -81,26 +81,27 @@ GLfloat cubePosition[] = {
 	-0.5f, -0.5f,  0.5f,
 	-0.5f,  0.5f,  0.5f,
 
-	 0.5f,  0.5f,  0.5f,
-	 0.5f, -0.5f, -0.5f,
-	 0.5f,  0.5f, -0.5f,
-	 0.5f, -0.5f, -0.5f,
-	 0.5f,  0.5f,  0.5f,
-	 0.5f, -0.5f,  0.5f,
+	0.5f,  0.5f,  0.5f,
+	0.5f,  0.5f, -0.5f,
+	0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f,  0.5f,
+	0.5f,  0.5f,  0.5f,
 
 	-0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f,  0.5f,
-	 0.5f, -0.5f,  0.5f,
+	0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f,  0.5f,
+	0.5f, -0.5f,  0.5f,
 	-0.5f, -0.5f,  0.5f,
 	-0.5f, -0.5f, -0.5f,
 
 	-0.5f,  0.5f, -0.5f,
-	 0.5f,  0.5f,  0.5f,
-	 0.5f,  0.5f, -0.5f,
-	 0.5f,  0.5f,  0.5f,
+	0.5f,  0.5f, -0.5f,
+	0.5f,  0.5f,  0.5f,
+	0.5f,  0.5f,  0.5f,
+	-0.5f,  0.5f,  0.5f,
 	-0.5f,  0.5f, -0.5f,
-	-0.5f,  0.5f,  0.5f
+
 };
 GLfloat cubeNormal[] = {
 	// Normals          
@@ -118,12 +119,12 @@ GLfloat cubeNormal[] = {
 	0.0f,  0.0f,  1.0f,
 	0.0f,  0.0f,  1.0f,
 
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
+	-1.0f,  0.0f,  0.0f,
+	-1.0f,  0.0f,  0.0f,
+	-1.0f,  0.0f,  0.0f,
+	-1.0f,  0.0f,  0.0f,
+	-1.0f,  0.0f,  0.0f,
+	-1.0f,  0.0f,  0.0f,
 
 	1.0f,  0.0f,  0.0f,
 	1.0f,  0.0f,  0.0f,
@@ -144,24 +145,25 @@ GLfloat cubeNormal[] = {
 	0.0f,  1.0f,  0.0f,
 	0.0f,  1.0f,  0.0f,
 	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f
+	0.0f,  1.0f,  0.0f,
+
 };
 GLfloat cubeTexCoords[] = {
 	// Texture Coords
 	0.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-
-	0.0f, 0.0f,
 	1.0f, 0.0f,
 	1.0f, 1.0f,
 	1.0f, 1.0f,
 	0.0f, 1.0f,
 	0.0f, 0.0f,
 
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	1.0f, 1.0f,
+	1.0f, 1.0f,
+	0.0f, 1.0f,
+	0.0f, 0.0f,
+
 	1.0f, 0.0f,
 	1.0f, 1.0f,
 	0.0f, 1.0f,
@@ -170,11 +172,11 @@ GLfloat cubeTexCoords[] = {
 	1.0f, 0.0f,
 
 	1.0f, 0.0f,
-	0.0f, 1.0f,
 	1.0f, 1.0f,
 	0.0f, 1.0f,
-	1.0f, 0.0f,
+	0.0f, 1.0f,
 	0.0f, 0.0f,
+	1.0f, 0.0f,
 
 	0.0f, 1.0f,
 	1.0f, 1.0f,
@@ -184,11 +186,11 @@ GLfloat cubeTexCoords[] = {
 	0.0f, 1.0f,
 
 	0.0f, 1.0f,
-	1.0f, 0.0f,
 	1.0f, 1.0f,
 	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f
 };
 
 glm::vec3 dirLight = glm::vec3(-1.0f, -1.0f, -1.0f);
@@ -270,13 +272,9 @@ void glInit()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	//glEnable(GL_PROGRAM_POINT_SIZE);
-
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 GLuint cubeVAO, cubeVBO, lampVAO, lampVBO;
@@ -285,52 +283,23 @@ void initVAOandVBO()
 	// cube
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &cubeVBO);
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	// method 0£º
-/*
 	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
-*/
 
-	// method 1£º use glBufferSubData() to write glBuffer
-/*
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, nullptr, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof cubeVertices, cubeVertices);   // it's not good :(
-*/
-	// or
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, nullptr, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof cubePosition, cubePosition);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof cubePosition, sizeof cubeNormal, cubeNormal);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof cubePosition + sizeof cubeNormal, sizeof cubeTexCoords, cubeTexCoords);
-
-	// method 2£º write glBuffer with ptr and memcpy
-/*
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, nullptr, GL_STATIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, nullptr, GL_STATIC_DRAW);
-	GLvoid* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-	memcpy(ptr, cubeVertices, sizeof cubeVertices);
-	glUnmapBuffer(GL_ARRAY_BUFFER);
-*/
 	glBindVertexArray(cubeVAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
-/*
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, nullptr);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, (GLvoid*)(3 * sizeof GL_FLOAT));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, (GLvoid*)(6 * sizeof GL_FLOAT));
-*/
-	// for glBufferSubData
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, (GLvoid*)sizeof cubePosition);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof GLfloat, (GLvoid*)(sizeof cubePosition + sizeof cubeNormal));
-
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GL_FLOAT, nullptr);
 	glBindVertexArray(0);
 
 	// lamp
 	glGenVertexArrays(1, &lampVAO);
 	glGenBuffers(1, &lampVBO);
-
+	
 	//glBindBuffer(GL_COPY_READ_BUFFER, cubeVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBindBuffer(GL_COPY_WRITE_BUFFER, lampVBO);

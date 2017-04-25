@@ -65,8 +65,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
-if(gl_FrontFacing)
-{
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(viewPos - FragPos);
 
@@ -78,11 +76,6 @@ if(gl_FrontFacing)
 	result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
 
 	color = vec4(result, 1.0f);
-}
-else
-{
-	color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-}
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)

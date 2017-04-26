@@ -55,6 +55,30 @@
     <None Include="geometryBase.geom">
       <Filter>Shader</Filter>
     </None>
+    <None Include="modelAnim.geom">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="modelAnim.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="modelAnim.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="modelBase.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="modelBase.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="modelNormal.geom">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="modelNormal.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="modelNormal.frag">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="box.png">

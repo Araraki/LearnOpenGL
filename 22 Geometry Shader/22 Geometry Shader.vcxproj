@@ -157,9 +157,9 @@
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="base.frag" />
-    <None Include="base.vert" />
-    <None Include="draw.geom" />
+    <None Include="geometryBase.frag" />
+    <None Include="geometryBase.vert" />
+    <None Include="geometryBase.geom" />
     <None Include="lamp.frag" />
     <None Include="lamp.vert" />
   </ItemGroup>

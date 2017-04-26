@@ -40,19 +40,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="base.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="base.vert">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="lamp.frag">
       <Filter>Shader</Filter>
     </None>
     <None Include="lamp.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="draw.geom">
+    <None Include="geometryBase.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="geometryBase.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="geometryBase.geom">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

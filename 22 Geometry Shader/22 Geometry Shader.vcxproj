@@ -159,6 +159,7 @@
   <ItemGroup>
     <None Include="base.frag" />
     <None Include="base.vert" />
+    <None Include="draw.geom" />
     <None Include="lamp.frag" />
     <None Include="lamp.vert" />
   </ItemGroup>

@@ -52,6 +52,9 @@
     <None Include="lamp.vert">
       <Filter>Shader</Filter>
     </None>
+    <None Include="draw.geom">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="box.png">

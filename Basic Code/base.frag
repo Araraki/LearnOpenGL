@@ -84,12 +84,12 @@ void main()
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
 	vec3 lightDir = normalize(-light.direction);
-	// ï¿½ï¿½ï¿½ã·´ï¿½ï¿½Ç¿ï¿½ï¿½
+	// ¼ÆËã·´ÉäÇ¿¶È
 	float diff = max(dot(normal, lightDir), 0.0f);
-	// ï¿½ï¿½ï¿½ã¾µï¿½æ·´ï¿½ï¿½Ç¿ï¿½ï¿½
+	// ¼ÆËã¾µÃæ·´ÉäÇ¿¶È
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-	// ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ·ï¿½ï¿½ï¿½
+	// ºÏ²¢¸÷¸ö¹âÕÕ·ÖÁ¿
 	vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, vert_in.TexCoords));
 	vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, vert_in.TexCoords));
 	vec3 specular = light.specular * spec * vec3(texture(material.specular, vert_in.TexCoords));
@@ -100,15 +100,15 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
 	vec3 lightDir = normalize(light.position - fragPos);
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½
+	// ¼ÆËãÂþ·´ÉäÇ¿¶È
 	float diff = max(dot(normal, lightDir), 0.0f);
-	// ï¿½ï¿½ï¿½ã¾µï¿½æ·´ï¿½ï¿½Ç¿ï¿½ï¿½
+	// ¼ÆËã¾µÃæ·´ÉäÇ¿¶È
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-	// ï¿½ï¿½ï¿½ï¿½Ë¥ï¿½ï¿½
+	// ¼ÆËãË¥¼õ
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï²ï¿½
+	// ½«¸÷¸ö·ÖÁ¿ºÏ²¢
     vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, vert_in.TexCoords));
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, vert_in.TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.specular, vert_in.TexCoords));
@@ -131,7 +131,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, vert_in.TexCoords));	
 	vec3 specular = light.specular * spec * vec3(texture(material.specular, vert_in.TexCoords));
 	
-	float theta = dot(lightDir, normalize(-light.spotDir)); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ô´ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ô´ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î³É¼Ð½Çµï¿½cosÖµ
+	float theta = dot(lightDir, normalize(-light.spotDir)); // ¼ÆËã ¹âÔ´µ½Æ¬¶ÎÏòÁ¿ Óë ¹âÔ´ÕýÇ°·½ÏòÁ¿ ÐÎ³É¼Ð½ÇµÄcosÖµ
 	float epsilon = light.cutOff - light.outerCutOff;
 	float spotIntensity = clamp((theta - light.outerCutOff) / epsilon, 0.0f, 1.0f);
 

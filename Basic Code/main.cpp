@@ -464,8 +464,6 @@ void DrawScene()
 	// lamp
 	lampShader.Use();
 
-
-
 	model = glm::mat4();
 	model = glm::translate(model, -dirLight*5.0f);
 	model = glm::scale(model, glm::vec3(0.2f));

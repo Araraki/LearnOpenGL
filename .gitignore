@@ -50,6 +50,8 @@ artifacts/
 *.ilk
 *.meta
 !Nanosuit/nanosuit.obj
+!planet/planet.obj
+!rock/rock.obj
 *.pch
 *.pdb
 *.pgc

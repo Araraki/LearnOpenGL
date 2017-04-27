@@ -159,6 +159,10 @@
   <ItemGroup>
     <None Include="instancingBase.frag" />
     <None Include="instancingBase.vert" />
+    <None Include="planet.frag" />
+    <None Include="planet.vert" />
+    <None Include="rock.frag" />
+    <None Include="rock.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

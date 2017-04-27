@@ -16,9 +16,27 @@ GLuint TextureFromFile(const char* path, std::string directory);
 class Model
 {
 public:
-	Model(GLchar* path)
+	Model() :Meshes(this->meshes), Textures_loaded(this->textures_loaded) {}
+	Model(GLchar* path) :Meshes(this->meshes), Textures_loaded(this->textures_loaded)
 	{
 		this->loadModel(path);
+	}
+	Model(const Model&& src) :Meshes(this->meshes), Textures_loaded(this->textures_loaded)
+	{
+		this->directory = src.directory;
+		this->meshes = src.meshes;
+		this->textures_loaded = src.textures_loaded;
+	}
+	Model& Model::operator= (const Model&& src)
+	{
+		this->directory = src.directory;
+		this->meshes = src.meshes;
+		this->textures_loaded = src.textures_loaded;
+
+		this->Meshes = this->meshes;
+		this->Textures_loaded = this->Textures_loaded;
+
+		return *this;
 	}
 
 	void Draw(Shader shader)
@@ -27,6 +45,8 @@ public:
 			this->meshes[i].Draw(shader);
 	}
 
+	std::vector<Mesh>& Meshes;
+	std::vector<Texture>& Textures_loaded;
 private:
 	std::string directory;
 	std::vector<Mesh> meshes;
@@ -126,7 +146,12 @@ private:
 inline GLuint TextureFromFile(const char* path, std::string directory)
 {
 	std::string filename = directory + '/' + std::string(path);
-	GLuint textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_BGRA, GL_RGBA, 0, 0);
+	GLuint textureID;
+	if (filename.find(".png") != std::string::npos)
+		textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_BGRA, GL_RGBA, 0, 0);
+	else if(filename.find(".jpg") != std::string::npos)
+		textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_BGR, GL_RGB, 0, 0);
+
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

@@ -46,5 +46,17 @@
     <None Include="instancingBase.vert">
       <Filter>Shader</Filter>
     </None>
+    <None Include="rock.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="rock.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="planet.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="planet.vert">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

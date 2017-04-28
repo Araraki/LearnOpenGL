@@ -61,6 +61,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "23 Instancing", "23 Instanc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "24 Anti Aliasing", "24 Anti Aliasing\24 Anti Aliasing.vcxproj", "{F93CB863-4929-4EBE-88B3-87B5D0587F87}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 Advanced Lighting", "4 Advanced Lighting", "{459E0B2C-3D62-4B67-8622-88AED24EE5A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

@@ -57,6 +57,16 @@ GLfloat cubeVertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f
 };
+GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+	 // Positions   // TexCoords
+	-1.0f,  1.0f,  0.0f, 1.0f,
+	-1.0f, -1.0f,  0.0f, 0.0f,
+	 1.0f, -1.0f,  1.0f, 0.0f,
+
+	-1.0f,  1.0f,  0.0f, 1.0f,
+	 1.0f, -1.0f,  1.0f, 0.0f,
+	 1.0f,  1.0f,  1.0f, 1.0f
+};
 
 GLfloat cubePosition[] = {
 	// Positions        
@@ -203,14 +213,15 @@ glm::vec3 lampPosition[] = {
 int screenWidth, screenHeight;
 void glInit();
 
-GLuint cubeVAO, cubeVBO, lampVAO, lampVBO;
+GLuint cubeVAO, cubeVBO, lampVAO, lampVBO, quadVAO, quadVBO;
 void initVAOandVBO();
 void deleteVAOandVBO();
 
-GLuint multisampledFBO, rbo;
+GLuint multisampledFBO, intermediateFBO, rbo;
+GLuint screenTexture;
 void initFBO();
 
-Shader baseShader, lampShader;
+Shader baseShader, lampShader, screenShader;
 GLuint uboMatrices;
 void loadShader();
 
@@ -250,18 +261,32 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 		keysProcess();
 
+		// 1. draw scene as normal in multisampled buffers
 		glBindFramebuffer(GL_FRAMEBUFFER, multisampledFBO);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
 
 		DrawScene();
 	
+		// 2. now blit multisampled buffer(s) to normal colorbuffer of intermediate FBO. Image is stored in screenTexture
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampledFBO);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFBO);
 		// glBlitFramebuffer : copy image bit block from a buffer to another
 		glBlitFramebuffer(0, 0, screenWidth, screenHeight, 0, 0, screenWidth, screenHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
+		// 3. now render quad with scene's visuals as its texture image
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glDisable(GL_DEPTH_TEST);
+
+		screenShader.Use();
+		glBindVertexArray(quadVAO);
+		glBindTexture(GL_TEXTURE_2D, screenTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+		
 		glfwSwapBuffers(window);
 	}
 
@@ -339,6 +364,21 @@ void initVAOandVBO()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
 
 	glBindVertexArray(0);
+
+	// quad
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof quadVertices, quadVertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(quadVAO);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof GLfloat, nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof GLfloat, (GLvoid*)(2 * sizeof GLfloat));
+
+	glBindVertexArray(0);
 }
 
 GLuint generateMultiSampleTexture(GLuint samples)
@@ -351,10 +391,34 @@ GLuint generateMultiSampleTexture(GLuint samples)
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 	return tex;
 }
+GLuint generateAttachmentTexture(GLboolean depth, GLboolean stencil)
+{
+	GLenum attachment_type;
+	if (!depth && !stencil)
+		attachment_type = GL_RGB;
+	else if (depth && !stencil)
+		attachment_type = GL_DEPTH_COMPONENT;
+	else if (!depth && stencil)
+		attachment_type = GL_STENCIL_INDEX;
+
+	GLuint texID;
+	glGenTextures(1, &texID);
+	glBindTexture(GL_TEXTURE_2D, texID);
+	if (!depth && !stencil)
+		glTexImage2D(GL_TEXTURE_2D, 0, attachment_type, screenWidth, screenHeight, 0, attachment_type, GL_UNSIGNED_BYTE, nullptr);
+	else 
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, screenWidth, screenHeight, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return texID;
+}
 
 void initFBO()
 {
-	// framebuffer
+	// multisampledFBO
 	glGenFramebuffers(1, &multisampledFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, multisampledFBO);
 
@@ -373,7 +437,18 @@ void initFBO()
 	// check framebuffer
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	// intermediateFBO
+	glGenFramebuffers(1, &intermediateFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, intermediateFBO);
+	
+	screenTexture = generateAttachmentTexture(false, false);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexture, 0);
+
+	// check framebuffer
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -390,6 +465,8 @@ void loadShader()
 {
 	baseShader = Shader("base.vert", "base.frag");
 	lampShader = Shader("lamp.vert", "lamp.frag");
+
+	screenShader = Shader("postProcessing.vert", "postProcessing.frag");
 
 	glUniformBlockBinding(baseShader.Program, glGetUniformBlockIndex(baseShader.Program, "Matrices"), 0);
 	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);

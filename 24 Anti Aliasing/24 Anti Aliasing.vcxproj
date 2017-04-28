@@ -161,6 +161,8 @@
     <None Include="base.vert" />
     <None Include="lamp.frag" />
     <None Include="lamp.vert" />
+    <None Include="postProcessing.frag" />
+    <None Include="postProcessing.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="box.png" />

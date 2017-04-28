@@ -52,6 +52,12 @@
     <None Include="lamp.vert">
       <Filter>Shader</Filter>
     </None>
+    <None Include="postProcessing.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="postProcessing.vert">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="box.png">

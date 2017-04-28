@@ -27,37 +27,13 @@ public:
 	std::vector<GLuint> indices;
 	std::vector<Texture> textures;
 
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures) :VAO(this->_VAO)
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures)
 	{
 		this->vertices = vertices;
 		this->indices = indices;
 		this->textures = textures;
 
 		this->setupMesh();
-	}
-	Mesh(const Mesh& src) :VAO(this->_VAO)
-	{
-		this->vertices = src.vertices;
-		this->indices = src.indices;
-		this->textures = src.textures;
-		
-		this->_VAO = src._VAO;
-		this->_VBO = src._VBO;
-		this->_EBO = src._EBO;
-		this->VAO = src._VAO;
-	}
-	Mesh& Mesh::operator=(const Mesh& src)
-	{
-		this->vertices = src.vertices;
-		this->indices = src.indices;
-		this->textures = src.textures;
-		
-		this->_VAO = src._VAO;
-		this->_VBO = src._VBO;
-		this->_EBO = src._EBO;
-		this->VAO = src._VAO;
-
-		return *this;
 	}
 
 	void Draw(Shader shader)
@@ -83,7 +59,7 @@ public:
 
 		glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 16.0f);
 
-		glBindVertexArray(this->_VAO);
+		glBindVertexArray(this->VAO);
 		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
 
@@ -94,21 +70,21 @@ public:
 		}
 	}
 
-	GLuint& VAO;
+
 private:
-	GLuint _VAO, _VBO, _EBO;
+	GLuint VAO, VBO, EBO;
 	void setupMesh()
 	{
-		glGenVertexArrays(1, &this->_VAO);
-		glGenBuffers(1, &this->_VBO);
-		glGenBuffers(1, &this->_EBO);
+		glGenVertexArrays(1, &this->VAO);
+		glGenBuffers(1, &this->VBO);
+		glGenBuffers(1, &this->EBO);
 
-		glBindVertexArray(this->_VAO);
+		glBindVertexArray(this->VAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, this->_VBO);
+		glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 		glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(Vertex), &this->vertices[0], GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(GLuint), &this->indices[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);

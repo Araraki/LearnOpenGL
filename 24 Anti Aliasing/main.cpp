@@ -217,7 +217,7 @@ GLuint cubeVAO, cubeVBO, lampVAO, lampVBO, quadVAO, quadVBO;
 void initVAOandVBO();
 void deleteVAOandVBO();
 
-GLuint multisampledFBO, intermediateFBO, rbo;
+GLuint framebuffer, intermediateFBO, rbo;
 GLuint screenTexture;
 void initFBO();
 
@@ -262,7 +262,7 @@ int main(int argc, char* argv[])
 		keysProcess();
 
 		// 1. draw scene as normal in multisampled buffers
-		glBindFramebuffer(GL_FRAMEBUFFER, multisampledFBO);
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
@@ -270,7 +270,7 @@ int main(int argc, char* argv[])
 		DrawScene();
 	
 		// 2. now blit multisampled buffer(s) to normal colorbuffer of intermediate FBO. Image is stored in screenTexture
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampledFBO);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFBO);
 		// glBlitFramebuffer : copy image bit block from a buffer to another
 		glBlitFramebuffer(0, 0, screenWidth, screenHeight, 0, 0, screenWidth, screenHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
@@ -283,7 +283,9 @@ int main(int argc, char* argv[])
 
 		screenShader.Use();
 		glBindVertexArray(quadVAO);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, screenTexture);
+
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 		
@@ -316,8 +318,6 @@ void glInit()
 	glViewport(0, 0, screenWidth, screenHeight);
 
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
 	glEnable(GL_MULTISAMPLE);
 
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -375,8 +375,8 @@ void initVAOandVBO()
 	glBindVertexArray(quadVAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof GLfloat, nullptr);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof GLfloat, (GLvoid*)(2 * sizeof GLfloat));
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof GLfloat, nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof GLfloat, (GLvoid*)(2 * sizeof GLfloat));
 
 	glBindVertexArray(0);
 }
@@ -418,9 +418,9 @@ GLuint generateAttachmentTexture(GLboolean depth, GLboolean stencil)
 
 void initFBO()
 {
-	// multisampledFBO
-	glGenFramebuffers(1, &multisampledFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, multisampledFBO);
+	// framebuffer
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
 	GLuint textureColorBufferMultiSampled = generateMultiSampleTexture(4);
 	// attach
@@ -440,10 +440,11 @@ void initFBO()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// intermediateFBO
+	screenTexture = generateAttachmentTexture(false, false);
+
 	glGenFramebuffers(1, &intermediateFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, intermediateFBO);
 	
-	screenTexture = generateAttachmentTexture(false, false);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexture, 0);
 
 	// check framebuffer
@@ -456,9 +457,11 @@ void deleteVAOandVBO()
 {
 	glDeleteVertexArrays(1, &cubeVAO);
 	glDeleteVertexArrays(1, &lampVAO);
+	glDeleteVertexArrays(1, &quadVAO);
 
 	glDeleteBuffers(1, &lampVBO);
 	glDeleteBuffers(1, &cubeVBO);
+	glDeleteBuffers(1, &quadVBO);
 }
 
 void loadShader()

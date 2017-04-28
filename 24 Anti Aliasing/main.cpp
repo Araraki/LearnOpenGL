@@ -200,13 +200,24 @@ glm::vec3 lampPosition[] = {
 };
 
 // opengl
+int screenWidth, screenHeight;
 void glInit();
+
+GLuint cubeVAO, cubeVBO, lampVAO, lampVBO;
 void initVAOandVBO();
 void deleteVAOandVBO();
+
+GLuint multisampledFBO, rbo;
+void initFBO();
+
+Shader baseShader, lampShader;
+GLuint uboMatrices;
 void loadShader();
+
 void DrawScene();
 
 // resources
+GLuint boxTexture, specTexture;
 void loadResources();
 
 // input
@@ -216,11 +227,14 @@ void keysProcess();
 
 GLFWwindow* window;
 GLfloat currentTime, deltaTime, lastFrame;
+
 int main(int argc, char* argv[])
 {
 	glInit();
 
 	initVAOandVBO();
+	
+	initFBO();
 
 	loadShader();
 
@@ -233,15 +247,22 @@ int main(int argc, char* argv[])
 		deltaTime = currentTime - lastFrame;
 		lastFrame = currentTime;
 
+		glfwPollEvents();
+		keysProcess();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, multisampledFBO);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		keysProcess();
-
 		DrawScene();
+	
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampledFBO);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		
+		// glBlitFramebuffer : copy image bit block from a buffer to another
+		glBlitFramebuffer(0, 0, screenWidth, screenHeight, 0, 0, screenWidth, screenHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 		glfwSwapBuffers(window);
-		glfwPollEvents();
 	}
 
 	deleteVAOandVBO();
@@ -251,8 +272,6 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-// opengl
-int screenWidth, screenHeight;
 void glInit()
 {
 	glfwInit();
@@ -260,6 +279,7 @@ void glInit()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+//	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
@@ -273,7 +293,7 @@ void glInit()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	//glEnable(GL_PROGRAM_POINT_SIZE);
+	glEnable(GL_MULTISAMPLE);
 
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetKeyCallback(window, key_callback);
@@ -282,7 +302,6 @@ void glInit()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-GLuint cubeVAO, cubeVBO, lampVAO, lampVBO;
 void initVAOandVBO()
 {
 	// cube
@@ -322,6 +341,42 @@ void initVAOandVBO()
 	glBindVertexArray(0);
 }
 
+GLuint generateMultiSampleTexture(GLuint samples)
+{
+	// generate texture
+	GLuint tex;
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, tex);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB, screenWidth, screenHeight, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+	return tex;
+}
+
+void initFBO()
+{
+	// framebuffer
+	glGenFramebuffers(1, &multisampledFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, multisampledFBO);
+
+	GLuint textureColorBufferMultiSampled = generateMultiSampleTexture(4);
+	// attach
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled, 0);
+
+	// renderbuffer
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	// attach
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	// check framebuffer
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void deleteVAOandVBO()
 {
 	glDeleteVertexArrays(1, &cubeVAO);
@@ -331,8 +386,6 @@ void deleteVAOandVBO()
 	glDeleteBuffers(1, &cubeVBO);
 }
 
-Shader baseShader, lampShader;
-GLuint uboMatrices;
 void loadShader()
 {
 	baseShader = Shader("base.vert", "base.frag");
@@ -351,7 +404,6 @@ void loadShader()
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
 }
 
-GLuint boxTexture, specTexture;
 void loadResources()
 {
 	boxTexture = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);

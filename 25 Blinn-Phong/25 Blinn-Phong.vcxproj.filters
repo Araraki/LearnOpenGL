@@ -24,6 +24,9 @@
     <Image Include="box.png">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="ground.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -43,10 +46,18 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lamp.frag" />
-    <None Include="lamp.vert" />
-    <None Include="base.frag" />
-    <None Include="base.vert" />
+    <None Include="base.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="base.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="lamp.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="lamp.vert">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

@@ -149,6 +149,7 @@
   <ItemGroup>
     <Image Include="box.png" />
     <Image Include="box_specular.png" />
+    <Image Include="ground.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

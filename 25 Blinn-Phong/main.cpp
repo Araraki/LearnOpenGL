@@ -57,6 +57,16 @@ GLfloat cubeVertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f
 };
+GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+	// Positions   // TexCoords
+	-1.0f, 0.0f,  1.0f,  0.0f, 1.0f,
+	-1.0f, 0.0f, -1.0f,  0.0f, 0.0f,
+	 1.0f, 0.0f, -1.0f,  1.0f, 0.0f,
+
+	-1.0f, 0.0f,  1.0f,  0.0f, 1.0f,
+	 1.0f, 0.0f, -1.0f,  1.0f, 0.0f,
+	 1.0f, 0.0f,  1.0f,  1.0f, 1.0f
+};
 
 GLfloat cubePosition[] = {
 	// Positions        
@@ -282,53 +292,46 @@ void glInit()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-GLuint cubeVAO, cubeVBO, lampVAO, lampVBO;
+GLuint groundVAO, groundVBO, lampVAO, lampVBO;
 void initVAOandVBO()
 {
-	// cube
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, nullptr, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof cubePosition, cubePosition);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof cubePosition, sizeof cubeNormal, cubeNormal);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof cubePosition + sizeof cubeNormal, sizeof cubeTexCoords, cubeTexCoords);
-
-	glBindVertexArray(cubeVAO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, (GLvoid*)sizeof cubePosition);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof GLfloat, (GLvoid*)(sizeof cubePosition + sizeof cubeNormal));
-
-	glBindVertexArray(0);
-
 	// lamp
 	glGenVertexArrays(1, &lampVAO);
 	glGenBuffers(1, &lampVBO);
 
-	glBindBuffer(GL_COPY_READ_BUFFER, cubeVBO);
-	glBindBuffer(GL_COPY_WRITE_BUFFER, lampVBO);
-
-	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, sizeof cubePosition);
-
+	glBindBuffer(GL_ARRAY_BUFFER, lampVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof cubePosition, cubePosition, GL_STATIC_DRAW);
+	
 	glBindVertexArray(lampVAO);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
+	glBindVertexArray(0);
+
+	// cube
+	glGenVertexArrays(1, &groundVAO);
+	glGenBuffers(1, &groundVBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, groundVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, nullptr, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof cubePosition, cubePosition);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof cubePosition, sizeof cubeTexCoords, cubeTexCoords);
+
+	glBindVertexArray(groundVAO);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof GLfloat, (GLvoid*)(sizeof cubePosition));
 
 	glBindVertexArray(0);
 }
 
 void deleteVAOandVBO()
 {
-	glDeleteVertexArrays(1, &cubeVAO);
+	glDeleteVertexArrays(1, &groundVAO);
 	glDeleteVertexArrays(1, &lampVAO);
 
 	glDeleteBuffers(1, &lampVBO);
-	glDeleteBuffers(1, &cubeVBO);
+	glDeleteBuffers(1, &groundVBO);
 }
 
 Shader baseShader, lampShader;
@@ -453,12 +456,10 @@ void DrawScene()
 	glUniform1i(glGetUniformLocation(baseShader.Program, "material.specular"), 1);
 	glUniform1f(glGetUniformLocation(baseShader.Program, "material.shininess"), 64.0f);
 
-	glBindVertexArray(cubeVAO);
+	glBindVertexArray(groundVAO);
 	glActiveTexture(GL_TEXTURE0);
 	TextureManager::Inst()->BindTexture(boxTexture);
-	glActiveTexture(GL_TEXTURE1);
-	TextureManager::Inst()->BindTexture(specTexture);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 
 	// lamp

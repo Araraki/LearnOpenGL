@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{DCDC686F-09CE-4D5B-951B-C12A0D658B76}</ProjectGuid>
+    <ProjectGuid>{33773ECC-023E-4A15-AE4B-073A5CF43EBB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>My25BlinnPhong</RootNamespace>
+    <RootNamespace>My26GammaCorrection</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -147,14 +147,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Image Include="ground.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="TextureManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ground.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="base.frag" />

@@ -14,13 +14,8 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Shader">
-      <UniqueIdentifier>{271db143-bf77-4545-ad14-b0d79d9dbf75}</UniqueIdentifier>
+      <UniqueIdentifier>{8f4d102c-6336-4cd5-87f6-3614d17b16f1}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="ground.png">
-      <Filter>资源文件</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -38,6 +33,11 @@
     <ClInclude Include="TextureManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ground.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="base.frag">

@@ -87,7 +87,8 @@ void keysProcess();
 
 GLFWwindow* window;
 GLfloat currentTime, deltaTime, lastFrame;
-GLboolean blinn = false;
+GLboolean gamma = true;
+GLboolean blinn = true;
 int main(int argc, char* argv[])
 {
 	glInit();
@@ -111,7 +112,6 @@ int main(int argc, char* argv[])
 		keysProcess();
 
 		DrawScene();
-		std::cout << (blinn ? "true" : "false") << std::endl;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -144,6 +144,7 @@ void glInit()
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);
 
+//	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -234,9 +235,6 @@ glm::mat4 model, view, proj;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 void DrawScene()
 {
-	// translate light position
-	lampPosition = glm::vec3(sin(currentTime), 0.0f, sin(2*currentTime));
-
 	proj = glm::mat4();
 	view = glm::mat4();
 	model = glm::mat4();
@@ -253,7 +251,18 @@ void DrawScene()
 	baseShader.Use();
 
 	glUniform3f(glGetUniformLocation(baseShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLightPos"), lampPosition.x, lampPosition.y, lampPosition.z);
+	
+	glUniform3f(glGetUniformLocation(baseShader.Program, "lightPositions[0]"), lampPosition.x-3, lampPosition.y, lampPosition.z);
+	glUniform3f(glGetUniformLocation(baseShader.Program, "lightPositions[1]"), lampPosition.x-1, lampPosition.y, lampPosition.z);
+	glUniform3f(glGetUniformLocation(baseShader.Program, "lightPositions[2]"), lampPosition.x+1, lampPosition.y, lampPosition.z);
+	glUniform3f(glGetUniformLocation(baseShader.Program, "lightPositions[3]"), lampPosition.x+3, lampPosition.y, lampPosition.z);
+
+	glUniform3f(glGetUniformLocation(baseShader.Program, "lightColors[0]"), 1.0f, 1.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(baseShader.Program, "lightColors[1]"), 1.0f, 1.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(baseShader.Program, "lightColors[2]"), 1.0f, 1.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(baseShader.Program, "lightColors[3]"), 1.0f, 1.0f, 1.0f);
+	
+	glUniform1i(glGetUniformLocation(baseShader.Program, "gamma"), gamma);
 	glUniform1i(glGetUniformLocation(baseShader.Program, "blinn"), blinn);
 
 	glBindVertexArray(groundVAO);
@@ -266,14 +275,17 @@ void DrawScene()
 	// lamp
 	lampShader.Use();
 
-	model = glm::mat4();
-	model = glm::translate(model, lampPosition);
-	model = glm::scale(model, glm::vec3(0.02f));
-	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
 
 	glBindVertexArray(lampVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	for (int i = 0; i < 4; i++)
+	{
+		model = glm::mat4();
+		model = glm::translate(model, lampPosition + glm::vec3(-3.0f + 2.0f*i, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.02f));
+		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
 	glBindVertexArray(0);
 }
 
@@ -313,6 +325,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	if (key == GLFW_KEY_B && action == GLFW_PRESS)
 		blinn = !blinn;
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+		gamma = !gamma;
 }
 
 void keysProcess()

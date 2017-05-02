@@ -12,20 +12,20 @@
 
 const GLuint WIDTH = 800, HEIGHT = 600;
 
-// resources
+#pragma region resources
 GLfloat cubeVertices[] = {
 	// Positions          // Normals           // Texture Coords
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-	0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
 
 	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-	0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
-	0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-	0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
 	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
 
@@ -36,178 +36,39 @@ GLfloat cubeVertices[] = {
 	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
 	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-	0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
 
 	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-	0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
 	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
 	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-	0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f
 };
-GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-	// Positions   // TexCoords
-	-1.0f, 0.0f,  1.0f,  0.0f, 1.0f,
-	-1.0f, 0.0f, -1.0f,  0.0f, 0.0f,
-	 1.0f, 0.0f, -1.0f,  1.0f, 0.0f,
+GLfloat quadVertices[] = {
+	// Positions		// Normals		   // TexCoords
+	 8.0f, -0.5f,  8.0f,  0.0f, 1.0f, 0.0f,  5.0f, 0.0f,
+	-8.0f, -0.5f,  8.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+	-8.0f, -0.5f, -8.0f,  0.0f, 1.0f, 0.0f,  0.0f, 5.0f,
 
-	-1.0f, 0.0f,  1.0f,  0.0f, 1.0f,
-	 1.0f, 0.0f, -1.0f,  1.0f, 0.0f,
-	 1.0f, 0.0f,  1.0f,  1.0f, 1.0f
+	 8.0f, -0.5f,  8.0f,  0.0f, 1.0f, 0.0f,  5.0f, 0.0f,
+	-8.0f, -0.5f, -8.0f,  0.0f, 1.0f, 0.0f,  0.0f, 5.0f,
+	 8.0f, -0.5f, -8.0f,  0.0f, 1.0f, 0.0f,  5.0f, 5.0f
 };
-
-GLfloat cubePosition[] = {
-	// Positions        
-	-0.5f, -0.5f, -0.5f,
-	0.5f,  0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f,  0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f,  0.5f, -0.5f,
-
-	-0.5f, -0.5f,  0.5f,
-	0.5f, -0.5f,  0.5f,
-	0.5f,  0.5f,  0.5f,
-	0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f,  0.5f,
-	-0.5f, -0.5f,  0.5f,
-
-	-0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f,  0.5f,
-	-0.5f,  0.5f,  0.5f,
-
-	0.5f,  0.5f,  0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f,  0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f,  0.5f,  0.5f,
-	0.5f, -0.5f,  0.5f,
-
-	-0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f,  0.5f,
-	0.5f, -0.5f,  0.5f,
-	-0.5f, -0.5f,  0.5f,
-	-0.5f, -0.5f, -0.5f,
-
-	-0.5f,  0.5f, -0.5f,
-	0.5f,  0.5f,  0.5f,
-	0.5f,  0.5f, -0.5f,
-	0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f, -0.5f,
-	-0.5f,  0.5f,  0.5f
-};
-GLfloat cubeNormal[] = {
-	// Normals          
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f
-};
-GLfloat cubeTexCoords[] = {
-	// Texture Coords
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f
-};
-
-glm::vec3 dirLight = glm::vec3(-1.0f, -1.0f, -1.0f);
-glm::vec3 lampPosition[] = {
-	glm::vec3(-2.0f,  2.0f,  3.0f),
-	glm::vec3(-2.0f, -2.0f, -3.0f),
-	glm::vec3(1.5f, -1.0f,  3.0f),
-	glm::vec3(-1.5f,  1.0f, -2.3f)
-};
+glm::vec3 lampPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+#pragma endregion 
 
 // opengl
 void glInit();
@@ -226,6 +87,7 @@ void keysProcess();
 
 GLFWwindow* window;
 GLfloat currentTime, deltaTime, lastFrame;
+GLboolean blinn = false;
 int main(int argc, char* argv[])
 {
 	glInit();
@@ -249,6 +111,7 @@ int main(int argc, char* argv[])
 		keysProcess();
 
 		DrawScene();
+		std::cout << (blinn ? "true" : "false") << std::endl;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -270,6 +133,7 @@ void glInit()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
@@ -280,6 +144,7 @@ void glInit()
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);
 
+	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
@@ -300,27 +165,27 @@ void initVAOandVBO()
 	glGenBuffers(1, &lampVBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, lampVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubePosition, cubePosition, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
 	
 	glBindVertexArray(lampVAO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, nullptr);
 	glBindVertexArray(0);
 
-	// cube
+	// ground
 	glGenVertexArrays(1, &groundVAO);
 	glGenBuffers(1, &groundVBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, groundVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, nullptr, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof cubePosition, cubePosition);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof cubePosition, sizeof cubeTexCoords, cubeTexCoords);
+	glBufferData(GL_ARRAY_BUFFER, sizeof quadVertices, quadVertices, GL_STATIC_DRAW);
 
 	glBindVertexArray(groundVAO);
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof GLfloat, (GLvoid*)(sizeof cubePosition));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, nullptr);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(6 * sizeof GLfloat));
 
 	glBindVertexArray(0);
 }
@@ -354,30 +219,27 @@ void loadShader()
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
 }
 
-GLuint boxTexture, specTexture;
+GLuint groundTexture;
 void loadResources()
 {
-	boxTexture = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
+	groundTexture = TextureManager::Inst()->LoadTexture("ground.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-	specTexture = TextureManager::Inst()->LoadTexture("box_specular.png", GL_BGRA, GL_RGBA, 0, 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 glm::mat4 model, view, proj;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 void DrawScene()
 {
+	// translate light position
+	lampPosition = glm::vec3(sin(currentTime), 0.0f, sin(2*currentTime));
+
 	proj = glm::mat4();
 	view = glm::mat4();
+	model = glm::mat4();
 
 	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
@@ -387,78 +249,17 @@ void DrawScene()
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 	glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
 
-
-	// cube
+	// ground
 	baseShader.Use();
 
-	model = glm::mat4();
-	model = glm::rotate(model, glm::radians(lastFrame) * 20, glm::vec3(1.0f, 0.2f, 0.5f));
-	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-	// shader.viewPos
 	glUniform3f(glGetUniformLocation(baseShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-
-	// shader.dirLight
-	glUniform3f(glGetUniformLocation(baseShader.Program, "dirLight.direction"), dirLight.x, dirLight.y, dirLight.z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
-
-	// shader.pointLights
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[0].position"), lampPosition[0].x, lampPosition[0].y, lampPosition[0].z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[0].ambient"), 0.05f, 0.05f, 0.05f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[0].diffuse"), 0.8f, 0.8f, 0.8f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[0].specular"), 1.0f, 1.0f, 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[0].constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[0].linear"), 0.09f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[0].quadratic"), 0.032f);
-
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[1].position"), lampPosition[1].x, lampPosition[1].y, lampPosition[1].z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[1].ambient"), 0.05f, 0.05f, 0.05f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[1].diffuse"), 0.8f, 0.8f, 0.8f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[1].specular"), 1.0f, 1.0f, 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[1].constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[1].linear"), 0.09f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[1].quadratic"), 0.032f);
-
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[2].position"), lampPosition[2].x, lampPosition[2].y, lampPosition[2].z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[2].ambient"), 0.05f, 0.05f, 0.05f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[2].diffuse"), 0.8f, 0.8f, 0.8f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[2].specular"), 1.0f, 1.0f, 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[2].constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[2].linear"), 0.09f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[2].quadratic"), 0.032f);
-
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[3].position"), lampPosition[3].x, lampPosition[3].y, lampPosition[3].z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[3].ambient"), 0.05f, 0.05f, 0.05f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[3].diffuse"), 0.8f, 0.8f, 0.8f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLights[3].specular"), 1.0f, 1.0f, 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[3].constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[3].linear"), 0.09f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "pointLights[3].quadratic"), 0.032f);
-
-	// shader.spotLight
-	glm::vec3 lampPos = glm::vec3(camera.Position.x, camera.Position.y, camera.Position.z) - 0.1f*camera.Front;
-	glm::vec3 spotDir = glm::vec3(camera.Front.x, camera.Front.y, camera.Front.z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.position"), lampPos.x, lampPos.y, lampPos.z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.spotDir"), spotDir.x, spotDir.y, spotDir.z);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
-	glUniform1f(glGetUniformLocation(baseShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(17.5f)));
-	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.ambient"), 0.05f, 0.05f, 0.05f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.diffuse"), 0.8f, 0.8f, 0.8f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "spotLight.constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "spotLight.linear"), 0.09f);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "spotLight.quadratic"), 0.032f);
-
-	// shader.material
-	glUniform1i(glGetUniformLocation(baseShader.Program, "material.diffuse"), 0);
-	glUniform1i(glGetUniformLocation(baseShader.Program, "material.specular"), 1);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "material.shininess"), 64.0f);
+	glUniform3f(glGetUniformLocation(baseShader.Program, "pointLightPos"), lampPosition.x, lampPosition.y, lampPosition.z);
+	glUniform1i(glGetUniformLocation(baseShader.Program, "blinn"), blinn);
 
 	glBindVertexArray(groundVAO);
 	glActiveTexture(GL_TEXTURE0);
-	TextureManager::Inst()->BindTexture(boxTexture);
+	TextureManager::Inst()->BindTexture(groundTexture);
+	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 
@@ -466,30 +267,13 @@ void DrawScene()
 	lampShader.Use();
 
 	model = glm::mat4();
-	model = glm::translate(model, -dirLight*5.0f);
-	model = glm::scale(model, glm::vec3(0.2f));
-	// rotate
-	float xz = acos(glm::dot(glm::normalize(glm::vec3(dirLight.x, 0.0f, dirLight.z)), glm::vec3(0.0f, 0.0f, 1.0f)));
-	model = glm::rotate(model, xz, glm::vec3(0.0f, 1.0f, 0.0f));
-	float yz = acos(glm::dot(glm::normalize(glm::vec3(0.0f, dirLight.y, dirLight.z)), glm::vec3(0.0f, 0.0f, 1.0f)));
-	model = glm::rotate(model, yz, glm::vec3(1.0f, 0.0f, 0.0f));
-
-	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 0.2f, 0.2f);
+	model = glm::translate(model, lampPosition);
+	model = glm::scale(model, glm::vec3(0.02f));
 	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
 
 	glBindVertexArray(lampVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
-
-	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
-	for (int i = 1; i < 4; ++i)
-	{
-		model = glm::mat4();
-		model = glm::translate(model, lampPosition[i]);
-		model = glm::scale(model, glm::vec3(0.2f));
-		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
 	glBindVertexArray(0);
 }
 
@@ -526,6 +310,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	if (key == GLFW_KEY_L && action == GLFW_PRESS)
 		camera.FPS_Camera = !camera.FPS_Camera;
+
+	if (key == GLFW_KEY_B && action == GLFW_PRESS)
+		blinn = !blinn;
 }
 
 void keysProcess()

@@ -159,6 +159,10 @@
   <ItemGroup>
     <None Include="base.frag" />
     <None Include="base.vert" />
+    <None Include="debugQuad.frag" />
+    <None Include="debugQuad.vert" />
+    <None Include="simpleDepth.frag" />
+    <None Include="simpleDepth.vert" />
     <None Include="lamp.frag" />
     <None Include="lamp.vert" />
   </ItemGroup>

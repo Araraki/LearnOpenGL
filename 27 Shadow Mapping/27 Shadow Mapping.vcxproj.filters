@@ -52,6 +52,18 @@
     <None Include="lamp.vert">
       <Filter>Shader</Filter>
     </None>
+    <None Include="debugQuad.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="debugQuad.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="simpleDepth.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="simpleDepth.vert">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

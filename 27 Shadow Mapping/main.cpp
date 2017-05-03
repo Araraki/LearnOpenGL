@@ -10,7 +10,8 @@
 #include "Shader.h"
 #include "TextureManager.h"
 
-const GLuint WIDTH = 800, HEIGHT = 600;
+const GLuint SCR_WIDTH = 800, SCR_HEIGHT = 600;
+const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 #pragma region resources
 GLfloat cubeVertices[] = {
@@ -57,7 +58,7 @@ GLfloat cubeVertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f
 };
-GLfloat quadVertices[] = {
+GLfloat groundVertices[] = {
 	// Positions			// Normals		   // Texture Coords
 	 25.0f, -0.5f,  25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 0.0f,
 	-25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  0.0f, 25.0f,
@@ -67,18 +68,22 @@ GLfloat quadVertices[] = {
 	 25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 25.0f,
 	-25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  0.0f, 25.0f
 };
-glm::vec3 lampPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+GLfloat quadVertices[] = {
+	// Positions        // Texture Coords
+	-1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+	-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
+	 1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
+	 1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
+};
+glm::vec3 directLightPos(-2.0f, 4.0f, -1.0f);
+glm::vec3 directLightColor(1.0f, 1.0f, 1.0f);
 #pragma endregion 
 
-// opengl
-void glInit();
-void initVAOandVBO();
-void deleteVAOandVBO();
-void loadShader();
-void DrawScene();
-
-// resources
-void loadResources();
+void RenderScene(Shader& shader);
+void RenderCube();
+void RenderPlane();
+void RenderQuad();
+void deleteObjects();
 
 // input
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -86,48 +91,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void keysProcess();
 
 GLFWwindow* window;
-GLfloat currentTime, deltaTime, lastFrame;
-GLboolean gamma = true;
-GLboolean blinn = true;
+GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
+GLuint groundTexture;
+Shader simpleDepthShader, debugDepthQuad;
+GLuint depthMap, depthMapFBO;
+
 int main(int argc, char* argv[])
 {
-	glInit();
-
-	initVAOandVBO();
-
-	loadShader();
-
-	loadResources();
-
-	currentTime = deltaTime = lastFrame = 0.0f;
-	while (!glfwWindowShouldClose(window))
-	{
-		currentTime = float(glfwGetTime());
-		deltaTime = currentTime - lastFrame;
-		lastFrame = currentTime;
-
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		keysProcess();
-
-		DrawScene();
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-
-	deleteVAOandVBO();
-
-	glfwTerminate();
-
-	return 0;
-}
-
-// opengl
-int screenWidth, screenHeight;
-void glInit()
-{
+	// opengl init
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -135,172 +106,229 @@ void glInit()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
-	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
+	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
-
-	glewExperimental = GL_TRUE;
-	glewInit();
-
-	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
-	glViewport(0, 0, screenWidth, screenHeight);
-
-//	glEnable(GL_FRAMEBUFFER_SRGB);
-	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
 
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
+	glewExperimental = GL_TRUE;
+	glewInit();
 
-GLuint planeVAO, planeVBO, cubeVAO, cubeVBO;
-void initVAOandVBO()
-{
-	// lamp
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
-	
-	glBindVertexArray(cubeVAO);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, nullptr);
-	glBindVertexArray(0);
+	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_DEPTH_TEST);
 
-	// ground
-	glGenVertexArrays(1, &planeVAO);
-	glGenBuffers(1, &planeVBO);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof quadVertices, quadVertices, GL_STATIC_DRAW);
+	// shader
+	simpleDepthShader = Shader("simpleDepth.vert", "simpleDepth.frag");
+	debugDepthQuad = Shader("debugQuad.vert", "debugQuad.frag");
 
-	glBindVertexArray(planeVAO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, nullptr);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(6 * sizeof GLfloat));
-
-	glBindVertexArray(0);
-}
-
-void deleteVAOandVBO()
-{
-	glDeleteVertexArrays(1, &planeVAO);
-	glDeleteVertexArrays(1, &cubeVAO);
-
-	glDeleteBuffers(1, &cubeVBO);
-	glDeleteBuffers(1, &planeVBO);
-}
-
-Shader baseShader, lampShader;
-GLuint uboMatrices;
-void loadShader()
-{
-	baseShader = Shader("base.vert", "base.frag");
-	lampShader = Shader("lamp.vert", "lamp.frag");
-
-	glUniformBlockBinding(baseShader.Program, glGetUniformBlockIndex(baseShader.Program, "Matrices"), 0);
-	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);
-
-	// (proj/view) ubo
-	glGenBuffers(1, &uboMatrices);
-
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof glm::mat4, nullptr, GL_STATIC_DRAW);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
-}
-
-GLuint groundTexture;
-void loadResources()
-{
+	// texture
 	groundTexture = TextureManager::Inst()->LoadTexture("ground.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	
+	// FBO	
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glGenFramebuffers(1, &depthMapFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// main loop
+	while (!glfwWindowShouldClose(window))
+	{
+		currentTime = float(glfwGetTime());
+		deltaTime = currentTime - lastFrame;
+		lastFrame = currentTime;
+		
+		// check and call events
+		glfwPollEvents();
+		keysProcess();
+		
+		// 1. Render depth of scene to texture (from light's perspective)
+        // - Get light projection/view matrix.
+		glm::mat4 lightProjection, lightView;
+		glm::mat4 lightSpaceMatrix;
+		GLfloat near_plane = 1.0f, far_plane = 7.5f;
+		lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+		lightView = glm::lookAt(directLightPos, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		lightSpaceMatrix = lightProjection * lightView;
+		// - render scene from light's point of view
+		simpleDepthShader.Use();
+		glUniformMatrix4fv(glGetUniformLocation(simpleDepthShader.Program, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		RenderScene(simpleDepthShader);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// Reset viewport
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Render Depth map to quad
+		debugDepthQuad.Use();
+		glUniform1f(glGetUniformLocation(debugDepthQuad.Program, "near_plane"), near_plane);
+		glUniform1f(glGetUniformLocation(debugDepthQuad.Program, "far_plane"), far_plane);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		RenderQuad();
+
+		glfwSwapBuffers(window);
+	}
+
+	deleteObjects();
+	glfwTerminate();
+
+	return 0;
 }
 
 glm::mat4 model, view, proj;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-void DrawScene()
+
+void RenderScene(Shader& shader)
 {
-	proj = glm::mat4();
-	view = glm::mat4();
 	model = glm::mat4();
+	glActiveTexture(GL_TEXTURE0);
+	TextureManager::Inst()->BindTexture(groundTexture);
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderPlane();
 
-	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof glm::mat4, glm::value_ptr(proj));
-
-	view = camera.GetViewMatrix();
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
-
-	// cube
-
+	// cube * 3
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
-	
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
+
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
 
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
 	model = glm::rotate(model, 60.0f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	model = glm::scale(model, glm::vec3(0.5));
-	// ground
-	baseShader.Use();
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
+}
 
-	glUniform3f(glGetUniformLocation(baseShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-	
-	glUniform3f(glGetUniformLocation(baseShader.Program, "lightPositions[0]"), lampPosition.x-3, lampPosition.y, lampPosition.z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "lightPositions[1]"), lampPosition.x-1, lampPosition.y, lampPosition.z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "lightPositions[2]"), lampPosition.x+1, lampPosition.y, lampPosition.z);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "lightPositions[3]"), lampPosition.x+3, lampPosition.y, lampPosition.z);
+GLuint cubeVAO = -1, cubeVBO = -1;
+GLuint planeVAO = -1, planeVBO = -1;
+GLuint quadVAO = -1, quadVBO = -1;
+void RenderCube()
+{
+	if (cubeVAO == -1)
+	{
+		glGenVertexArrays(1, &cubeVAO);
+		glGenBuffers(1, &cubeVBO);
 
-	glUniform3f(glGetUniformLocation(baseShader.Program, "lightColors[0]"), 1.0f, 1.0f, 1.0f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "lightColors[1]"), 1.0f, 1.0f, 1.0f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "lightColors[2]"), 1.0f, 1.0f, 1.0f);
-	glUniform3f(glGetUniformLocation(baseShader.Program, "lightColors[3]"), 1.0f, 1.0f, 1.0f);
-	
-	glUniform1i(glGetUniformLocation(baseShader.Program, "gamma"), gamma);
-	glUniform1i(glGetUniformLocation(baseShader.Program, "blinn"), blinn);
+		glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
+
+		glBindVertexArray(cubeVAO);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, nullptr);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(6 * sizeof GLfloat));
+		glBindVertexArray(0);
+	}
+
+	glBindVertexArray(cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+void RenderPlane()
+{
+	if(planeVAO == -1)
+	{
+		glGenVertexArrays(1, &planeVAO);
+		glGenBuffers(1, &planeVBO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof groundVertices, groundVertices, GL_STATIC_DRAW);
+
+		glBindVertexArray(planeVAO);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, nullptr);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(6 * sizeof GLfloat));
+		glBindVertexArray(0);
+	}
 
 	glBindVertexArray(planeVAO);
-	glActiveTexture(GL_TEXTURE0);
-	TextureManager::Inst()->BindTexture(groundTexture);
-	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
-
-	// lamp
-	lampShader.Use();
-	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
-	glBindVertexArray(cubeVAO);
-	for (int i = 0; i < 4; i++)
+}
+void RenderQuad()
+{
+	if (quadVAO == -1)
 	{
-		model = glm::mat4();
-		model = glm::translate(model, lampPosition + glm::vec3(-3.0f + 2.0f*i, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.02f));
-		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof quadVertices, quadVertices, GL_STATIC_DRAW);
+
+		glBindVertexArray(quadVAO);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof GLfloat, nullptr);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
+		glBindVertexArray(0);
 	}
+
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindVertexArray(0);
 }
 
-// input
+void deleteObjects()
+{
+	if (planeVAO != -1)
+	{
+		glDeleteVertexArrays(1, &planeVAO);
+		glDeleteBuffers(1, &planeVBO);
+	}
+	if (cubeVAO != -1)
+	{
+		glDeleteVertexArrays(1, &cubeVAO);
+		glDeleteBuffers(1, &cubeVBO);
+	}
+	if (quadVAO != -1)
+	{
+		glDeleteVertexArrays(1, &quadVAO);
+		glDeleteBuffers(1, &quadVBO);
+	}
+}
+
+#pragma region input
 bool firstMouse = true;
-GLfloat lastX = WIDTH / 2;
-GLfloat	lastY = HEIGHT / 2;
+GLfloat lastX = SCR_WIDTH / 2;
+GLfloat	lastY = SCR_HEIGHT / 2;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
@@ -330,11 +358,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	if (key == GLFW_KEY_L && action == GLFW_PRESS)
 		camera.FPS_Camera = !camera.FPS_Camera;
-
-	if (key == GLFW_KEY_B && action == GLFW_PRESS)
-		blinn = !blinn;
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-		gamma = !gamma;
 }
 
 void keysProcess()
@@ -357,3 +380,4 @@ void keysProcess()
 	if (keys[GLFW_KEY_Q])
 		camera.ProcessKeyboard(DOWN, deltaTime);
 }
+#pragma endregion 

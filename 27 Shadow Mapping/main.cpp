@@ -60,12 +60,12 @@ GLfloat cubeVertices[] = {
 };
 GLfloat groundVertices[] = {
 	// Positions			// Normals		   // Texture Coords
-	 25.0f, -0.5f,  25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 0.0f,
+	25.0f, -0.5f,  25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 0.0f,
 	-25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  0.0f, 25.0f,
 	-25.0f, -0.5f,  25.0f,	0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
 											  
-	 25.0f, -0.5f,  25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 0.0f,
-	 25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 25.0f,
+	25.0f, -0.5f,  25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 0.0f,
+	25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 25.0f,
 	-25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  0.0f, 25.0f
 };
 GLfloat quadVertices[] = {
@@ -93,8 +93,10 @@ void keysProcess();
 GLFWwindow* window;
 GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
 GLuint groundTexture;
-Shader simpleDepthShader, debugDepthQuad;
+Shader simpleDepthShader, debugDepthQuad, shadowShader;
 GLuint depthMap, depthMapFBO;
+glm::mat4 model, view, proj;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 int main(int argc, char* argv[])
 {
@@ -121,11 +123,27 @@ int main(int argc, char* argv[])
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
 
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
 	// shader
 	simpleDepthShader = Shader("simpleDepth.vert", "simpleDepth.frag");
 	debugDepthQuad = Shader("debugQuad.vert", "debugQuad.frag");
+	shadowShader = Shader("shadow.vert", "shadow.frag");
+
+	shadowShader.Use();
+	glUniform1i(glGetUniformLocation(shadowShader.Program, "diffuseTexture"), 0);
+	glUniform1i(glGetUniformLocation(shadowShader.Program, "shadowMap"), 1);
+
+	// ubo
+	glUniformBlockBinding(shadowShader.Program, glGetUniformBlockIndex(shadowShader.Program, "Matrices"), 0);
+
+	// (proj/view) ubo
+	GLuint uboMatrices;
+	glGenBuffers(1, &uboMatrices);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof glm::mat4, nullptr, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
 
 	// texture
 	groundTexture = TextureManager::Inst()->LoadTexture("ground.png", GL_BGRA, GL_RGBA, 0, 0);
@@ -135,7 +153,8 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	
-	// FBO	
+	// depthMap FBO	
+	glGenFramebuffers(1, &depthMapFBO);
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 
@@ -145,13 +164,14 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glGenFramebuffers(1, &depthMapFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	
 	// main loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -171,27 +191,44 @@ int main(int argc, char* argv[])
 		lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 		lightView = glm::lookAt(directLightPos, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		lightSpaceMatrix = lightProjection * lightView;
-		// - render scene from light's point of view
+		// - now render scene from light's point of view
 		simpleDepthShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(simpleDepthShader.Program, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
+		glCullFace(GL_FRONT);
 		RenderScene(simpleDepthShader);
+		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// Reset viewport
+		// 2. Render scene as normal
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		shadowShader.Use();
+		proj = glm::perspective(camera.Zoom, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.1f, 100.0f);
+		view = camera.GetViewMatrix();
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof glm::mat4, glm::value_ptr(proj));
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
+		glUniform3fv(glGetUniformLocation(shadowShader.Program, "lightPos"), 1, &directLightPos[0]);
+		glUniform3fv(glGetUniformLocation(shadowShader.Program, "viewPos"), 1, &camera.Position[0]);
+		glUniformMatrix4fv(glGetUniformLocation(shadowShader.Program, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, groundTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		RenderScene(shadowShader);
 
-		// Render Depth map to quad
+
+		// 3. DEBUG: visualize depth map by rendering it to plane
 		debugDepthQuad.Use();
 		glUniform1f(glGetUniformLocation(debugDepthQuad.Program, "near_plane"), near_plane);
 		glUniform1f(glGetUniformLocation(debugDepthQuad.Program, "far_plane"), far_plane);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
-		RenderQuad();
+		//RenderQuad();
 
 		glfwSwapBuffers(window);
 	}
@@ -201,9 +238,6 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-
-glm::mat4 model, view, proj;
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 void RenderScene(Shader& shader)
 {

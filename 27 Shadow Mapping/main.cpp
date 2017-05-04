@@ -202,12 +202,13 @@ int main(int argc, char* argv[])
 		// - now render scene from light's point of view
 		simpleDepthShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(simpleDepthShader.Program, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
-		
+		//glCullFace(GL_FRONT);
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		RenderScene(simpleDepthShader);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//glCullFace(GL_BACK);
 
 		// 2. Render scene as normal
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);

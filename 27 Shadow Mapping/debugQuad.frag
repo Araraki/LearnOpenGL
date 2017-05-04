@@ -5,9 +5,20 @@ out vec4 color;
 in vec2 TexCoords;
 
 uniform sampler2D depthMap;
+uniform float near_plane;
+uniform float far_plane;
+
+float LinearizeDepth(float depth)
+{
+	float z = depth * 2.0f - 1.0f;
+	return (2.0f * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));
+}
 
 void main()
 {
 	float depthValue = texture(depthMap, TexCoords).r;
-	color = vec4(vec3(depthValue), 1.0f);
+	// perspective
+	color = vec4(vec3(LinearizeDepth(depthValue) / far_plane), 1.0f); 
+	// orthographic
+	//color = vec4(vec3(depthValue), 1.0f);
 }

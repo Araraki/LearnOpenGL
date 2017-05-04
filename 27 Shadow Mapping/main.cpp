@@ -93,7 +93,7 @@ void keysProcess();
 GLFWwindow* window;
 GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
 GLuint groundTexture;
-Shader simpleDepthShader, debugDepthQuad, shadowShader;
+Shader simpleDepthShader, debugDepthQuad, shadowShader, lampShader;
 GLuint depthMap, depthMapFBO;
 glm::mat4 model, view, proj;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -122,11 +122,13 @@ int main(int argc, char* argv[])
 
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	// shader
+	lampShader = Shader("lamp.vert", "lamp.frag");
+	shadowShader = Shader("shadow.vert", "shadow.frag");
 	simpleDepthShader = Shader("simpleDepth.vert", "simpleDepth.frag");
 	debugDepthQuad = Shader("debugQuad.vert", "debugQuad.frag");
-	shadowShader = Shader("shadow.vert", "shadow.frag");
 
 	shadowShader.Use();
 	glUniform1i(glGetUniformLocation(shadowShader.Program, "diffuseTexture"), 0);
@@ -161,8 +163,10 @@ int main(int argc, char* argv[])
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	GLfloat borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
@@ -182,7 +186,11 @@ int main(int argc, char* argv[])
 		// check and call events
 		glfwPollEvents();
 		keysProcess();
-		
+		// Change light position over time
+		directLightPos.x = sin(glfwGetTime()) * 3.0f;
+		directLightPos.z = cos(glfwGetTime()) * 2.0f;
+		directLightPos.y = 5.0 + cos(glfwGetTime()) * 1.0f;
+
 		// 1. Render depth of scene to texture (from light's perspective)
         // - Get light projection/view matrix.
 		glm::mat4 lightProjection, lightView;
@@ -194,31 +202,35 @@ int main(int argc, char* argv[])
 		// - now render scene from light's point of view
 		simpleDepthShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(simpleDepthShader.Program, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
-
+		
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glCullFace(GL_FRONT);
 		RenderScene(simpleDepthShader);
-		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		// 2. Render scene as normal
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		shadowShader.Use();
 		proj = glm::perspective(camera.Zoom, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.1f, 100.0f);
 		view = camera.GetViewMatrix();
+
 		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof glm::mat4, glm::value_ptr(proj));
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
+
 		glUniform3fv(glGetUniformLocation(shadowShader.Program, "lightPos"), 1, &directLightPos[0]);
 		glUniform3fv(glGetUniformLocation(shadowShader.Program, "viewPos"), 1, &camera.Position[0]);
+
 		glUniformMatrix4fv(glGetUniformLocation(shadowShader.Program, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, groundTexture);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
+
 		RenderScene(shadowShader);
 
 
@@ -263,6 +275,15 @@ void RenderScene(Shader& shader)
 	model = glm::rotate(model, 60.0f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	model = glm::scale(model, glm::vec3(0.5));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
+
+	// lamp
+	lampShader.Use();
+	model = glm::mat4();
+	model = glm::translate(model, directLightPos);
+	model = glm::scale(model, glm::vec3(0.02f));
+	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
 	RenderCube();
 }
 

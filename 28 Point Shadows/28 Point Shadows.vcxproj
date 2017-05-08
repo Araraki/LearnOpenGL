@@ -157,12 +157,13 @@
   <ItemGroup>
     <None Include="debugQuad.frag" />
     <None Include="debugQuad.vert" />
+    <None Include="depthCubemap.frag" />
+    <None Include="depthCubemap.geom" />
+    <None Include="depthCubemap.vert" />
     <None Include="lamp.frag" />
     <None Include="lamp.vert" />
     <None Include="shadow.frag" />
     <None Include="shadow.vert" />
-    <None Include="simpleDepth.frag" />
-    <None Include="simpleDepth.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="ground.png" />

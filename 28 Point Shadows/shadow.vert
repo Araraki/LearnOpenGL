@@ -8,7 +8,6 @@ out VS_OUT
 	vec3 FragPos;
 	vec3 Normal;
 	vec2 TexCoords;
-	vec4 FragPosLightSpace;
 } vs_out;
 
 layout (std140) uniform Matrices
@@ -17,13 +16,16 @@ layout (std140) uniform Matrices
 	mat4 view;
 };
 uniform mat4 model;
-uniform mat4 lightSpaceMatrix;
+
+uniform bool reverse_normals;
 
 void main()
 {
 	gl_Position = proj * view * model * vec4(position, 1.0f);
 	vs_out.FragPos = vec3(model * vec4(position, 1.0f));
-	vs_out.Normal = transpose(inverse(mat3(model))) * normal;
+	if(reverse_normals)
+		vs_out.Normal = transpose(inverse(mat3(model))) * (-1.0f * normal);
+	else
+		vs_out.Normal = transpose(inverse(mat3(model))) * normal;
 	vs_out.TexCoords = texCoords;
-	vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0f);
 }

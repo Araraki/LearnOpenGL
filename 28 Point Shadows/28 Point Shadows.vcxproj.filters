@@ -58,10 +58,13 @@
     <None Include="shadow.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="simpleDepth.frag">
+    <None Include="depthCubemap.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="simpleDepth.vert">
+    <None Include="depthCubemap.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="depthCubemap.geom">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

@@ -16,7 +16,7 @@ const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 GLFWwindow* window;
 GLfloat currentTime = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f;
 GLuint groundTexture;
-Shader depthCubemapShader, debugDepthQuad, shadowShader, lampShader;
+Shader depthCubemapShader, shadowShader, lampShader;
 
 #pragma region resources
 GLfloat cubeVertices[] = {
@@ -93,12 +93,12 @@ void RenderCube()
 	if (cubeVAO == -1)
 	{
 		glGenVertexArrays(1, &cubeVAO);
-		glGenBuffers(1, &cubeVBO);
+		glBindVertexArray(cubeVAO);
 
+		glGenBuffers(1, &cubeVBO);
 		glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
 
-		glBindVertexArray(cubeVAO);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
@@ -116,13 +116,13 @@ void RenderPlane()
 {
 	if (planeVAO == -1)
 	{
+		glBindVertexArray(planeVAO);
 		glGenVertexArrays(1, &planeVAO);
-		glGenBuffers(1, &planeVBO);
 
+		glGenBuffers(1, &planeVBO);
 		glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof groundVertices, groundVertices, GL_STATIC_DRAW);
 
-		glBindVertexArray(planeVAO);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
@@ -140,13 +140,13 @@ void RenderQuad()
 {
 	if (quadVAO == -1)
 	{
+		glBindVertexArray(quadVAO);
 		glGenVertexArrays(1, &quadVAO);
-		glGenBuffers(1, &quadVBO);
 
+		glGenBuffers(1, &quadVBO);
 		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof quadVertices, quadVertices, GL_STATIC_DRAW);
 
-		glBindVertexArray(quadVAO);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof GLfloat, nullptr);
@@ -316,7 +316,6 @@ int main(int argc, char* argv[])
 	lampShader = Shader("lamp.vert", "lamp.frag");
 	shadowShader = Shader("shadow.vert", "shadow.frag");
 	depthCubemapShader = Shader("depthCubemap.vert", "depthCubemap.frag", "depthCubemap.geom");
-	debugDepthQuad = Shader("debugQuad.vert", "debugQuad.frag");
 
 	shadowShader.Use();
 	glUniform1i(glGetUniformLocation(shadowShader.Program, "diffuseTexture"), 0);
@@ -399,7 +398,7 @@ int main(int argc, char* argv[])
 
 		// LightSpace Transform
 		GLfloat aspect = GLfloat(SHADOW_WIDTH) / GLfloat(SHADOW_HEIGHT);
-		GLfloat near_plane = 1.0f, far_plane = 25.0f;
+		GLfloat near_plane = 0.02f, far_plane = 25.0f;
 		glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), aspect, near_plane, far_plane);
 
 		std::vector<glm::mat4> shadowTransforms;	// Left Right Top Bottom Front Back

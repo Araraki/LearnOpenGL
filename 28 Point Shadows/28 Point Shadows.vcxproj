@@ -155,8 +155,6 @@
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="debugQuad.frag" />
-    <None Include="debugQuad.vert" />
     <None Include="depthCubemap.frag" />
     <None Include="depthCubemap.geom" />
     <None Include="depthCubemap.vert" />

@@ -40,12 +40,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="debugQuad.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="debugQuad.vert">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="lamp.frag">
       <Filter>Shader</Filter>
     </None>

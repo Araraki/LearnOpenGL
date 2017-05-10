@@ -35,16 +35,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="brickwall_normal.jpg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="brickwall.jpg">
-      <Filter>资源文件</Filter>
-    </Image>
     <Image Include="box.png">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="box_specular.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="brickwall_normal.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="brickwall.png">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

@@ -28,8 +28,8 @@
   <ItemGroup>
     <Image Include="box.png" />
     <Image Include="box_specular.png" />
-    <Image Include="brickwall.jpg" />
-    <Image Include="brickwall_normal.jpg" />
+    <Image Include="brickwall.png" />
+    <Image Include="brickwall_normal.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="base.frag" />

@@ -10,9 +10,16 @@
 #include "Shader.h"
 #include "TextureManager.h"
 
-const GLuint WIDTH = 800, HEIGHT = 600;
+const GLuint SCR_WIDTH = 800, SCR_HEIGHT = 600;
+const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
-// resources
+GLFWwindow* window;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+GLuint boxTexture, specTexture;
+GLfloat currentTime, deltaTime, lastFrame;
+Shader baseShader, lampShader;
+
+#pragma region Resources
 GLfloat cubeVertices[] = {
 	// Positions          // Normals           // Texture Coords
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
@@ -57,140 +64,23 @@ GLfloat cubeVertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f
 };
+GLfloat groundVertices[] = {
+	// Positions			// Normals		   // Texture Coords
+	25.0f, -0.5f,  25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 0.0f,
+	-25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  0.0f, 25.0f,
+	-25.0f, -0.5f,  25.0f,	0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
 
-GLfloat cubePosition[] = {
-	// Positions        
-	-0.5f, -0.5f, -0.5f,
-	0.5f,  0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f,  0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f,  0.5f, -0.5f,
-
-	-0.5f, -0.5f,  0.5f,
-	0.5f, -0.5f,  0.5f,
-	0.5f,  0.5f,  0.5f,
-	0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f,  0.5f,
-	-0.5f, -0.5f,  0.5f,
-
-	-0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f,  0.5f,
-	-0.5f,  0.5f,  0.5f,
-
-	0.5f,  0.5f,  0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f,  0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f,  0.5f,  0.5f,
-	0.5f, -0.5f,  0.5f,
-
-	-0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f,  0.5f,
-	0.5f, -0.5f,  0.5f,
-	-0.5f, -0.5f,  0.5f,
-	-0.5f, -0.5f, -0.5f,
-
-	-0.5f,  0.5f, -0.5f,
-	0.5f,  0.5f,  0.5f,
-	0.5f,  0.5f, -0.5f,
-	0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f, -0.5f,
-	-0.5f,  0.5f,  0.5f
+	25.0f, -0.5f,  25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 0.0f,
+	25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  25.0f, 25.0f,
+	-25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,  0.0f, 25.0f
 };
-GLfloat cubeNormal[] = {
-	// Normals          
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-	0.0f,  0.0f,  1.0f,
-
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f
+GLfloat quadVertices[] = {
+	// Positions        // Texture Coords
+	-1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+	-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
+	1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
+	1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
 };
-GLfloat cubeTexCoords[] = {
-	// Texture Coords
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f
-};
-
 glm::vec3 dirLight = glm::vec3(-1.0f, -1.0f, -1.0f);
 glm::vec3 lampPosition[] = {
 	glm::vec3(-2.0f,  2.0f,  3.0f),
@@ -198,196 +88,165 @@ glm::vec3 lampPosition[] = {
 	glm::vec3(1.5f, -1.0f,  3.0f),
 	glm::vec3(-1.5f,  1.0f, -2.3f)
 };
+#pragma endregion 
 
-// opengl
-void glInit();
-void initVAOandVBO();
-void deleteVAOandVBO();
-void loadShader();
-void DrawScene();
-
-// resources
-void loadResources();
-
-// input
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void keysProcess();
-
-GLFWwindow* window;
-GLfloat currentTime, deltaTime, lastFrame;
-int main(int argc, char* argv[])
+#pragma region RenderFigure
+GLuint cubeVAO = -1, cubeVBO = -1;
+GLuint planeVAO = -1, planeVBO = -1;
+GLuint quadVAO = -1, quadVBO = -1;
+void RenderCube()
 {
-	glInit();
-
-	initVAOandVBO();
-
-	loadShader();
-
-	loadResources();
-
-	currentTime = deltaTime = lastFrame = 0.0f;
-	while (!glfwWindowShouldClose(window))
+	if (cubeVAO == -1)
 	{
-		currentTime = float(glfwGetTime());
-		deltaTime = currentTime - lastFrame;
-		lastFrame = currentTime;
+		glGenVertexArrays(1, &cubeVAO);
+		glBindVertexArray(cubeVAO);
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glGenBuffers(1, &cubeVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
 
-		keysProcess();
-
-		DrawScene();
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, nullptr);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(6 * sizeof GLfloat));
+		glBindVertexArray(0);
 	}
 
-	deleteVAOandVBO();
-
-	glfwTerminate();
-
-	return 0;
-}
-
-// opengl
-int screenWidth, screenHeight;
-void glInit()
-{
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
-	glfwMakeContextCurrent(window);
-
-	glewExperimental = GL_TRUE;
-	glewInit();
-
-	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
-	glViewport(0, 0, screenWidth, screenHeight);
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
-	//glEnable(GL_PROGRAM_POINT_SIZE);
-
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
-
-GLuint cubeVAO, cubeVBO, lampVAO, lampVBO;
-void initVAOandVBO()
-{
-	// cube
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, nullptr, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof cubePosition, cubePosition);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof cubePosition, sizeof cubeNormal, cubeNormal);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof cubePosition + sizeof cubeNormal, sizeof cubeTexCoords, cubeTexCoords);
-
 	glBindVertexArray(cubeVAO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, (GLvoid*)sizeof cubePosition);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof GLfloat, (GLvoid*)(sizeof cubePosition + sizeof cubeNormal));
-
-	glBindVertexArray(0);
-
-	// lamp
-	glGenVertexArrays(1, &lampVAO);
-	glGenBuffers(1, &lampVBO);
-
-	glBindBuffer(GL_COPY_READ_BUFFER, cubeVBO);
-	glBindBuffer(GL_COPY_WRITE_BUFFER, lampVBO);
-
-	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, sizeof cubePosition);
-
-	glBindVertexArray(lampVAO);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof GLfloat, nullptr);
-
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 }
-
-void deleteVAOandVBO()
+void RenderPlane()
 {
-	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteVertexArrays(1, &lampVAO);
+	if (planeVAO == -1)
+	{
+		glBindVertexArray(planeVAO);
+		glGenVertexArrays(1, &planeVAO);
 
-	glDeleteBuffers(1, &lampVBO);
-	glDeleteBuffers(1, &cubeVBO);
+		glGenBuffers(1, &planeVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof groundVertices, groundVertices, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, nullptr);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof GLfloat, (GLvoid*)(6 * sizeof GLfloat));
+		glBindVertexArray(0);
+	}
+
+	glBindVertexArray(planeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+}
+void RenderQuad()
+{
+	if (quadVAO == -1)
+	{
+		glBindVertexArray(quadVAO);
+		glGenVertexArrays(1, &quadVAO);
+
+		glGenBuffers(1, &quadVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof quadVertices, quadVertices, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof GLfloat, nullptr);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof GLfloat, (GLvoid*)(3 * sizeof GLfloat));
+		glBindVertexArray(0);
+	}
+
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
 }
 
-Shader baseShader, lampShader;
-GLuint uboMatrices;
-void loadShader()
+void deleteObjects()
 {
-	baseShader = Shader("base.vert", "base.frag");
-	lampShader = Shader("lamp.vert", "lamp.frag");
+	if (planeVAO != -1)
+	{
+		glDeleteVertexArrays(1, &planeVAO);
+		glDeleteBuffers(1, &planeVBO);
+	}
+	if (cubeVAO != -1)
+	{
+		glDeleteVertexArrays(1, &cubeVAO);
+		glDeleteBuffers(1, &cubeVBO);
+	}
+	if (quadVAO != -1)
+	{
+		glDeleteVertexArrays(1, &quadVAO);
+		glDeleteBuffers(1, &quadVBO);
+	}
+}
+#pragma endregion 
 
-	glUniformBlockBinding(baseShader.Program, glGetUniformBlockIndex(baseShader.Program, "Matrices"), 0);
-	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);
+#pragma region Input Process
+bool firstMouse = true;
+GLfloat lastX = SCR_WIDTH / 2;
+GLfloat	lastY = SCR_HEIGHT / 2;
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = float(xpos);
+		lastY = float(ypos);
+		firstMouse = false;
+	}
 
-	// (proj/view) ubo
-	glGenBuffers(1, &uboMatrices);
+	GLfloat xoffset = float(xpos) - lastX;
+	GLfloat yoffset = lastY - float(ypos);
+	lastX = float(xpos);
+	lastY = float(ypos);
 
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof glm::mat4, nullptr, GL_STATIC_DRAW);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
+	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-GLuint boxTexture, specTexture;
-void loadResources()
+bool keys[1024];
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
-	boxTexture = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	std::cout << key << std::endl;
 
-	specTexture = TextureManager::Inst()->LoadTexture("box_specular.png", GL_BGRA, GL_RGBA, 0, 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (action == GLFW_PRESS)
+		keys[key] = true;
+	else if (action == GLFW_RELEASE)
+		keys[key] = false;
+
+	if (key == GLFW_KEY_L && action == GLFW_PRESS)
+		camera.FPS_Camera = !camera.FPS_Camera;
 }
 
-glm::mat4 model, view, proj;
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-void DrawScene()
+void keysProcess()
 {
-	proj = glm::mat4();
-	view = glm::mat4();
+	float cameraSpeed = 5.0f * deltaTime;
 
-	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof glm::mat4, glm::value_ptr(proj));
+	if (keys[GLFW_KEY_ESCAPE])
+		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	view = camera.GetViewMatrix();
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
+	if (keys[GLFW_KEY_W])
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (keys[GLFW_KEY_S])
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (keys[GLFW_KEY_A])
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (keys[GLFW_KEY_D])
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+	if (keys[GLFW_KEY_E])
+		camera.ProcessKeyboard(UP, deltaTime);
+	if (keys[GLFW_KEY_Q])
+		camera.ProcessKeyboard(DOWN, deltaTime);
+}
+#pragma endregion 
 
+void RenderScene(Shader& shader)
+{
+	glm::mat4 model = glm::mat4();
 
 	// cube
-	baseShader.Use();
-
 	model = glm::mat4();
 	model = glm::rotate(model, glm::radians(lastFrame) * 20, glm::vec3(1.0f, 0.2f, 0.5f));
 	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -453,13 +312,12 @@ void DrawScene()
 	glUniform1i(glGetUniformLocation(baseShader.Program, "material.specular"), 1);
 	glUniform1f(glGetUniformLocation(baseShader.Program, "material.shininess"), 64.0f);
 
-	glBindVertexArray(cubeVAO);
 	glActiveTexture(GL_TEXTURE0);
-	TextureManager::Inst()->BindTexture(boxTexture);
+	glBindTexture(GL_TEXTURE_2D, boxTexture);
 	glActiveTexture(GL_TEXTURE1);
-	TextureManager::Inst()->BindTexture(specTexture);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, specTexture);
+
+	RenderCube();
 
 	// lamp
 	lampShader.Use();
@@ -475,10 +333,8 @@ void DrawScene()
 
 	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 0.2f, 0.2f);
 	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-	glBindVertexArray(lampVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-
+	RenderCube();
+	
 	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
 	for (int i = 1; i < 4; ++i)
 	{
@@ -486,64 +342,104 @@ void DrawScene()
 		model = glm::translate(model, lampPosition[i]);
 		model = glm::scale(model, glm::vec3(0.2f));
 		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		RenderCube();
 	}
-	glBindVertexArray(0);
 }
 
-// input
-bool firstMouse = true;
-GLfloat lastX = WIDTH / 2;
-GLfloat	lastY = HEIGHT / 2;
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+int main(int argc, char* argv[])
 {
-	if (firstMouse)
+	// opengl init
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+
+	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
+	glfwMakeContextCurrent(window);
+
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	glewExperimental = GL_TRUE;
+	glewInit();
+
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+	// shader
+	baseShader = Shader("base.vert", "base.frag");
+	lampShader = Shader("lamp.vert", "lamp.frag");
+
+	baseShader.Use();
+	glUniform1i(glGetUniformLocation(baseShader.Program, "diffuse"), 0);
+	glUniform1i(glGetUniformLocation(baseShader.Program, "specular"), 1);
+
+	// (proj/view) ubo
+	glUniformBlockBinding(baseShader.Program, glGetUniformBlockIndex(baseShader.Program, "Matrices"), 0);
+	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);
+
+	GLuint uboMatrices;
+	glGenBuffers(1, &uboMatrices);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof glm::mat4, nullptr, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
+
+	// texture
+	boxTexture = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	specTexture = TextureManager::Inst()->LoadTexture("box_specular.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	currentTime = deltaTime = lastFrame = 0.0f;
+	// main loop
+	while (!glfwWindowShouldClose(window))
 	{
-		lastX = float(xpos);
-		lastY = float(ypos);
-		firstMouse = false;
+		currentTime = float(glfwGetTime());
+		deltaTime = currentTime - lastFrame;
+		lastFrame = currentTime;
+		
+		// clean screen
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// check and call events
+		glfwPollEvents();
+		keysProcess();
+
+		// update Projection/View matrix
+		glm::mat4 proj = glm::perspective(camera.Zoom, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.1f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof glm::mat4, glm::value_ptr(proj));
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
+
+		baseShader.Use();
+		RenderScene(baseShader);
+		
+		glfwSwapBuffers(window);
 	}
 
-	GLfloat xoffset = float(xpos) - lastX;
-	GLfloat yoffset = lastY - float(ypos);
-	lastX = float(xpos);
-	lastY = float(ypos);
+	deleteObjects();
+	glfwTerminate();
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
-}
-
-bool keys[1024];
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-	std::cout << key << std::endl;
-
-	if (action == GLFW_PRESS)
-		keys[key] = true;
-	else if (action == GLFW_RELEASE)
-		keys[key] = false;
-
-	if (key == GLFW_KEY_L && action == GLFW_PRESS)
-		camera.FPS_Camera = !camera.FPS_Camera;
-}
-
-void keysProcess()
-{
-	float cameraSpeed = 5.0f * deltaTime;
-
-	if (keys[GLFW_KEY_ESCAPE])
-		glfwSetWindowShouldClose(window, GL_TRUE);
-
-	if (keys[GLFW_KEY_W])
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (keys[GLFW_KEY_S])
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (keys[GLFW_KEY_A])
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (keys[GLFW_KEY_D])
-		camera.ProcessKeyboard(RIGHT, deltaTime);
-	if (keys[GLFW_KEY_E])
-		camera.ProcessKeyboard(UP, deltaTime);
-	if (keys[GLFW_KEY_Q])
-		camera.ProcessKeyboard(DOWN, deltaTime);
+	return 0;
 }

@@ -13,11 +13,16 @@ layout (std140) uniform Matrices
 };
 uniform mat4 model;
 
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
 out VERT_OUT
 {
 	vec3 FragPos;
-	mat3 TBN;
 	vec2 TexCoords;
+	vec3 TangentLightPos;
+	vec3 TangentViewPos;
+	vec3 TangentFragPos;
 } vert_out;
 
 void main()
@@ -25,9 +30,17 @@ void main()
     gl_Position = proj * view * model * vec4(position, 1.0);
 	vert_out.FragPos = vec3(model * vec4(position, 1.0f));
 	vert_out.TexCoords = texCoords;
-	vec3 T = normalize(vec3(model * vec4(tangent, 0.0f)));
-	vec3 B = normalize(vec3(model * vec4(bitangent, 0.0f)));
-	vec3 N = normalize(vec3(model * vec4(normal, 0.0f)));
-	// method 1: pass TBN to fragShader
-	vert_out.TBN = mat3(T, B, N);
+	
+	// method 2: transform all relevant world-space vectors then pass out
+	mat3 normalMatrix = transpose(inverse(mat3(model)));
+	vec3 T = normalize(normalMatrix * tangent);
+	vec3 B = normalize(normalMatrix * bitangent);
+	vec3 N = normalize(normalMatrix * normal);
+	
+	mat3 TBN = transpose(mat3(T, B, N));
+	vert_out.TangentLightPos = TBN * lightPos;
+	vert_out.TangentViewPos = TBN * viewPos;
+	vert_out.TangentFragPos = TBN * vert_out.FragPos;
+
+
 }

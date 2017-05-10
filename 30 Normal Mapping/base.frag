@@ -5,6 +5,7 @@ struct Material
 {
 	sampler2D diffuse;
 	sampler2D specular;
+	sampler2D normalMap;
 	float shininess;
 }; 
 
@@ -50,9 +51,9 @@ struct SpotLight
 in VERT_OUT
 {
 	vec3 FragPos;
-	vec3 Normal;
+	mat3 TBN;
 	vec2 TexCoords;
-} vert_in;
+} fs_in;
 
 out vec4 color;
 
@@ -68,15 +69,22 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
-	vec3 norm = normalize(vert_in.Normal);
-	vec3 viewDir = normalize(viewPos - vert_in.FragPos);
+/*	// whitout TBN
+	vec3 norm = texture(material.normalMap, fs_in.TexCoords).rgb;	// range [0, 1]
+	norm = normalize(norm * 2.0f - 1.0f);	// remapping to [-1, 1]
+*/
+	// method 1: pass TBN to fragShader
+	vec3 norm = texture(material.normalMap, fs_in.TexCoords).rgb;
+	norm = normalize(norm * 2.0f - 1.0f);
+	norm = normalize(fs_in.TBN * norm);
 
+	vec3 viewDir = normalize(viewPos - fs_in.FragPos);
 	vec3 result = CalcDirLight(dirLight, norm, viewDir);
 
 	for(int i = 0; i < NR_POINT_LIGHT; ++i)
-		result += CalcPointLight(pointLights[i], norm, vert_in.FragPos, viewDir);
+		result += CalcPointLight(pointLights[i], norm, fs_in.FragPos, viewDir);
 
-	result += CalcSpotLight(spotLight, norm, vert_in.FragPos, viewDir);
+	result += CalcSpotLight(spotLight, norm, fs_in.FragPos, viewDir);
 
 	color = vec4(result, 1.0f);
 }
@@ -90,9 +98,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	// 合并各个光照分量
-	vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, vert_in.TexCoords));
-	vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, vert_in.TexCoords));
-	vec3 specular = light.specular * spec * vec3(texture(material.specular, vert_in.TexCoords));
+	vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, fs_in.TexCoords));
+	vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, fs_in.TexCoords));
+	vec3 specular = light.specular * spec;// * vec3(texture(material.specular, fs_in.TexCoords));
 
 	return (ambient + diffuse + specular);
 }
@@ -109,9 +117,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 	// 将各个分量合并
-    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, vert_in.TexCoords));
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, vert_in.TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, vert_in.TexCoords));
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, fs_in.TexCoords));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, fs_in.TexCoords));
+    vec3 specular = light.specular * spec;// * vec3(texture(material.specular, fs_in.TexCoords));
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
@@ -127,9 +135,9 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
 
-	vec3 ambient = light.ambient * vec3(texture(material.diffuse, vert_in.TexCoords));
-	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, vert_in.TexCoords));	
-	vec3 specular = light.specular * spec * vec3(texture(material.specular, vert_in.TexCoords));
+	vec3 ambient = light.ambient * vec3(texture(material.diffuse, fs_in.TexCoords));
+	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, fs_in.TexCoords));	
+	vec3 specular = light.specular * spec;// * vec3(texture(material.specular, fs_in.TexCoords));
 	
 	float theta = dot(lightDir, normalize(-light.spotDir)); // 计算 光源到片段向量 与 光源正前方向量 形成夹角的cos值
 	float epsilon = light.cutOff - light.outerCutOff;

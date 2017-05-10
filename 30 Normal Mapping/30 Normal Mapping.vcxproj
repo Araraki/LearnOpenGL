@@ -19,15 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="box.png" />
-    <Image Include="box_specular.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="TextureManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="box.png" />
+    <Image Include="box_specular.png" />
+    <Image Include="brickwall.jpg" />
+    <Image Include="brickwall_normal.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="base.frag" />

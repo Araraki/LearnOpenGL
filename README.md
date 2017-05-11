@@ -77,3 +77,7 @@ http://www.cnblogs.com/bitzhuwei/p/glsl-syntax-highlight-in-visual-studio.html
 [OpenGL documentation]
 
 http://docs.gl/
+
+[ shader resources]
+
+http://thebookofshaders.com/

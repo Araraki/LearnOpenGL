@@ -1,4 +1,3 @@
-
 #version 330 core
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
@@ -31,7 +30,6 @@ void main()
 	vert_out.FragPos = vec3(model * vec4(position, 1.0f));
 	vert_out.TexCoords = texCoords;
 	
-	// method 2: transform all relevant world-space vectors then pass out
 	mat3 normalMatrix = transpose(inverse(mat3(model)));
 	vec3 T = normalize(normalMatrix * tangent);
 	vec3 B = normalize(normalMatrix * bitangent);

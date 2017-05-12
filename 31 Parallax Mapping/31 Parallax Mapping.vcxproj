@@ -147,8 +147,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Image Include="brickwall.png" />
-    <Image Include="brickwall_normal.png" />
+    <Image Include="bricks2.png" />
+    <Image Include="bricks2_disp.png" />
+    <Image Include="bricks2_normal.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

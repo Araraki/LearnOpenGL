@@ -15,7 +15,7 @@ const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 GLFWwindow* window;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-GLuint diffTexture, normTexture;
+GLuint diffTexture, normTexture, dpthTexture;
 GLfloat currentTime, deltaTime, lastFrame;
 Shader baseShader, lampShader;
 
@@ -262,22 +262,21 @@ void RenderScene(Shader& shader)
 {
 	glm::mat4 model = glm::mat4();
 
-	// cube
+	// quad
 	model = glm::mat4();
 	model = glm::rotate(model, glm::radians(currentTime * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 	glUniform3fv(glGetUniformLocation(baseShader.Program, "viewPos"), 1, &camera.Position[0]);
 	glUniform3fv(glGetUniformLocation(baseShader.Program, "lightPos"), 1, &lightPos[0]);
+	glUniform1f(glGetUniformLocation(baseShader.Program, "height_scale"), 0.04f);
 	
-	// shader.material
-	glUniform1f(glGetUniformLocation(baseShader.Program, "material.shininess"), 64.0f);
-
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffTexture);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, normTexture);
-
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, dpthTexture);
 	RenderQuad();
 
 	// lamp
@@ -317,6 +316,8 @@ int main(int argc, char* argv[])
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
 
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
 	// shader
 	baseShader = Shader("base.vert", "base.frag");
 	lampShader = Shader("lamp.vert", "lamp.frag");
@@ -324,6 +325,7 @@ int main(int argc, char* argv[])
 	baseShader.Use();
 	glUniform1i(glGetUniformLocation(baseShader.Program, "material.diffuse"), 0);
 	glUniform1i(glGetUniformLocation(baseShader.Program, "material.normalMap"), 1);
+	glUniform1i(glGetUniformLocation(baseShader.Program, "material.depthMap"), 2);
 
 	// (proj/view) ubo
 	glUniformBlockBinding(baseShader.Program, glGetUniformBlockIndex(baseShader.Program, "Matrices"), 0);
@@ -339,14 +341,21 @@ int main(int argc, char* argv[])
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
 
 	// texture
-	diffTexture = TextureManager::Inst()->LoadTexture("brickwall.png", GL_BGRA, GL_RGBA, 0, 0);
+	diffTexture = TextureManager::Inst()->LoadTexture("bricks2.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-	normTexture = TextureManager::Inst()->LoadTexture("brickwall_normal.png", GL_BGRA, GL_RGBA, 0, 0);
+	normTexture = TextureManager::Inst()->LoadTexture("bricks2_normal.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	dpthTexture = TextureManager::Inst()->LoadTexture("bricks2_disp.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -362,7 +371,6 @@ int main(int argc, char* argv[])
 		lastFrame = currentTime;
 		
 		// clean screen
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// check and call events

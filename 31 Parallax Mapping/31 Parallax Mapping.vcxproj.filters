@@ -13,12 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{c9a538ab-dad5-4ea1-b6fe-38037d0fedbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="brickwall.png">
+    <Image Include="bricks2_normal.png">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="brickwall_normal.png">
+    <Image Include="bricks2.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="bricks2_disp.png">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
@@ -40,10 +46,18 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lamp.frag" />
-    <None Include="lamp.vert" />
-    <None Include="base.frag" />
-    <None Include="base.vert" />
+    <None Include="base.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="base.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lamp.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lamp.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

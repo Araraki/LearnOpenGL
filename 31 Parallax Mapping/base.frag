@@ -24,14 +24,13 @@ uniform float height_scale;
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 {
-	const float minLayers = 8;
-	const float maxLayers = 32;
-	
+	const float minLayers = 10;
+	const float maxLayers = 20;	
 	float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0f, 0.0f, 1.0f), viewDir)));	
 
 	float layerDepth = 1.0 / numLayers;
 	float currentLayerDepth = 0.0f;
-	vec2 P = viewDir.xy * height_scale;
+	vec2 P = viewDir.xy / viewDir.z * height_scale;
 	vec2 deltaTexCoords = P / numLayers;
 
 	vec2 currentTexCoords = texCoords;
@@ -59,14 +58,14 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 void main()
 {
 	// base value
-	vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
 	vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-	vec3 halfwayDir = normalize(lightDir + viewDir);
-	// offset texture coordinates with ParallaxMapping
-	vec2 texCoords = ParallaxMapping(fs_in.TexCoords, viewDir);
-	if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
+	vec2 texCoords = ParallaxMapping(fs_in.TexCoords, viewDir);	// offset texture coordinates with ParallaxMapping
+	if(texCoords.x > 1.0 || texCoords.y > 1.0
+	|| texCoords.x < 0.0 || texCoords.y < 0.0)
 		discard;
+	vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
 	vec3 norm =  normalize(texture(material.normalMap, texCoords).rgb * 2.0f - 1.0f);
+	vec3 halfwayDir = normalize(lightDir + viewDir);
 	
 
 	// calculation

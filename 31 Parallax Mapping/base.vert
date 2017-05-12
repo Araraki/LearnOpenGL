@@ -26,16 +26,15 @@ out VERT_OUT
 
 void main()
 {
-    gl_Position = proj * view * model * vec4(position, 1.0);
+    gl_Position = proj * view * model * vec4(position, 1.0f);
 	vert_out.FragPos = vec3(model * vec4(position, 1.0f));
 	vert_out.TexCoords = texCoords;
 	
-	mat3 normalMatrix = transpose(inverse(mat3(model)));
-	vec3 T = normalize(normalMatrix * tangent);
-	vec3 B = normalize(normalMatrix * bitangent);
-	vec3 N = normalize(normalMatrix * normal);
-	
+	vec3 T = normalize(mat3(model) * tangent);
+	vec3 B = normalize(mat3(model) * bitangent);
+	vec3 N = normalize(mat3(model) * normal);	
 	mat3 TBN = transpose(mat3(T, B, N));
+
 	vert_out.TangentLightPos = TBN * lightPos;
 	vert_out.TangentViewPos = TBN * viewPos;
 	vert_out.TangentFragPos = TBN * vert_out.FragPos;

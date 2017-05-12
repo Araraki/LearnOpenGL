@@ -150,6 +150,9 @@
     <Image Include="bricks2.png" />
     <Image Include="bricks2_disp.png" />
     <Image Include="bricks2_normal.png" />
+    <Image Include="toy_box_disp.png" />
+    <Image Include="toy_box_normal.png" />
+    <Image Include="wood.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

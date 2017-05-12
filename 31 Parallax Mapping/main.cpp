@@ -269,7 +269,7 @@ void RenderScene(Shader& shader)
 
 	glUniform3fv(glGetUniformLocation(baseShader.Program, "viewPos"), 1, &camera.Position[0]);
 	glUniform3fv(glGetUniformLocation(baseShader.Program, "lightPos"), 1, &lightPos[0]);
-	glUniform1f(glGetUniformLocation(baseShader.Program, "height_scale"), 0.04f);
+	glUniform1f(glGetUniformLocation(baseShader.Program, "height_scale"), 0.10f);
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffTexture);
@@ -341,21 +341,21 @@ int main(int argc, char* argv[])
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
 
 	// texture
-	diffTexture = TextureManager::Inst()->LoadTexture("bricks2.png", GL_BGRA, GL_RGBA, 0, 0);
+	diffTexture = TextureManager::Inst()->LoadTexture("wood.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-	normTexture = TextureManager::Inst()->LoadTexture("bricks2_normal.png", GL_BGRA, GL_RGBA, 0, 0);
+	normTexture = TextureManager::Inst()->LoadTexture("toy_box_normal.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	dpthTexture = TextureManager::Inst()->LoadTexture("bricks2_disp.png", GL_BGRA, GL_RGBA, 0, 0);
+	dpthTexture = TextureManager::Inst()->LoadTexture("toy_box_disp.png", GL_BGRA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

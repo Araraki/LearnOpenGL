@@ -372,6 +372,8 @@ int main(int argc, char* argv[])
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
 	// shader
 	baseShader = Shader("base.vert", "base.frag");
 	lampShader = Shader("lamp.vert", "lamp.frag");
@@ -417,7 +419,6 @@ int main(int argc, char* argv[])
 		lastFrame = currentTime;
 		
 		// clean screen
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// check and call events

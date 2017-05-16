@@ -156,6 +156,8 @@
   <ItemGroup>
     <None Include="base.frag" />
     <None Include="base.vert" />
+    <None Include="hdr.frag" />
+    <None Include="hdr.vert" />
     <None Include="lamp.frag" />
     <None Include="lamp.vert" />
   </ItemGroup>
@@ -163,8 +165,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="box.png" />
-    <Image Include="box_specular.png" />
+    <Image Include="wood.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

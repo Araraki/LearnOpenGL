@@ -266,22 +266,20 @@ void RenderScene(Shader& shader)
 	// shader.pointLights
 	for (GLuint i = 0; i < lightPositions.size(); i++)
 	{
-		glUniform3fv(glGetUniformLocation(shader.Program, ("pointLights[" + std::to_string(i) + "].position").c_str()), 1, &lightPositions[i][0]);
-		glUniform3fv(glGetUniformLocation(shader.Program, ("pointLights[" + std::to_string(i) + "].color").c_str()), 1, &lightColors[i][0]);
-		glUniform3f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].ambient").c_str()), 0.05f, 0.05f, 0.05f);
-		glUniform3f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].diffuse").c_str()), 0.8f, 0.8f, 0.8f);
-		glUniform3f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].specular").c_str()), 1.0f, 1.0f, 1.0f);
-		glUniform1f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].constant").c_str()), 1.0f);
-		glUniform1f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].linear").c_str()), 0.09f);
+		glUniform3fv(glGetUniformLocation(shader.Program, ("pointLights[" + std::to_string(i) + "].position")	.c_str()), 1, &lightPositions[i][0]);
+		glUniform3fv(glGetUniformLocation(shader.Program, ("pointLights[" + std::to_string(i) + "].color")	.c_str()), 1, &lightColors[i][0]);
+		glUniform1f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].constant")	.c_str()), 1.0f);
+		glUniform1f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].linear")	.c_str()), 0.09f);
 		glUniform1f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].quadratic").c_str()), 0.032f);
 	}
 
 	// shader.material
-	glUniform1i(glGetUniformLocation(shader.Program, "material.diffuse"), 0);
-	glUniform1i(glGetUniformLocation(shader.Program, "material.specular"), 1);
-	glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 64.0f);
-	glUniform1i(glGetUniformLocation(shader.Program, "diffuse"), 0);
-
+	glUniform1i(glGetUniformLocation(shader.Program, "material.diffuseTex"), 0);
+	glUniform1f(glGetUniformLocation(shader.Program, "material.ambient"),	0.12f);
+	glUniform1f(glGetUniformLocation(shader.Program, "material.diffuse"),	0.8f);
+	glUniform1f(glGetUniformLocation(shader.Program, "material.specular"),	0.2f);
+	glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"),	16.0f);
+	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, woodTexture);
 

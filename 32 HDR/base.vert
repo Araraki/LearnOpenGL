@@ -9,6 +9,7 @@ layout (std140) uniform Matrices
 	mat4 view;
 };
 uniform mat4 model;
+uniform bool inverse_normals;
 
 out VERT_OUT
 {
@@ -19,8 +20,12 @@ out VERT_OUT
 
 void main()
 {
-    gl_Position = proj * view * model * vec4(position, 1.0);
 	vert_out.FragPos = vec3(model * vec4(position, 1.0f));
-	vert_out.Normal = mat3(transpose(inverse(model))) * normal;
 	vert_out.TexCoords = texCoords;
+
+	vec3 n = inverse_normals ? -normal : normal;
+	mat3 normalMatrix = transpose(inverse(mat3(model)));
+	vert_out.Normal = normalize(normalMatrix * n);
+
+    gl_Position = proj * view * model * vec4(position, 1.0);
 }

@@ -18,6 +18,7 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 GLuint woodTexture;
 GLfloat currentTime, deltaTime, lastFrame;
 Shader baseShader, lampShader, hdrShader;
+GLfloat exposure;
 
 #pragma region Resources
 std::vector<glm::vec3> lightPositions{
@@ -245,6 +246,10 @@ void keysProcess()
 		camera.ProcessKeyboard(UP, deltaTime);
 	if (keys[GLFW_KEY_Q])
 		camera.ProcessKeyboard(DOWN, deltaTime);
+	if (keys[GLFW_KEY_EQUAL])
+		exposure += 0.05f;
+	if (keys[GLFW_KEY_MINUS])
+		exposure -= 0.05f;
 }
 #pragma endregion 
 
@@ -262,23 +267,16 @@ void RenderScene(Shader& shader)
 
 	// shader.viewPos
 	glUniform3f(glGetUniformLocation(shader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-
+	glUniform1i(glGetUniformLocation(shader.Program, "inverse_normals"), true);
 	// shader.pointLights
 	for (GLuint i = 0; i < lightPositions.size(); i++)
 	{
-		glUniform3fv(glGetUniformLocation(shader.Program, ("pointLights[" + std::to_string(i) + "].position")	.c_str()), 1, &lightPositions[i][0]);
-		glUniform3fv(glGetUniformLocation(shader.Program, ("pointLights[" + std::to_string(i) + "].color")	.c_str()), 1, &lightColors[i][0]);
-		glUniform1f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].constant")	.c_str()), 1.0f);
-		glUniform1f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].linear")	.c_str()), 0.09f);
-		glUniform1f(glGetUniformLocation(shader.Program,  ("pointLights[" + std::to_string(i) + "].quadratic").c_str()), 0.032f);
+		glUniform3fv(glGetUniformLocation(shader.Program, ("lights[" + std::to_string(i) + "].position")	.c_str()), 1, &lightPositions[i][0]);
+		glUniform3fv(glGetUniformLocation(shader.Program, ("lights[" + std::to_string(i) + "].color")	.c_str()), 1, &lightColors[i][0]);
 	}
 
 	// shader.material
 	glUniform1i(glGetUniformLocation(shader.Program, "material.diffuseTex"), 0);
-	glUniform1f(glGetUniformLocation(shader.Program, "material.ambient"),	0.12f);
-	glUniform1f(glGetUniformLocation(shader.Program, "material.diffuse"),	0.8f);
-	glUniform1f(glGetUniformLocation(shader.Program, "material.specular"),	0.2f);
-	glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"),	16.0f);
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, woodTexture);
@@ -379,6 +377,7 @@ int main(int argc, char* argv[])
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	currentTime = deltaTime = lastFrame = 0.0f;
+	exposure = 1.0f;
 	// main loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -408,6 +407,7 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		hdrShader.Use();
 		glUniform1i(glGetUniformLocation(hdrShader.Program, "hdrBuffer"), 0);
+		glUniform1f(glGetUniformLocation(hdrShader.Program, "exposure"), exposure);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, colorBuffer);
 		RenderQuad();

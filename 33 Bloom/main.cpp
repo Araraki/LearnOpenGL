@@ -15,23 +15,23 @@ const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 GLFWwindow* window;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-GLuint woodTexture;
+GLuint woodTexture, boxTexture;
 GLfloat currentTime, deltaTime, lastFrame;
 Shader baseShader, lampShader, hdrShader;
 GLfloat exposure;
 
 #pragma region Resources
 std::vector<glm::vec3> lightPositions{
-	glm::vec3(0.0f, 0.0f, 49.5f),
-	glm::vec3(-1.4f, -1.9f, 9.0f),
-	glm::vec3(0.0f, -1.8f, 4.0f),
-	glm::vec3(0.8f, -1.7f, 6.0f)
+	glm::vec3( 0.0f,  0.5f,  1.5f),
+	glm::vec3(-4.0f,  0.5f, -3.0f),
+	glm::vec3( 3.0f,  0.5f,  1.0f),
+	glm::vec3(-0.8f,  2.4f, -1.0f)
 };
 std::vector<glm::vec3> lightColors{
-	glm::vec3(200.0f, 200.0f, 200.0f),
-	glm::vec3(0.1f,	0.0f, 0.0f),
-	glm::vec3(0.0f, 0.0f, 0.2f),
-	glm::vec3(0.0f, 0.1f, 0.0f)
+	glm::vec3(2.0f, 2.0f, 2.0f),
+	glm::vec3(1.5f,	0.0f, 0.0f),
+	glm::vec3(0.0f, 0.0f, 1.5f),
+	glm::vec3(0.0f, 1.5f, 0.0f)
 };
 #pragma endregion 
 
@@ -259,38 +259,67 @@ void RenderScene(Shader& shader)
 
 	glm::mat4 model = glm::mat4();
 
-	// cube
-	model = glm::mat4();
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 25.0f));
-	model = glm::scale(model, glm::vec3(5.0f, 5.0f, 55.0f));
-	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
 	// shader.viewPos
 	glUniform3f(glGetUniformLocation(shader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-	glUniform1i(glGetUniformLocation(shader.Program, "inverse_normals"), true);
+	glUniform1i(glGetUniformLocation(shader.Program, "inverse_normals"), false);
 	// shader.pointLights
 	for (GLuint i = 0; i < lightPositions.size(); i++)
 	{
 		glUniform3fv(glGetUniformLocation(shader.Program, ("lights[" + std::to_string(i) + "].position")	.c_str()), 1, &lightPositions[i][0]);
 		glUniform3fv(glGetUniformLocation(shader.Program, ("lights[" + std::to_string(i) + "].color")	.c_str()), 1, &lightColors[i][0]);
 	}
-
 	// shader.material
-	glUniform1i(glGetUniformLocation(shader.Program, "material.diffuseTex"), 0);
-	
+	glUniform1i(glGetUniformLocation(shader.Program, "material.diffuseTex"), 0);	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, woodTexture);
 
+	// - create one large cube that acts as the floor
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0));
+	model = glm::scale(model, glm::vec3(25.0f, 1.0f, 25.0f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
-
-	// lamp
+	// - then create multiple cubes as the scenery
+	glBindTexture(GL_TEXTURE_2D, boxTexture);
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-1.0f, -1.0f, 2.0));
+	model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+	model = glm::scale(model, glm::vec3(2.0));
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, 2.7f, 4.0));
+	model = glm::rotate(model, glm::radians(23.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+	model = glm::scale(model, glm::vec3(2.5));
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-2.0f, 1.0f, -3.0));
+	model = glm::rotate(model, glm::radians(124.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+	model = glm::scale(model, glm::vec3(2.0));
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
+	RenderCube();
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 0.0));
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	RenderCube();
+	// - finally show all the light sources as bright cubes
 	lampShader.Use();
 
 	for (GLuint i = 0; i < lightPositions.size(); ++i)
 	{
 		model = glm::mat4();
 		model = glm::translate(model, lightPositions[i]);
-		model = glm::scale(model, glm::vec3(0.2f));
+		model = glm::scale(model, glm::vec3(0.5f));
 		glUniform3fv(glGetUniformLocation(lampShader.Program, "lampColor"), 1, &lightColors[i][0]);
 		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		RenderCube();
@@ -349,6 +378,14 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	boxTexture = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
 
 	// fbo
 	GLuint hdrFBO;

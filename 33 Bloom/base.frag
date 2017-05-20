@@ -1,6 +1,9 @@
 #version 330 core
 #define NR_POINT_LIGHT 4
 
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
+
 struct Material
 {
 	sampler2D diffuseTex;
@@ -18,8 +21,6 @@ in VERT_OUT
 	vec3 Normal;
 	vec2 TexCoords;
 } fs_in;
-
-out vec4 color;
 
 uniform vec3 viewPos;
 uniform PointLight lights[NR_POINT_LIGHT];
@@ -51,5 +52,11 @@ void main()
 		lighting += result;
 	}
 
-	color = vec4(ambient + lighting, 1.0f);
+	FragColor = vec4(ambient + lighting, 1.0f);
+
+	float brightness = dot(FragColor.rgb, vec3(0.2126f, 0.7152f, 0.0722f));
+	if(brightness > 1.0f)
+		BrightColor = vec4(FragColor.rgb, 1.0f);
+	else
+		BrightColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 }

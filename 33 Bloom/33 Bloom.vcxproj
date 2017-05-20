@@ -161,6 +161,8 @@
   <ItemGroup>
     <None Include="base.frag" />
     <None Include="base.vert" />
+    <None Include="blur.frag" />
+    <None Include="blur.vert" />
     <None Include="hdr.frag" />
     <None Include="hdr.vert" />
     <None Include="lamp.frag" />

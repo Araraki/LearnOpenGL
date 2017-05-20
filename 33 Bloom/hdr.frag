@@ -5,6 +5,7 @@ out vec4 color;
 in vec2 TexCoords;
 
 uniform sampler2D hdrBuffer;
+uniform sampler2D brintBuffer;
 uniform float exposure;
 
 void main()

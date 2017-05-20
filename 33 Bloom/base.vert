@@ -22,10 +22,7 @@ void main()
 {
 	vert_out.FragPos = vec3(model * vec4(position, 1.0f));
 	vert_out.TexCoords = texCoords;
-
-	vec3 n = inverse_normals ? -normal : normal;
-	mat3 normalMatrix = transpose(inverse(mat3(model)));
-	vert_out.Normal = normalize(normalMatrix * n);
+	vert_out.Normal = normalize(transpose(inverse(mat3(model))) * normal);
 
     gl_Position = proj * view * model * vec4(position, 1.0);
 }

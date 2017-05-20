@@ -4,6 +4,13 @@ layout (location = 1) out vec4 BrightColor;
 
 uniform vec3 lampColor;
 
+in VERT_OUT
+{
+	vec3 FragPos;
+	vec3 Normal;
+	vec2 TexCoords;
+} fs_in;
+
 void main()
 {
 	FragColor = vec4(lampColor, 1.0f);

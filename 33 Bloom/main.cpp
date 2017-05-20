@@ -17,7 +17,7 @@ GLFWwindow* window;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 GLuint woodTexture, boxTexture;
 GLfloat currentTime, deltaTime, lastFrame;
-Shader baseShader, lampShader, hdrShader;
+Shader baseShader, lampShader, shaderBlur, hdrShader;
 GLfloat exposure;
 
 #pragma region Resources
@@ -354,7 +354,8 @@ int main(int argc, char* argv[])
 
 	// shader
 	baseShader = Shader("base.vert", "base.frag");
-	lampShader = Shader("lamp.vert", "lamp.frag");
+	lampShader = Shader("base.vert", "lamp.frag");
+	shaderBlur = Shader("blur.vert", "blur.frag");
 	hdrShader = Shader("hdr.vert", "hdr.frag");
 
 	// (proj/view) ubo
@@ -466,13 +467,34 @@ int main(int argc, char* argv[])
 			RenderScene(baseShader);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		// blur
+		GLboolean horizontal = true, first_iteration = true;
+		GLuint amount = 10;
+		shaderBlur.Use();
+		glUniform1i(glGetUniformLocation(shaderBlur.Program, "image"), 0);
+		for (GLuint i = 0; i < amount; i++)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+			glUniform1i(glGetUniformLocation(shaderBlur.Program, "horizontal"), horizontal);
+			glBindTexture(GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongColorbuffers[!horizontal]);
+			RenderQuad();
+			horizontal = !horizontal;
+			if (first_iteration)
+				first_iteration = false;
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// final
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		hdrShader.Use();
-		glUniform1i(glGetUniformLocation(hdrShader.Program, "hdrBuffer"), 0);
-		glUniform1i(glGetUniformLocation(hdrShader.Program, "brintBuffer"), 1);
+		glUniform1i(glGetUniformLocation(hdrShader.Program, "scene"), 0);
+		glUniform1i(glGetUniformLocation(hdrShader.Program, "bloomBlur"), 1);
+		glUniform1i(glGetUniformLocation(hdrShader.Program, "bloom"), true);
 		glUniform1f(glGetUniformLocation(hdrShader.Program, "exposure"), exposure);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, colorBuffers[1]);
+		glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
 		RenderQuad();
 
 		glfwSwapBuffers(window);

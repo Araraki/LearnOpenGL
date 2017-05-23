@@ -147,10 +147,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="baselighting.frag" />
-    <None Include="baselighting.vs" />
+    <None Include="base.frag" />
+    <None Include="base.vart" />
     <None Include="lamp.frag" />
-    <None Include="lamp.vs" />
+    <None Include="lamp.vart" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

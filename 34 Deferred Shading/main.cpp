@@ -14,6 +14,8 @@
 const GLuint SCR_WIDTH = 800, SCR_HEIGHT = 600;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Shader baseShader;
+Model ourModel;
 glm::mat4 model, view, proj;
 GLFWwindow* window;
 
@@ -199,6 +201,32 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 #pragma endregion 
 
+void DrawScene()
+{
+	baseShader.Use();
+		
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+
+	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+	glUniform3f(glGetUniformLocation(baseShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+
+	for (int i = 0; i < 2; i++)
+	{
+		glUniform3f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].position").c_str()), pointLightPositions[i].x, pointLightPositions[i].y, pointLightPositions[i].z);
+		glUniform3f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].ambient").c_str()), 0.05f, 0.05f, 0.05f);
+		glUniform3f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].diffuse").c_str()), 1.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].specular").c_str()), 1.0f, 1.0f, 1.0f);
+		glUniform1f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].constant").c_str()), 1.0f);
+		glUniform1f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].linear").c_str()), 0.009);
+		glUniform1f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].quadratic").c_str()), 0.0032);
+	}
+
+	ourModel.Draw(baseShader);
+}
+
 int main(int argc, char* argv[])
 {	
 	// opengl Init
@@ -221,55 +249,43 @@ int main(int argc, char* argv[])
 	glEnable(GL_DEPTH_TEST);
 
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+	glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
-	Shader lightingShader = Shader("baselighting.vs", "baselighting.frag");	
-	Model ourModel = Model("Nanosuit/nanosuit.obj");
+	// shader
+	baseShader = Shader("base.vart", "base.frag");	
+	ourModel = Model("Nanosuit/nanosuit.obj");
+
+	// ubo
+	glUniformBlockBinding(baseShader.Program, glGetUniformBlockIndex(baseShader.Program, "Matrices"), 0);
+	GLuint uboMatrices;
+	glGenBuffers(1, &uboMatrices);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof glm::mat4, nullptr, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	//glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboMatrices);
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
 
 	currentTime = deltaTime =lastFrame = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
-		// calculate deltaTime
 		currentTime = glfwGetTime();
 		deltaTime = currentTime - lastFrame;
 		lastFrame = currentTime;
+		
+		glfwPollEvents();
+		keysProcess();
 
-		// Start Draw
-		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		keysProcess();		
-
-		lightingShader.Use();
-		
-		view = glm::mat4();
-		proj = glm::mat4();
-		model = glm::mat4();
 		view = camera.GetViewMatrix();
 		proj = glm::perspective(camera.Zoom, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.1f, 100.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof glm::mat4, glm::value_ptr(proj));
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
 
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));		
-
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-
-		for (int i = 0; i < 2; i++)
-		{
-			glUniform3f(glGetUniformLocation(lightingShader.Program, ("pointLights[" + std::to_string(i) + "].position"	).c_str()), pointLightPositions[i].x, pointLightPositions[i].y, pointLightPositions[i].z);
-			glUniform3f(glGetUniformLocation(lightingShader.Program, ("pointLights[" + std::to_string(i) + "].ambient"	).c_str()), 0.05f, 0.05f, 0.05f);
-			glUniform3f(glGetUniformLocation(lightingShader.Program, ("pointLights[" + std::to_string(i) + "].diffuse"	).c_str()), 1.0f, 1.0f, 1.0f);
-			glUniform3f(glGetUniformLocation(lightingShader.Program, ("pointLights[" + std::to_string(i) + "].specular"	).c_str()), 1.0f, 1.0f, 1.0f);
-			glUniform1f(glGetUniformLocation(lightingShader.Program, ("pointLights[" + std::to_string(i) + "].constant"	).c_str()), 1.0f);
-			glUniform1f(glGetUniformLocation(lightingShader.Program, ("pointLights[" + std::to_string(i) + "].linear"	).c_str()), 0.009);
-			glUniform1f(glGetUniformLocation(lightingShader.Program, ("pointLights[" + std::to_string(i) + "].quadratic").c_str()), 0.0032);
-		}
-
-		ourModel.Draw(lightingShader);
+		DrawScene();
 
 		glfwSwapBuffers(window);
-		glfwPollEvents();
 	}
 
 	FreeImage_DeInitialise();

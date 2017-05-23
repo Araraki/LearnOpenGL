@@ -148,9 +148,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="base.frag" />
-    <None Include="base.vart" />
+    <None Include="base.vert" />
     <None Include="lamp.frag" />
-    <None Include="lamp.vart" />
+    <None Include="lamp.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

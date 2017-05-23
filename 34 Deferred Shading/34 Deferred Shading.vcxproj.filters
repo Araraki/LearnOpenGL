@@ -24,10 +24,10 @@
     <None Include="base.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="base.vart">
+    <None Include="base.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="lamp.vart">
+    <None Include="lamp.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

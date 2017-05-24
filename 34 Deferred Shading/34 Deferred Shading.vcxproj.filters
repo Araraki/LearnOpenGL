@@ -30,6 +30,18 @@
     <None Include="lamp.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="gbuffer.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="gbuffer.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lightingPass.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lightingPass.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

@@ -62,7 +62,7 @@ public:
 
 	void Draw(Shader shader)
 	{
-		GLuint diffuseNr = 1, specularNr = 1;
+		GLuint diffuseNr = 1, specularNr = 1, reflectionNr = 1;
 
 		for (GLuint i = 0; i < this->textures.size(); ++i)
 		{
@@ -71,10 +71,12 @@ public:
 			std::stringstream ss;
 			std::string number;
 			std::string name = this->textures[i].type;
-			if (name == "texture_diffuse") 
+			if (name == "texture_diffuse")
 				ss << diffuseNr++;
 			else if (name == "texture_specular")
 				ss << specularNr++;
+			else if (name == "texture_reflection")
+				ss << reflectionNr++;
 			number = ss.str();
 
 			glUniform1i(glGetUniformLocation(shader.Program, (name + number).c_str()), i);
@@ -115,7 +117,6 @@ private:
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Normal));
-
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, TexCoords));
 

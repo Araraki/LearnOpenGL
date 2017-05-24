@@ -12,9 +12,13 @@
 #include "TextureManager.h"
 
 const GLuint SCR_WIDTH = 800, SCR_HEIGHT = 600;
+const GLuint NR_LIGHTS = 2;
+const GLfloat constant = 1.0f;
+const GLfloat linear = 0.7;
+const GLfloat quadratic = 1.8;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-Shader baseShader;
+Shader lightingPassShader, lampShader, gbufferShader;
 Model ourModel;
 glm::mat4 model, view, proj;
 GLFWwindow* window;
@@ -22,10 +26,7 @@ GLFWwindow* window;
 GLfloat currentTime, deltaTime, lastFrame;
 
 #pragma region Resources
-glm::vec3 pointLightPositions[] = {
-	glm::vec3(2.3f, -1.6f, -3.0f),
-	glm::vec3(-1.7f, 0.9f, 1.0f)
-};
+std::vector<glm::vec3> lightPositions, lightColors, objectPositions;
 #pragma endregion 
 
 #pragma region RenderFigure
@@ -132,11 +133,16 @@ void RenderQuad()
 
 void deleteObjects()
 {
-
 	if (cubeVAO != -1)
 	{
 		glDeleteVertexArrays(1, &cubeVAO);
 		glDeleteBuffers(1, &cubeVBO);
+	}
+
+	if (quadVAO != -1)
+	{
+		glDeleteVertexArrays(1, &quadVAO);
+		glDeleteBuffers(1, &quadVBO);
 	}
 }
 #pragma endregion
@@ -147,7 +153,7 @@ bool keys[1024];
 
 void keysProcess()
 {
-	float cameraSpeed = 5.0f * deltaTime;
+	//float cameraSpeed = 5.0f * deltaTime;
 
 	if (keys[GLFW_KEY_ESCAPE])
 		glfwSetWindowShouldClose(window, GL_TRUE);
@@ -201,32 +207,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 #pragma endregion 
 
-void DrawScene()
-{
-	baseShader.Use();
-		
-	model = glm::mat4();
-	model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
-	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-
-	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-	glUniform3f(glGetUniformLocation(baseShader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-
-	for (int i = 0; i < 2; i++)
-	{
-		glUniform3f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].position").c_str()), pointLightPositions[i].x, pointLightPositions[i].y, pointLightPositions[i].z);
-		glUniform3f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].ambient").c_str()), 0.05f, 0.05f, 0.05f);
-		glUniform3f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].diffuse").c_str()), 1.0f, 1.0f, 1.0f);
-		glUniform3f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].specular").c_str()), 1.0f, 1.0f, 1.0f);
-		glUniform1f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].constant").c_str()), 1.0f);
-		glUniform1f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].linear").c_str()), 0.009);
-		glUniform1f(glGetUniformLocation(baseShader.Program, ("pointLights[" + std::to_string(i) + "].quadratic").c_str()), 0.0032);
-	}
-
-	ourModel.Draw(baseShader);
-}
-
 int main(int argc, char* argv[])
 {	
 	// opengl Init
@@ -251,12 +231,43 @@ int main(int argc, char* argv[])
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
+	// resources init
+	lightPositions = std::vector<glm::vec3>();
+	lightColors = std::vector<glm::vec3>();
+	objectPositions = std::vector<glm::vec3>();
+
+	srand(22);
+	for (GLuint i = 0; i < NR_LIGHTS; i++)
+	{
+		GLfloat xPos = ((rand() % 100) / 100)*6.0f - 3.0f;
+		GLfloat yPos = ((rand() % 100) / 100)*6.0f - 3.0f;
+		GLfloat zPos = ((rand() % 100) / 100)*6.0f - 3.0f;
+		lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
+		GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5f;
+		GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5f;
+		GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5f;
+		lightColors.push_back(glm::vec3(rColor, gColor, bColor));
+	}
+
+	for (int i = 0; i < 9; i++)
+		objectPositions.push_back(glm::vec3(3 * (i / 3) - 3.0f, -3.0, 3 * (i % 3) - 3.0));
+	
 	// shader
-	baseShader = Shader("base.vart", "base.frag");	
+	lampShader = Shader("lamp.vert", "lamp.frag");
+	gbufferShader = Shader("gbuffer.vert", "gbuffer.frag");
+	lightingPassShader = Shader("lightingPass.vert", "lightingPass.frag");
+	
+	lightingPassShader.Use();
+	glUniform1i(glGetUniformLocation(lightingPassShader.Program, "gPosition"), 0);
+	glUniform1i(glGetUniformLocation(lightingPassShader.Program, "gNormal"), 1);
+	glUniform1i(glGetUniformLocation(lightingPassShader.Program, "gColorSpec"), 2);
+
+	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);
+	glUniformBlockBinding(gbufferShader.Program, glGetUniformBlockIndex(gbufferShader.Program, "Matrices"), 0);
+	
 	ourModel = Model("Nanosuit/nanosuit.obj");
 
 	// ubo
-	glUniformBlockBinding(baseShader.Program, glGetUniformBlockIndex(baseShader.Program, "Matrices"), 0);
 	GLuint uboMatrices;
 	glGenBuffers(1, &uboMatrices);
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
@@ -264,6 +275,48 @@ int main(int argc, char* argv[])
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	//glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboMatrices);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
+
+	// G-Buffer
+	GLuint gBuffer;
+	glGenFramebuffers(1, &gBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+
+	GLuint gPosition, gNormal, gColorSpec;
+	glGenTextures(1, &gPosition);
+	glBindTexture(GL_TEXTURE_2D, gPosition);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+
+	glGenTextures(1, &gNormal);
+	glBindTexture(GL_TEXTURE_2D, gNormal);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+	
+	glGenTextures(1, &gColorSpec);
+	glBindTexture(GL_TEXTURE_2D, gColorSpec);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
+
+	GLuint attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
+	glDrawBuffers(3, attachments);
+	
+	// rbo
+	GLuint rboDepth;
+	glGenRenderbuffers(1, &rboDepth);
+	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer is not complete!" << std::endl;
+
+	glBindBuffer(GL_FRAMEBUFFER, 0);
 
 	currentTime = deltaTime =lastFrame = 0.0f;
 	while (!glfwWindowShouldClose(window))
@@ -274,16 +327,49 @@ int main(int argc, char* argv[])
 		
 		glfwPollEvents();
 		keysProcess();
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		
+		// update camera position
 		view = camera.GetViewMatrix();
 		proj = glm::perspective(camera.Zoom, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.1f, 100.0f);
 		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof glm::mat4, glm::value_ptr(proj));
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
 
-		DrawScene();
+		// draw into Gbuffer
+		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			gbufferShader.Use();
+			for (GLuint i = 0; i < objectPositions.size(); i++)
+			{
+				model = glm::mat4();
+				model = glm::translate(model, objectPositions[i]);
+				model = glm::scale(model, glm::vec3(0.25f));
+				glUniformMatrix4fv(glGetUniformLocation(gbufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+				ourModel.Draw(gbufferShader);
+			}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		
+		// lighting calculate
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			lightingPassShader.Use();
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, gPosition);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, gNormal);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, gColorSpec);
+		
+			for (int i = 0; i < NR_LIGHTS; i++)
+			{
+				glUniform3fv(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Position").c_str()), 1, &lightPositions[i][0]);
+				glUniform3fv(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Color").c_str()), 1, &lightColors[i][0]);
+				glUniform1f(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Linear").c_str()), linear);
+				glUniform1f(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Quadratic").c_str()), quadratic);
+			}
+			glUniform3fv(glGetUniformLocation(lightingPassShader.Program, "viewPos"), 1, &camera.Position[0]);
+
+		RenderQuad();
 
 		glfwSwapBuffers(window);
 	}

@@ -149,8 +149,12 @@
   <ItemGroup>
     <None Include="base.frag" />
     <None Include="base.vert" />
+    <None Include="gbuffer.frag" />
+    <None Include="gbuffer.vert" />
     <None Include="lamp.frag" />
     <None Include="lamp.vert" />
+    <None Include="lightingPass.frag" />
+    <None Include="lightingPass.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

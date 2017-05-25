@@ -12,12 +12,12 @@
 #include "TextureManager.h"
 
 const GLuint SCR_WIDTH = 800, SCR_HEIGHT = 600;
-const GLuint NR_LIGHTS = 2;
+const GLuint NR_LIGHTS = 16;
 const GLfloat constant = 1.0f;
 const GLfloat linear = 0.7;
 const GLfloat quadratic = 1.8;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 Shader lightingPassShader, lampShader, gbufferShader;
 Model ourModel;
 glm::mat4 model, view, proj;
@@ -239,9 +239,9 @@ int main(int argc, char* argv[])
 	srand(22);
 	for (GLuint i = 0; i < NR_LIGHTS; i++)
 	{
-		GLfloat xPos = ((rand() % 100) / 100)*6.0f - 3.0f;
-		GLfloat yPos = ((rand() % 100) / 100)*6.0f - 3.0f;
-		GLfloat zPos = ((rand() % 100) / 100)*6.0f - 3.0f;
+		GLfloat xPos = ((rand() % 100) / 100.0f)*6.0f - 3.0f;
+		GLfloat yPos = ((rand() % 100) / 100.0f)*6.0f - 4.0f;
+		GLfloat zPos = ((rand() % 100) / 100.0f)*6.0f - 3.0f;
 		lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
 		GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5f;
 		GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5f;
@@ -256,15 +256,15 @@ int main(int argc, char* argv[])
 	lampShader = Shader("lamp.vert", "lamp.frag");
 	gbufferShader = Shader("gbuffer.vert", "gbuffer.frag");
 	lightingPassShader = Shader("lightingPass.vert", "lightingPass.frag");
+
+	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);
+	glUniformBlockBinding(gbufferShader.Program, glGetUniformBlockIndex(gbufferShader.Program, "Matrices"), 0);
 	
 	lightingPassShader.Use();
 	glUniform1i(glGetUniformLocation(lightingPassShader.Program, "gPosition"), 0);
 	glUniform1i(glGetUniformLocation(lightingPassShader.Program, "gNormal"), 1);
 	glUniform1i(glGetUniformLocation(lightingPassShader.Program, "gColorSpec"), 2);
 
-	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);
-	glUniformBlockBinding(gbufferShader.Program, glGetUniformBlockIndex(gbufferShader.Program, "Matrices"), 0);
-	
 	ourModel = Model("Nanosuit/nanosuit.obj");
 
 	// ubo
@@ -368,8 +368,25 @@ int main(int argc, char* argv[])
 				glUniform1f(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Quadratic").c_str()), quadratic);
 			}
 			glUniform3fv(glGetUniformLocation(lightingPassShader.Program, "viewPos"), 1, &camera.Position[0]);
-
 		RenderQuad();
+
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// draw lamp
+		lampShader.Use();
+		for (int i = 0; i < NR_LIGHTS; i++)
+		{
+			model = glm::mat4();
+			model = glm::translate(model, lightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.2f));
+			glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			glUniform3fv(glGetUniformLocation(lampShader.Program, "lampColor"), 1, &lightColors[i][0]);
+			RenderCube();
+		}
 
 		glfwSwapBuffers(window);
 	}

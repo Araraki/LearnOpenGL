@@ -15,7 +15,7 @@ struct Light
 	float quadratic;
 };
 
-const int NR_LIGHTS = 2;
+const int NR_LIGHTS = 16;
 uniform Light lights[NR_LIGHTS];
 uniform vec3 viewPos;
 
@@ -26,7 +26,7 @@ void main()
 	vec3 Color = texture(gColorSpec, TexCoords).rgb;
 	float Specular = texture(gColorSpec, TexCoords).a;
 
-	vec3 lighting = Color * 1.0f;
+	vec3 lighting = Color * 0.1f;
 	vec3 viewDir = normalize(viewPos - FragPos);
 	for(int i = 0; i < NR_LIGHTS; ++i)
 	{

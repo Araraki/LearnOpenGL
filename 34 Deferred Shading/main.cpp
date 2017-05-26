@@ -362,10 +362,13 @@ int main(int argc, char* argv[])
 		
 			for (int i = 0; i < NR_LIGHTS; i++)
 			{
+				GLfloat lightMax = std::fmaxf(std::fmaxf(lightColors[i].r, lightColors[i].g), lightColors[i].b);
+				GLfloat radius = -linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f)* lightMax));
 				glUniform3fv(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Position").c_str()), 1, &lightPositions[i][0]);
 				glUniform3fv(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Color").c_str()), 1, &lightColors[i][0]);
 				glUniform1f(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Linear").c_str()), linear);
 				glUniform1f(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Quadratic").c_str()), quadratic);
+				glUniform1f(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].radius").c_str()), radius);
 			}
 			glUniform3fv(glGetUniformLocation(lightingPassShader.Program, "viewPos"), 1, &camera.Position[0]);
 		RenderQuad();

@@ -26,7 +26,7 @@ GLFWwindow* window;
 GLfloat currentTime, deltaTime, lastFrame;
 
 #pragma region Resources
-std::vector<glm::vec3> lightPositions, lightColors, objectPositions;
+std::vector<glm::vec3> lightPositions, lightColors;
 #pragma endregion 
 
 #pragma region RenderFigure
@@ -234,9 +234,8 @@ int main(int argc, char* argv[])
 	// resources init
 	lightPositions = std::vector<glm::vec3>();
 	lightColors = std::vector<glm::vec3>();
-	objectPositions = std::vector<glm::vec3>();
 
-	srand(22);
+	srand(12);
 	for (GLuint i = 0; i < NR_LIGHTS; i++)
 	{
 		GLfloat xPos = ((rand() % 100) / 100.0f)*6.0f - 3.0f;
@@ -249,9 +248,6 @@ int main(int argc, char* argv[])
 		lightColors.push_back(glm::vec3(rColor, gColor, bColor));
 	}
 
-	for (int i = 0; i < 9; i++)
-		objectPositions.push_back(glm::vec3(3 * (i / 3) - 3.0f, -3.0, 3 * (i % 3) - 3.0));
-	
 	// shader
 	lampShader = Shader("lamp.vert", "lamp.frag");
 	gbufferShader = Shader("gbuffer.vert", "gbuffer.frag");
@@ -330,7 +326,7 @@ int main(int argc, char* argv[])
 		
 		// update camera position
 		view = camera.GetViewMatrix();
-		proj = glm::perspective(camera.Zoom, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.1f, 100.0f);
+		proj = glm::perspective(camera.Zoom, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.1f, 50.0f);
 		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof glm::mat4, glm::value_ptr(proj));
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof glm::mat4, sizeof glm::mat4, glm::value_ptr(view));
@@ -339,14 +335,18 @@ int main(int argc, char* argv[])
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			gbufferShader.Use();
-			for (GLuint i = 0; i < objectPositions.size(); i++)
-			{
-				model = glm::mat4();
-				model = glm::translate(model, objectPositions[i]);
-				model = glm::scale(model, glm::vec3(0.25f));
-				glUniformMatrix4fv(glGetUniformLocation(gbufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-				ourModel.Draw(gbufferShader);
-			}
+			model = glm::mat4();
+			model = glm::translate(model, glm::vec3(0.0f, -1.0f, -0.0f));
+			model = glm::scale(model, glm::vec3(20.0f, 1.0f, 20.0f));
+			glUniformMatrix4fv(glGetUniformLocation(gbufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			RenderCube();
+
+			model = glm::mat4();
+			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 5.0f));
+			model = glm::rotate(model, 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(0.25f));
+			glUniformMatrix4fv(glGetUniformLocation(gbufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			ourModel.Draw(gbufferShader);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		
 		// lighting calculate

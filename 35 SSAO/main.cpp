@@ -12,7 +12,7 @@
 #include "TextureManager.h"
 
 const GLuint SCR_WIDTH = 800, SCR_HEIGHT = 600;
-const GLuint NR_LIGHTS = 16;
+const GLuint NR_LIGHTS = 1;
 const GLfloat constant = 1.0f;
 const GLfloat linear = 0.7;
 const GLfloat quadratic = 1.8;
@@ -26,7 +26,8 @@ GLFWwindow* window;
 GLfloat currentTime, deltaTime, lastFrame;
 
 #pragma region Resources
-std::vector<glm::vec3> lightPositions, lightColors;
+glm::vec3 lightPosition = glm::vec3(2.0f, 4.0f, -2.0f);
+glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 #pragma endregion 
 
 #pragma region RenderFigure
@@ -231,23 +232,6 @@ int main(int argc, char* argv[])
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
-	// resources init
-	lightPositions = std::vector<glm::vec3>();
-	lightColors = std::vector<glm::vec3>();
-
-	srand(12);
-	for (GLuint i = 0; i < NR_LIGHTS; i++)
-	{
-		GLfloat xPos = ((rand() % 100) / 100.0f)*6.0f - 3.0f;
-		GLfloat yPos = ((rand() % 100) / 100.0f)*6.0f - 4.0f;
-		GLfloat zPos = ((rand() % 100) / 100.0f)*6.0f - 3.0f;
-		lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
-		GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5f;
-		GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5f;
-		GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5f;
-		lightColors.push_back(glm::vec3(rColor, gColor, bColor));
-	}
-
 	// shader
 	lampShader = Shader("lamp.vert", "lamp.frag");
 	gbufferShader = Shader("gbuffer.vert", "gbuffer.frag");
@@ -360,16 +344,14 @@ int main(int argc, char* argv[])
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, gColorSpec);
 		
-			for (int i = 0; i < NR_LIGHTS; i++)
-			{
-				GLfloat lightMax = std::fmaxf(std::fmaxf(lightColors[i].r, lightColors[i].g), lightColors[i].b);
-				GLfloat radius = -linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f)* lightMax));
-				glUniform3fv(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Position").c_str()), 1, &lightPositions[i][0]);
-				glUniform3fv(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Color").c_str()), 1, &lightColors[i][0]);
-				glUniform1f(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Linear").c_str()), linear);
-				glUniform1f(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].Quadratic").c_str()), quadratic);
-				glUniform1f(glGetUniformLocation(lightingPassShader.Program, ("lights[" + std::to_string(i) + "].radius").c_str()), radius);
-			}
+			GLfloat lightMax = std::fmaxf(std::fmaxf(lightColor.r, lightColor.g), lightColor.b);
+			GLfloat radius = -linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f)* lightMax));
+			glUniform3fv(glGetUniformLocation(lightingPassShader.Program, "lights[0].Position"), 1, &lightPosition[0]);
+			glUniform3fv(glGetUniformLocation(lightingPassShader.Program, "lights[0.Color"), 1, &lightColor[0]);
+			glUniform1f(glGetUniformLocation(lightingPassShader.Program, "lights[0].Linear"), linear);
+			glUniform1f(glGetUniformLocation(lightingPassShader.Program, "lights[0].Quadratic"), quadratic);
+			glUniform1f(glGetUniformLocation(lightingPassShader.Program, "lights[0].radius"), radius);
+
 			glUniform3fv(glGetUniformLocation(lightingPassShader.Program, "viewPos"), 1, &camera.Position[0]);
 		RenderQuad();
 
@@ -381,15 +363,12 @@ int main(int argc, char* argv[])
 
 		// draw lamp
 		lampShader.Use();
-		for (int i = 0; i < NR_LIGHTS; i++)
-		{
-			model = glm::mat4();
-			model = glm::translate(model, lightPositions[i]);
-			model = glm::scale(model, glm::vec3(0.2f));
-			glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			glUniform3fv(glGetUniformLocation(lampShader.Program, "lampColor"), 1, &lightColors[i][0]);
-			RenderCube();
-		}
+		model = glm::mat4();
+		model = glm::translate(model, lightPosition);
+		model = glm::scale(model, glm::vec3(0.2f));
+		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(glGetUniformLocation(lampShader.Program, "lampColor"), 1, &lightColor[0]);
+		RenderCube();
 
 		glfwSwapBuffers(window);
 	}

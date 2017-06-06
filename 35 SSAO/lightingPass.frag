@@ -17,7 +17,7 @@ struct Light
 	float radius;
 };
 
-const int NR_LIGHTS = 16;
+const int NR_LIGHTS = 1;
 const float constant = 1.0f;
 uniform Light lights[NR_LIGHTS];
 uniform vec3 viewPos;

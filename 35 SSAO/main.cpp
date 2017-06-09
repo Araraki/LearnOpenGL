@@ -1,4 +1,6 @@
 #define GLEW_STATIC
+#include <random>
+
 #include <gl/glew.h>
 #include <glfw/glfw3.h>
 
@@ -11,6 +13,7 @@
 #include "Model.h"
 #include "TextureManager.h"
 
+
 const GLuint SCR_WIDTH = 800, SCR_HEIGHT = 600;
 const GLuint NR_LIGHTS = 1;
 const GLfloat constant = 1.0f;
@@ -18,7 +21,7 @@ const GLfloat linear = 0.7;
 const GLfloat quadratic = 1.8;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
-Shader lightingPassShader, lampShader, gbufferShader;
+Shader ssaoLightingPassShader, lampShader, gbufferShader;
 Model ourModel;
 glm::mat4 model, view, proj;
 GLFWwindow* window;
@@ -28,6 +31,10 @@ GLfloat currentTime, deltaTime, lastFrame;
 #pragma region Resources
 glm::vec3 lightPosition = glm::vec3(2.0f, 4.0f, -2.0f);
 glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+inline GLfloat lerp(GLfloat a, GLfloat b, GLfloat f)
+{
+	return a + f*(b - a);
+}
 #pragma endregion 
 
 #pragma region RenderFigure
@@ -235,17 +242,46 @@ int main(int argc, char* argv[])
 	// shader
 	lampShader = Shader("lamp.vert", "lamp.frag");
 	gbufferShader = Shader("gbuffer.vert", "gbuffer.frag");
-	lightingPassShader = Shader("lightingPass.vert", "lightingPass.frag");
+	ssaoLightingPassShader = Shader("ssaoLightingPass.vert", "ssaoLightingPass.frag");
 
 	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);
 	glUniformBlockBinding(gbufferShader.Program, glGetUniformBlockIndex(gbufferShader.Program, "Matrices"), 0);
 	
-	lightingPassShader.Use();
-	glUniform1i(glGetUniformLocation(lightingPassShader.Program, "gPosition"), 0);
-	glUniform1i(glGetUniformLocation(lightingPassShader.Program, "gNormal"), 1);
-	glUniform1i(glGetUniformLocation(lightingPassShader.Program, "gColorSpec"), 2);
+	ssaoLightingPassShader.Use();
+	glUniform1i(glGetUniformLocation(ssaoLightingPassShader.Program, "gPositionDepth"), 0);
+	glUniform1i(glGetUniformLocation(ssaoLightingPassShader.Program, "gNormal"), 1);
+	glUniform1i(glGetUniformLocation(ssaoLightingPassShader.Program, "gColorSpec"), 2);
 
 	ourModel = Model("Nanosuit/nanosuit.obj");
+
+	// SSAO Noise
+	std::uniform_real_distribution<GLfloat> randomFloats(0.0f, 1.0f);
+	std::default_random_engine generator;
+	std::vector<glm::vec3> ssaoKernel;
+	for (GLuint i = 0; i < 64; i++)
+	{
+		glm::vec3 sample(
+			randomFloats(generator)*2.0f - 1.0f,
+			randomFloats(generator)*2.0f - 1.0f,
+			randomFloats(generator)
+		);
+		sample = glm::normalize(sample);
+		sample *= randomFloats(generator);
+		GLfloat scale = GLfloat(i) / 64.0f;
+		scale = lerp(0.1f, 1.0f, scale*scale);
+		sample *= scale;
+		ssaoKernel.push_back(sample);
+	}
+	std::vector<glm::vec3> ssaoNoise;
+	for (GLuint i = 0; i < 16; i++)
+	{
+		glm::vec3 noise(
+			randomFloats(generator) * 2.0f - 1.0f,
+			randomFloats(generator) * 2.0f - 1.0f,
+			0.0f
+		);
+		ssaoNoise.push_back(noise);
+	}
 
 	// ubo
 	GLuint uboMatrices;
@@ -261,13 +297,15 @@ int main(int argc, char* argv[])
 	glGenFramebuffers(1, &gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 
-	GLuint gPosition, gNormal, gColorSpec;
-	glGenTextures(1, &gPosition);
-	glBindTexture(GL_TEXTURE_2D, gPosition);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, nullptr);
+	GLuint gPositionDepth, gNormal, noiseTexture;
+	glGenTextures(1, &gPositionDepth);
+	glBindTexture(GL_TEXTURE_2D, gPositionDepth);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPositionDepth, 0);
 
 	glGenTextures(1, &gNormal);
 	glBindTexture(GL_TEXTURE_2D, gNormal);
@@ -275,13 +313,14 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
-	
-	glGenTextures(1, &gColorSpec);
-	glBindTexture(GL_TEXTURE_2D, gColorSpec);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, nullptr);
+
+	glGenTextures(1, &noiseTexture);
+	glBindTexture(GL_TEXTURE_2D, noiseTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
 
 	GLuint attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
 	glDrawBuffers(3, attachments);
@@ -297,6 +336,19 @@ int main(int argc, char* argv[])
 		std::cout << "Framebuffer is not complete!" << std::endl;
 
 	glBindBuffer(GL_FRAMEBUFFER, 0);
+
+	// SSAO FBO
+	GLuint ssaoFBO;
+	glGenFramebuffers(1, &ssaoFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+	GLuint ssaoColorBuffer;
+
+	glGenTextures(1, &ssaoColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
 
 	currentTime = deltaTime =lastFrame = 0.0f;
 	while (!glfwWindowShouldClose(window))
@@ -327,33 +379,35 @@ int main(int argc, char* argv[])
 
 			model = glm::mat4();
 			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 5.0f));
-			model = glm::rotate(model, 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			model = glm::scale(model, glm::vec3(0.25f));
 			glUniformMatrix4fv(glGetUniformLocation(gbufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			ourModel.Draw(gbufferShader);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		
-		// lighting calculate
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			lightingPassShader.Use();
+		// use Gbuffer to render SSAO Texture
+		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			ssaoLightingPassShader.Use();
 
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, gPosition);
+			glBindTexture(GL_TEXTURE_2D, gPositionDepth);
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, gNormal);
 			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, gColorSpec);
+			glBindTexture(GL_TEXTURE_2D, noiseTexture);
 		
 			GLfloat lightMax = std::fmaxf(std::fmaxf(lightColor.r, lightColor.g), lightColor.b);
 			GLfloat radius = -linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f)* lightMax));
-			glUniform3fv(glGetUniformLocation(lightingPassShader.Program, "lights[0].Position"), 1, &lightPosition[0]);
-			glUniform3fv(glGetUniformLocation(lightingPassShader.Program, "lights[0.Color"), 1, &lightColor[0]);
-			glUniform1f(glGetUniformLocation(lightingPassShader.Program, "lights[0].Linear"), linear);
-			glUniform1f(glGetUniformLocation(lightingPassShader.Program, "lights[0].Quadratic"), quadratic);
-			glUniform1f(glGetUniformLocation(lightingPassShader.Program, "lights[0].radius"), radius);
+			glUniform3fv(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].Position"), 1, &lightPosition[0]);
+			glUniform3fv(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].Color"), 1, &lightColor[0]);
+			glUniform1f(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].Linear"), linear);
+			glUniform1f(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].Quadratic"), quadratic);
+			glUniform1f(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].radius"), radius);
 
-			glUniform3fv(glGetUniformLocation(lightingPassShader.Program, "viewPos"), 1, &camera.Position[0]);
-		RenderQuad();
+			glUniform3fv(glGetUniformLocation(ssaoLightingPassShader.Program, "viewPos"), 1, &camera.Position[0]);
+			RenderQuad();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

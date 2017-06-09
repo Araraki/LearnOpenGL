@@ -151,8 +151,8 @@
     <None Include="gbuffer.vert" />
     <None Include="lamp.frag" />
     <None Include="lamp.vert" />
-    <None Include="lightingPass.frag" />
-    <None Include="lightingPass.vert" />
+    <None Include="ssaoLightingPass.frag" />
+    <None Include="ssaoLightingPass.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

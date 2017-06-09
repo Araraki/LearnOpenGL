@@ -30,10 +30,10 @@
     <None Include="lamp.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="lightingPass.frag">
+    <None Include="ssaoLightingPass.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="lightingPass.vert">
+    <None Include="ssaoLightingPass.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

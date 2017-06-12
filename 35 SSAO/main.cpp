@@ -21,7 +21,7 @@ const GLfloat linear = 0.7;
 const GLfloat quadratic = 1.8;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
-Shader ssaoLightingPassShader, lampShader, gbufferShader;
+Shader gbufferShader, ssaoShader, lightingShader, lampShader;
 Model ourModel;
 glm::mat4 model, view, proj;
 GLFWwindow* window;
@@ -240,17 +240,18 @@ int main(int argc, char* argv[])
 	glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
 	// shader
-	lampShader = Shader("lamp.vert", "lamp.frag");
 	gbufferShader = Shader("gbuffer.vert", "gbuffer.frag");
-	ssaoLightingPassShader = Shader("ssaoLightingPass.vert", "ssaoLightingPass.frag");
+	ssaoShader = Shader("ssaoPass.vert", "ssaoPass.frag");
+	lightingShader = Shader("lighting.vert", "lighting.frag");
+	lampShader = Shader("lamp.vert", "lamp.frag");
 
 	glUniformBlockBinding(lampShader.Program, glGetUniformBlockIndex(lampShader.Program, "Matrices"), 0);
 	glUniformBlockBinding(gbufferShader.Program, glGetUniformBlockIndex(gbufferShader.Program, "Matrices"), 0);
 	
-	ssaoLightingPassShader.Use();
-	glUniform1i(glGetUniformLocation(ssaoLightingPassShader.Program, "gPositionDepth"), 0);
-	glUniform1i(glGetUniformLocation(ssaoLightingPassShader.Program, "gNormal"), 1);
-	glUniform1i(glGetUniformLocation(ssaoLightingPassShader.Program, "gColorSpec"), 2);
+	ssaoShader.Use();
+	glUniform1i(glGetUniformLocation(ssaoShader.Program, "gPositionDepth"), 0);
+	glUniform1i(glGetUniformLocation(ssaoShader.Program, "gNormal"), 1);
+	glUniform1i(glGetUniformLocation(ssaoShader.Program, "gColorSpec"), 2);
 
 	ourModel = Model("Nanosuit/nanosuit.obj");
 
@@ -292,7 +293,7 @@ int main(int argc, char* argv[])
 	//glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboMatrices);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof glm::mat4);
 
-	// G-Buffer
+	// G-Buffer (FBO
 	GLuint gBuffer;
 	glGenFramebuffers(1, &gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -321,23 +322,12 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, noiseTexture, 0);
 
 	GLuint attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
 	glDrawBuffers(3, attachments);
 	
-	// rbo
-	GLuint rboDepth;
-	glGenRenderbuffers(1, &rboDepth);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
-
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Framebuffer is not complete!" << std::endl;
-
-	glBindBuffer(GL_FRAMEBUFFER, 0);
-
-	// SSAO FBO
+	// SSAO (FBO
 	GLuint ssaoFBO;
 	glGenFramebuffers(1, &ssaoFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
@@ -349,6 +339,18 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+
+	// rbo
+	GLuint rboDepth;
+	glGenRenderbuffers(1, &rboDepth);
+	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer is not complete!" << std::endl;
+
+	glBindBuffer(GL_FRAMEBUFFER, 0);
 
 	currentTime = deltaTime =lastFrame = 0.0f;
 	while (!glfwWindowShouldClose(window))
@@ -388,7 +390,7 @@ int main(int argc, char* argv[])
 		// use Gbuffer to render SSAO Texture
 		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			ssaoLightingPassShader.Use();
+			ssaoShader.Use();
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, gPositionDepth);
@@ -399,13 +401,13 @@ int main(int argc, char* argv[])
 		
 			GLfloat lightMax = std::fmaxf(std::fmaxf(lightColor.r, lightColor.g), lightColor.b);
 			GLfloat radius = -linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f)* lightMax));
-			glUniform3fv(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].Position"), 1, &lightPosition[0]);
-			glUniform3fv(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].Color"), 1, &lightColor[0]);
-			glUniform1f(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].Linear"), linear);
-			glUniform1f(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].Quadratic"), quadratic);
-			glUniform1f(glGetUniformLocation(ssaoLightingPassShader.Program, "lights[0].radius"), radius);
+			glUniform3fv(glGetUniformLocation(ssaoShader.Program, "lights[0].Position"), 1, &lightPosition[0]);
+			glUniform3fv(glGetUniformLocation(ssaoShader.Program, "lights[0].Color"), 1, &lightColor[0]);
+			glUniform1f(glGetUniformLocation(ssaoShader.Program, "lights[0].Linear"), linear);
+			glUniform1f(glGetUniformLocation(ssaoShader.Program, "lights[0].Quadratic"), quadratic);
+			glUniform1f(glGetUniformLocation(ssaoShader.Program, "lights[0].radius"), radius);
 
-			glUniform3fv(glGetUniformLocation(ssaoLightingPassShader.Program, "viewPos"), 1, &camera.Position[0]);
+			glUniform3fv(glGetUniformLocation(ssaoShader.Program, "viewPos"), 1, &camera.Position[0]);
 			RenderQuad();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

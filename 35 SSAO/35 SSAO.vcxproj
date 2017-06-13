@@ -153,8 +153,8 @@
     <None Include="lamp.vert" />
     <None Include="lighting.frag" />
     <None Include="lighting.vert" />
-    <None Include="ssaoPass.frag" />
-    <None Include="ssaoPass.vert" />
+    <None Include="ssao.frag" />
+    <None Include="ssao.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

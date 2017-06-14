@@ -1,26 +1,25 @@
 #version 330 core
-out vec4 FragColor;
+out float FragColor;
 in vec2 TexCoords;
-
-layout (std140) uniform Matrices
-{
-	mat4 proj;
-	mat4 view;
-};
 
 uniform sampler2D gPositionDepth;
 uniform sampler2D gNormal;
 uniform sampler2D texNoise;
 
+uniform mat4 proj;
+
 uniform vec3 samples[64];
+
+const int kernelSize = 64;
+const float radius = 1.0f;
 
 const vec2 noiseScale = vec2(800.0f/4.0f, 600.0f/4.0f);
 
 void main()
 {
-	vec3 fragPos = texture(gPositionDepth, TexCoords);
-	vec3 normal = texture(gNormal, TexCoords);
-	vec3 randomVec = texture(texNoise, TexCoords);
+    vec3 fragPos = texture(gPositionDepth, TexCoords).xyz;
+    vec3 normal = texture(gNormal, TexCoords).rgb;
+    vec3 randomVec = texture(texNoise, TexCoords * noiseScale).xyz;
 
 	vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
 	vec3 bitangent = cross(normal, tangent);
@@ -38,7 +37,6 @@ void main()
 		offset.xyz = offset.xyz * 0.5f + 0.5f;
 
 		float sampleDepth = -texture(gPositionDepth, offset.xy).w;
-		occlusion += (sampleDepth >= sample.z ? 1.0f : 0.0f);
 
 		float rangeCheck = smoothstep(0.0f, 1.0f, radius / abs(fragPos.z - sampleDepth));
 		occlusion += (sampleDepth >= sample.z ? 1.0f : 0.0f) * rangeCheck;

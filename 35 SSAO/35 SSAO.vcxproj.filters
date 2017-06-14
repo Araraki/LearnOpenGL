@@ -42,6 +42,12 @@
     <None Include="ssao.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="ssaoBlur.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ssaoBlur.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

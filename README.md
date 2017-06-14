@@ -7,12 +7,18 @@ Learn OpenGL with Tutorial
 [ Tutorials ]
 
 ( 0 )
-
+en:
 http://www.learnopengl.com/
 
+zh:
 https://learnopengl-cn.github.io
-
 http://bullteacher.com/category/zh_learnopengl_com
+
+en:
+http://ogldev.atspace.co.uk/index.html
+
+zh:
+http://wiki.jikexueyuan.com/project/modern-opengl-tutorial/
 
 ( 1 )
 

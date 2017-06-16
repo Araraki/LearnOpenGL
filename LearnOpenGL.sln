@@ -87,6 +87,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "34 Deferred Shading", "34 D
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "35 SSAO", "35 SSAO\35 SSAO.vcxproj", "{B7F1C502-6784-42D3-9D09-F318802E5026}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 PBR", "5 PBR", "{E9900C00-0C4B-4591-8AF5-F44FFEF63550}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6 In Practice", "6 In Practice", "{0A21DA84-9CDA-41B2-8B83-0612A226C55C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

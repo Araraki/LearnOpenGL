@@ -7,18 +7,47 @@
 
 const GLuint WIDHT = 800, HEIGHT = 600;
 
-GLfloat vertices[] =
+GLfloat triangleVertices[] =
 {	// vertex			color
-	0.0f,  0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+	0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
 	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
 	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
 };
-
+GLfloat cubeVertices[] =
+{	// vertex			color
+	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+	
+	 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f,	
+	-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+};
+GLuint VAO;
+GLuint triangleVBO, triangleVAO,
+	   cubeVBO, cubeVAO;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	std::cout << key << std::endl;
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+	{
+		GLfloat tmp = triangleVertices[3];
+		triangleVertices[3] = triangleVertices[4];
+		triangleVertices[4] = triangleVertices[5];
+		triangleVertices[5] = tmp;
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof triangleVertices, triangleVertices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+	{
+		if (VAO != cubeVAO)
+			VAO = cubeVAO;
+		else
+			VAO = triangleVAO;
+	}
 }
 
 int main(int argc, char* argv[])
@@ -30,25 +59,25 @@ int main(int argc, char* argv[])
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	GLFWwindow* window = glfwCreateWindow(WIDHT, HEIGHT, "Playground", nullptr, nullptr);
+	if (window == nullptr) { std::cout << "GLFWwindow error" << std::endl; glfwTerminate(); return -1; }
 	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
 
 	glewExperimental = GL_TRUE;
-	glewInit();
+	if (glewInit() != GLEW_OK) { std::cout << "glewInit error" << std::endl; glfwTerminate(); return -1; }
 	glViewport(0, 0, WIDHT, HEIGHT);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 	Shader shader("default.vert", "default.frag");
 
-	GLuint VBO, VAO;
+	// triangle
+	glGenVertexArrays(1, &triangleVAO);
+	glGenBuffers(1, &triangleVBO);
 
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof triangleVertices, triangleVertices, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
-
-	glBindVertexArray(VAO);
+	glBindVertexArray(triangleVAO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), static_cast<GLvoid *>(nullptr));
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<GLvoid *>(3 * sizeof(GLfloat)));
@@ -57,6 +86,24 @@ int main(int argc, char* argv[])
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	// cube
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof cubeVertices, cubeVertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(cubeVAO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), static_cast<GLvoid *>(nullptr));
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<GLvoid *>(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+
+	VAO = triangleVAO;
 
 	while (! glfwWindowShouldClose(window))
 	{
@@ -65,14 +112,14 @@ int main(int argc, char* argv[])
 
 		shader.Use();
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
 	}
 
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
+	glDeleteVertexArrays(1, &triangleVAO);
+	glDeleteBuffers(1, &triangleVBO);
 
 	glfwTerminate();
 	return 0;

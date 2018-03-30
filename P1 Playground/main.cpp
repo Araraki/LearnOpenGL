@@ -1,9 +1,11 @@
 #include <iostream>
-#define GLEW_STATIC
-#include <gl\glew.h>
+//#define GLEW_STATIC
+//#include <gl\glew.h>
+#include <glad\glad.h>
 #include <glfw\glfw3.h>
 
 #include "Shader.h"
+#include "Sprite.h"
 
 const GLuint WIDHT = 800, HEIGHT = 600;
 
@@ -59,25 +61,41 @@ int main(int argc, char* argv[])
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	GLFWwindow* window = glfwCreateWindow(WIDHT, HEIGHT, "Playground", nullptr, nullptr);
-	if (window == nullptr) { std::cout << "GLFWwindow error" << std::endl; glfwTerminate(); return -1; }
+	if (window == nullptr)
+	{
+		std::cout << "GLFWwindow error" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
 	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
 
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK) { std::cout << "glewInit error" << std::endl; glfwTerminate(); return -1; }
+	//glewExperimental = GL_TRUE;
+	//if (glewInit() != GLEW_OK)
+	//{
+	//	std::cout << "glewInit error" << std::endl;
+	//	glfwTerminate();
+	//	return -1;
+	//}
+	if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return -1;
+	}
+
 	glViewport(0, 0, WIDHT, HEIGHT);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 	Shader shader("default.vert", "default.frag");
 
+	Sprite triangle();
 	// triangle
 	glGenVertexArrays(1, &triangleVAO);
 	glGenBuffers(1, &triangleVBO);
-
+	glBindVertexArray(triangleVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof triangleVertices, triangleVertices, GL_STATIC_DRAW);
 
-	glBindVertexArray(triangleVAO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), static_cast<GLvoid *>(nullptr));
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<GLvoid *>(3 * sizeof(GLfloat)));
@@ -105,7 +123,7 @@ int main(int argc, char* argv[])
 
 	VAO = triangleVAO;
 
-	while (! glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 		glClear(GL_COLOR_BUFFER_BIT);

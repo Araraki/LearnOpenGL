@@ -1,11 +1,15 @@
-#define GLEW_STATIC
-#include <gl\glew.h>
-#include <glfw\glfw3.h>
-#include <FreeImage.h>
+//#define GLEW_STATIC
+//#include <gl\glew.h>
+#include <glad/glad.h>
+#include <glfw/glfw3.h>
+//#include <FreeImage.h>
 
-#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtc\type_ptr.hpp>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
 
@@ -104,8 +108,9 @@ int main(int argc, char* argv[])
 
 	glfwSetKeyCallback(window, key_callback);
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
@@ -113,7 +118,7 @@ int main(int argc, char* argv[])
 
 	glEnable(GL_DEPTH_TEST);
 
-	FreeImage_Initialise(TRUE);
+	//FreeImage_Initialise(TRUE);
 
 	// ---main code---
 
@@ -148,11 +153,11 @@ int main(int argc, char* argv[])
 	
 	// Texture
 	GLuint texture, texture2;
-	FIBITMAP* bitmap;
+	//FIBITMAP* bitmap;
 	unsigned char* bits;
-	int w, h;
+	int w, h, comp;
 	const char *image = "ok.jpeg",
-			   *image2 = "happy.jpeg";
+			   *image2 = "awesomeface.png";
 	// texture 1
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -162,15 +167,25 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
-	bitmap = FreeImage_Load(FreeImage_GetFileType(image), image, JPEG_DEFAULT);
-	bits = FreeImage_GetBits(bitmap);
-	w = FreeImage_GetWidth(bitmap);
-	h = FreeImage_GetHeight(bitmap);
+	//bitmap = FreeImage_Load(FreeImage_GetFileType(image), image, JPEG_DEFAULT);
+	//bits = FreeImage_GetBits(bitmap);
+	//w = FreeImage_GetWidth(bitmap);
+	//h = FreeImage_GetHeight(bitmap);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_BGR, GL_UNSIGNED_BYTE, bits);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	FreeImage_Unload(bitmap);
+	bits = stbi_load(image, &w, &h, &comp, 0);
+	if (bits)
+	{
+		if (comp == 3)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, bits);
+		else if (comp == 4)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, bits);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(bits);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// texture 2
@@ -181,15 +196,26 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	bitmap = FreeImage_Load(FreeImage_GetFileType(image2), image2, JPEG_DEFAULT);
-	bits = FreeImage_GetBits(bitmap);
-	w = FreeImage_GetWidth(bitmap);
-	h = FreeImage_GetHeight(bitmap);
+	//bitmap = FreeImage_Load(FreeImage_GetFileType(image2), image2, JPEG_DEFAULT);
+	//bits = FreeImage_GetBits(bitmap);
+	//w = FreeImage_GetWidth(bitmap);
+	//h = FreeImage_GetHeight(bitmap);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0,	GL_BGR, GL_UNSIGNED_BYTE, bits);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	FreeImage_Unload(bitmap);
+	bits = stbi_load(image2, &w, &h, &comp, 0);
+	if (bits)
+	{
+		if (comp == 3)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, bits);
+		else if (comp == 4)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, bits);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(bits);
+	//FreeImage_Unload(bitmap);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
 	glUniform1f(glGetUniformLocation(ourShader.Program, "blend"), 0.0f);
@@ -261,7 +287,7 @@ int main(int argc, char* argv[])
 
 	// ---code end---
 
-	FreeImage_DeInitialise();
+	//FreeImage_DeInitialise();
 	glfwTerminate();
 
 	return 0;

@@ -13,13 +13,16 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="源文件\shader">
+      <UniqueIdentifier>{1efe6a3d-3aa8-40ae-b213-c58242b1eac0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
-      <Filter>源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="default.vs">
-      <Filter>源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -38,6 +41,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

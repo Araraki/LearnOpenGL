@@ -26,6 +26,9 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -44,10 +47,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="happy.jpeg">
+    <Image Include="ok.jpeg">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="ok.jpeg">
+    <Image Include="awesomeface.png">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

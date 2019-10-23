@@ -1,11 +1,21 @@
-#define GLEW_STATIC
-#include <gl\glew.h>
-#include <glfw\glfw3.h>
-#include <FreeImage.h>
+//#define GLEW_STATIC
+//#include <gl\glew.h>
+#include <glad/glad.h>
+#include <glfw/glfw3.h>
 
-#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtc\type_ptr.hpp>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+//#include <glm/vec3.hpp> // glm::vec3
+//#include <glm/vec4.hpp> // glm::vec4
+//#include <glm/mat4x4.hpp> // glm::mat4
+//#include <glm/ext/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
+//#include <glm/ext/matrix_clip_space.hpp> // glm::perspective
+//#include <glm/ext/constants.hpp> // glm::pi
 
 #include "Shader.h"
 
@@ -60,14 +70,15 @@ int main(int argc, char* argv[])
 
 	glfwSetKeyCallback(window, key_callback);
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 
-	FreeImage_Initialise(TRUE);
+	//FreeImage_Initialise(TRUE);
 
 	// ---main code---
 
@@ -111,11 +122,11 @@ int main(int argc, char* argv[])
 	
 	// Texture
 	GLuint texture, texture2;
-	FIBITMAP* bitmap;
-	unsigned char* bits;
-	int w, h;
+	//FIBITMAP* bitmap;
+	unsigned char* data;
+	int w, h, comp;
 	const char *image = "ok.jpeg",
-			   *image2 = "happy.jpeg";
+			   *image2 = "awesomeface.png";
 	// texture 1
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -125,15 +136,25 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 	
-	bitmap = FreeImage_Load(FreeImage_GetFileType(image), image, JPEG_DEFAULT);
-	bits = FreeImage_GetBits(bitmap);
-	w = FreeImage_GetWidth(bitmap);
-	h = FreeImage_GetHeight(bitmap);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_BGR, GL_UNSIGNED_BYTE, bits);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	FreeImage_Unload(bitmap);
+	//bitmap = FreeImage_Load(FreeImage_GetFileType(image), image, JPEG_DEFAULT);
+	//bits = FreeImage_GetBits(bitmap);
+	//w = FreeImage_GetWidth(bitmap);
+	//h = FreeImage_GetHeight(bitmap);
+	data = stbi_load(image, &w, &h, &comp, 0);
+	if (data)
+	{
+		if (comp == 3)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		else if (comp == 4)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);		
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+	//FreeImage_Unload(bitmap);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// texture 2
@@ -144,15 +165,27 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 
-	bitmap = FreeImage_Load(FreeImage_GetFileType(image2), image2, JPEG_DEFAULT);
-	bits = FreeImage_GetBits(bitmap);
-	w = FreeImage_GetWidth(bitmap);
-	h = FreeImage_GetHeight(bitmap);
+	//bitmap = FreeImage_Load(FreeImage_GetFileType(image2), image2, JPEG_DEFAULT);
+	//bits = FreeImage_GetBits(bitmap);
+	//w = FreeImage_GetWidth(bitmap);
+	//h = FreeImage_GetHeight(bitmap);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0,	GL_BGR, GL_UNSIGNED_BYTE, bits);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	data = stbi_load(image2, &w, &h, &comp, 0);
+	if (data)
+	{
+		if (comp == 3)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		else if (comp == 4)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
 
-	FreeImage_Unload(bitmap);
+	//FreeImage_Unload(bitmap);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
 	glUniform1f(glGetUniformLocation(ourShader.Program, "blend"), 0.0f);
@@ -191,7 +224,7 @@ int main(int argc, char* argv[])
 		glBindVertexArray(VAO);
 
 		// use Transform
-		glm::mat4 trans;
+		glm::mat4 trans = glm::mat4(1.0f);
 		trans = glm::translate(trans, glm::vec3(0.5, -0.5, 0.0f));
 		trans = glm::rotate(trans, (GLfloat)glfwGetTime()*1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 		//trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
@@ -201,7 +234,7 @@ int main(int argc, char* argv[])
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 		
 		// use Transform
-		trans = glm::mat4();
+		trans = glm::mat4(1.0f);
 		trans = glm::translate(trans, glm::vec3(-0.5, 0.5, 0.0f));
 		GLfloat scale = sin(glfwGetTime());
 		trans = glm::scale(trans, glm::vec3(scale, scale, scale));
@@ -222,7 +255,7 @@ int main(int argc, char* argv[])
 
 	// ---code end---
 
-	FreeImage_DeInitialise();
+	//FreeImage_DeInitialise();
 	glfwTerminate();
 
 	return 0;

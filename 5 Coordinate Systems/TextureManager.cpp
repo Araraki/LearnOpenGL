@@ -6,6 +6,8 @@
 //For use with OpenGL and the FreeImage library
 //**********************************************
 
+#include "stb_image.h"
+
 #include "TextureManager.h"
 
 TextureManager* TextureManager::m_inst(0);
@@ -41,6 +43,7 @@ TextureManager::~TextureManager()
 	m_inst = 0;
 }
 
+/*
 bool TextureManager::LoadTexture(const char* filename, const unsigned int texID, GLenum image_format, GLint internal_format, GLint level, GLint border)
 {
 	//image format
@@ -53,11 +56,11 @@ bool TextureManager::LoadTexture(const char* filename, const unsigned int texID,
 	unsigned int width(0), height(0);
 	//OpenGL's image ID to map to
 	GLuint gl_texID;
-	
+
 	//check the file signature and deduce its format
 	fif = FreeImage_GetFileType(filename, 0);
 	//if still unknown, try to guess the file format from the file extension
-	if(fif == FIF_UNKNOWN) 
+	if(fif == FIF_UNKNOWN)
 		fif = FreeImage_GetFIFFromFilename(filename);
 	//if still unkown, return failure
 	if(fif == FIF_UNKNOWN)
@@ -78,7 +81,7 @@ bool TextureManager::LoadTexture(const char* filename, const unsigned int texID,
 	//if this somehow one of these failed (they shouldn't), return failure
 	if((bits == 0) || (width == 0) || (height == 0))
 		return false;
-	
+
 	//if this texture ID is in use, unload the current texture
 	if(m_texID.find(texID) != m_texID.end())
 		glDeleteTextures(1, &(m_texID[texID]));
@@ -97,6 +100,39 @@ bool TextureManager::LoadTexture(const char* filename, const unsigned int texID,
 	FreeImage_Unload(dib);
 
 	//return success
+	return true;
+}
+*/
+
+bool TextureManager::LoadTexture(const char* filename, const unsigned int texID, GLenum image_format, GLint internal_format, GLint level, GLint border)
+{
+	int width, height;
+	int nrChannels;
+	unsigned char* data;
+	GLuint gl_texID;
+
+	// load image file
+	data = stbi_load(filename, &width, &height, &nrChannels, 0);
+
+	if ((data == 0) || (width == 0) || (height == 0))
+		return false;
+
+	//if this texture ID is in use, unload the current texture
+	if (m_texID.find(texID) != m_texID.end())
+		glDeleteTextures(1, &(m_texID[texID]));
+
+	//generate an OpenGL texture ID for this texture
+	glGenTextures(1, &gl_texID);
+	//store the texture ID mapping
+	m_texID[texID] = gl_texID;
+	//bind to the new texture ID
+	glBindTexture(GL_TEXTURE_2D, gl_texID);
+	//store the texture data for OpenGL use
+	glTexImage2D(GL_TEXTURE_2D, level, internal_format, width, height,
+		border, image_format, GL_UNSIGNED_BYTE, data);
+
+	stbi_image_free(data);
+
 	return true;
 }
 

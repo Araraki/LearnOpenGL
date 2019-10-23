@@ -14,5 +14,6 @@ void main()
 	//color = texture(ourTexture, TexCoord);
 	color = mix(texture(ourTexture1, TexCoord),
 				texture(ourTexture2, vec2(TexCoord.x*2, TexCoord.y*2)),
+				//texture(ourTexture2, TexCoord),
 				blend);
 }

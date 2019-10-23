@@ -1,6 +1,6 @@
-#define GLEW_STATIC
-
-#include <gl/glew.h>
+//#define GLEW_STATIC
+//#include <gl/glew.h>
+#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -93,8 +93,9 @@ void glInit ()
 	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);
@@ -136,18 +137,18 @@ void vboInit()
 // texture
 float texBlend = 0.5f;
 const int texCount = 2;
-char* images[texCount] = { "ok.png", "happy.png" };
+char* images[texCount] = { "ok.png", "awesomeface.png" };
 GLuint textures[texCount];
 
 void loadTextures()
 {
-	TextureManager::Inst()->LoadTexture(images[0], 0, GL_BGRA, GL_RGBA, 0, 0);
+	TextureManager::Inst()->LoadTexture(images[0], 0, GL_RGBA, GL_RGBA, 0, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
-	TextureManager::Inst()->LoadTexture(images[1], 1, GL_BGRA, GL_RGBA, 0, 0);
+	TextureManager::Inst()->LoadTexture(images[1], 1, GL_RGBA, GL_RGBA, 0, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

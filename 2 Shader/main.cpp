@@ -2,8 +2,12 @@
 #include <fstream>
 #include <iostream>
 
-#define GLEW_STATIC
-#include <gl\glew.h>
+// GLEW
+//#define GLEW_STATIC
+//#include <GL/glew.h>
+
+// GLAD
+#include <glad/glad.h> 
 #include <glfw\glfw3.h>
 
 #include "Shader.h"
@@ -56,10 +60,15 @@ int main(int argc, char* argv[])
 	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
 
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK)
+	//glewExperimental = GL_TRUE;
+	//if (glewInit() != GLEW_OK)
+	//{
+	//	std::cout << "Failed to initialize GLEW" << std::endl;
+	//	return -1;
+	//}
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cout << "Failed to initialize GLEW" << std::endl;
+		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
 

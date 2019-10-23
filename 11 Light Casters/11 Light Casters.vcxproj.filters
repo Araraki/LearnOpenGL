@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="源文件\shader">
+      <UniqueIdentifier>{e9cca1f6-6e4b-48e1-9682-bf2fc25b2c74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="box_specular.png">
@@ -41,6 +44,9 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -55,16 +61,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="baselighting.frag">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="baselighting.vs">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="lamp.frag">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="lamp.vs">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
+    </None>
+    <None Include="lamp.frag">
+      <Filter>源文件\shader</Filter>
+    </None>
+    <None Include="baselighting.vs">
+      <Filter>源文件\shader</Filter>
     </None>
   </ItemGroup>
 </Project>

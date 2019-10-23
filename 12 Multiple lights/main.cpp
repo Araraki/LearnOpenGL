@@ -1,5 +1,6 @@
-#define GLEW_STATIC
-#include <gl/glew.h>
+//#define GLEW_STATIC
+//#include <gl/glew.h>
+#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -99,8 +100,9 @@ void glInit ()
 	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);
@@ -170,14 +172,14 @@ int main(int argc, char* argv[])
 	glBindVertexArray(0);
 
 	// texture
-	TextureManager::Inst()->LoadTexture("box.png", 0, GL_BGRA, GL_RGBA, 0, 0);
+	TextureManager::Inst()->LoadTexture("box.png", 0, GL_RGBA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	TextureManager::Inst()->LoadTexture("box_specular.png", 1, GL_BGRA, GL_RGBA, 0, 0);
+	TextureManager::Inst()->LoadTexture("box_specular.png", 1, GL_RGBA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -334,7 +336,7 @@ int main(int argc, char* argv[])
 	glDeleteVertexArrays(1, &lampVAO);
 	glDeleteVertexArrays(1, &cubeVAO);
 	glDeleteBuffers(1, &cubeVBO);
-	FreeImage_DeInitialise();
+	//FreeImage_DeInitialise();
 	glfwTerminate();
 
 	return 0;

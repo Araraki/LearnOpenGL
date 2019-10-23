@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="源文件\shader">
+      <UniqueIdentifier>{ce2af090-9a50-4e6c-813a-4742bcaae993}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -22,6 +25,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,16 +41,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="baselighting.frag">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="baselighting.vs">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="lamp.frag">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="lamp.vs">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
   </ItemGroup>
 </Project>

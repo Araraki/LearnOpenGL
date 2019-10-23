@@ -11,7 +11,7 @@
 
 #include <windows.h>
 #include <gl/gl.h>
-#include "FreeImage.h"
+//#include "FreeImage.h"
 #include <map>
 
 class TextureManager

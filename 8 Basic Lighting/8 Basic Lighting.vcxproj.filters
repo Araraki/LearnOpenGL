@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="源文件\shader">
+      <UniqueIdentifier>{52985648-3ed6-448c-9590-b4bd273da3b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -23,29 +26,29 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lamp.frag">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="lamp.vs">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="baselighting.frag">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="baselighting.vs">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="baselighting_Gouraud.frag">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="baselighting_Gouraud.vs">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="baselighting_viewSpecular.frag">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
     </None>
     <None Include="baselighting_viewSpecular.vs">
-      <Filter>资源文件</Filter>
+      <Filter>源文件\shader</Filter>
+    </None>
+    <None Include="lamp.frag">
+      <Filter>源文件\shader</Filter>
+    </None>
+    <None Include="lamp.vs">
+      <Filter>源文件\shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -56,6 +59,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

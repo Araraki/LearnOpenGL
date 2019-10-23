@@ -1,5 +1,6 @@
-#define GLEW_STATIC
-#include <gl/glew.h>
+//#define GLEW_STATIC
+//#include <gl/glew.h>
+#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -91,8 +92,9 @@ void glInit ()
 	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);

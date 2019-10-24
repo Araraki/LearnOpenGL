@@ -13,12 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shader">
+    <Filter Include="源文件\Shader">
       <UniqueIdentifier>{41075454-dbf3-4a23-83d7-82a9a88a9b2e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,43 +44,43 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="lamp.frag">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="lamp.vert">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="geometryBase.frag">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="geometryBase.vert">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="geometryBase.geom">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="modelAnim.geom">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="modelAnim.vert">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="modelAnim.frag">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="modelBase.frag">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="modelBase.vert">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="modelNormal.geom">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="modelNormal.vert">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
     <None Include="modelNormal.frag">
-      <Filter>Shader</Filter>
+      <Filter>源文件\Shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

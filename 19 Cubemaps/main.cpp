@@ -1,5 +1,6 @@
-#define GLEW_STATIC
-#include <gl/glew.h>
+//#define GLEW_STATIC
+//#include <gl/glew.h>
+#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -164,8 +165,9 @@ void glInit()
 	glfwMakeContextCurrent(window);
 
 	// initialize glew
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);
@@ -214,7 +216,7 @@ void LoadResources()
 
 	nanosuitModel = Model("Nanosuit_reflection/nanosuit.obj");
 
-	skyboxTexture = TextureManager::Inst()->LoadCubemapTexture(cubemapTexturePaths, GL_BGR, GL_RGB, 0, 0);
+	skyboxTexture = TextureManager::Inst()->LoadCubemapTexture(cubemapTexturePaths, GL_RGB, GL_RGB, 0, 0);
 }
 
 // camera
@@ -342,7 +344,7 @@ int main(int argc, char* argv[])
 	glDeleteBuffers(1, &skyboxVBO);
 	glDeleteVertexArrays(1, &skyboxVAO);
 
-	FreeImage_DeInitialise();
+	//FreeImage_DeInitialise();
 	TextureManager::Inst()->UnloadAllTextures();
 	glfwTerminate();
 

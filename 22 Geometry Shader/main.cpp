@@ -1,5 +1,6 @@
-#define GLEW_STATIC
-#include <gl/glew.h>
+//#define GLEW_STATIC
+//#include <gl/glew.h>
+#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -50,8 +51,9 @@ int main(int argc, char* argv[])
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -129,7 +131,7 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	FreeImage_DeInitialise();
+	//FreeImage_DeInitialise();
 	TextureManager::Inst()->UnloadAllTextures();
 	glfwTerminate();
 

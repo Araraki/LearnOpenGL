@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 
-#include <gl/glew.h>
+//#include <gl/glew.h>
+#include <glad/glad.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

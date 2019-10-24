@@ -1,5 +1,6 @@
-#define GLEW_STATIC
-#include <gl/glew.h>
+//#define GLEW_STATIC
+//#include <gl/glew.h>
+#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -90,8 +91,9 @@ void glInit ()
 	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);
@@ -158,7 +160,7 @@ int main(int argc, char* argv[])
 	glBindVertexArray(0);
 
 	// texture
-	GLuint texID = TextureManager::Inst()->LoadTexture("box.png", GL_BGRA, GL_RGBA, 0, 0);
+	GLuint texID = TextureManager::Inst()->LoadTexture("box.png", GL_RGBA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

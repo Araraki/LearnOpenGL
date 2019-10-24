@@ -1,5 +1,6 @@
-#define GLEW_STATIC
-#include <gl/glew.h>
+//#define GLEW_STATIC
+//#include <gl/glew.h>
+#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -55,7 +56,7 @@ int main(int argc, char* argv[])
 	}
 
 	TextureManager::Inst()->UnloadAllTextures();
-	FreeImage_DeInitialise();
+	//FreeImage_DeInitialise();
 	glfwTerminate();
 
 	return 0;
@@ -74,8 +75,9 @@ void glInit()
 	window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	glViewport(0, 0, screenWidth, screenHeight);
@@ -270,8 +272,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 // base Instancing Shader
 /*
-#define GLEW_STATIC
-#include <gl/glew.h>
+//#define GLEW_STATIC
+//#include <gl/glew.h>
+#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <glm/detail/type_vec2.hpp>
@@ -302,8 +305,9 @@ int main(int argc, char* argv[])
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(window, key_callback);
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewExperimental = GL_TRUE;
+	//glewInit();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

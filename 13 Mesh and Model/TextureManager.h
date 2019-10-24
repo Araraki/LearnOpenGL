@@ -2,7 +2,11 @@
 
 #include <windows.h>
 #include <gl/gl.h>
-#include "FreeImage.h"
+//#include "FreeImage.h"
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#endif
 #include <vector>
 
 class TextureManager
@@ -16,14 +20,10 @@ public:
 	}
 	virtual ~TextureManager()
 	{
-		// call this ONLY when linking with FreeImage as a static library
-		#ifdef FREEIMAGE_LIB
-		FreeImage_DeInitialise();
-		#endif
-
 		UnloadAllTextures();
 	}
 
+	/*
 	GLuint LoadTexture(const char* filename, GLenum image_format = GL_RGB, GLint internal_format = GL_RGB, GLint level = 0, GLint border = 0)
 	{
 		//image format
@@ -76,6 +76,35 @@ public:
 		FreeImage_Unload(dib);
 
 		//return success
+		return gl_texID;
+	}
+	*/
+
+	GLuint TextureManager::LoadTexture(const char* filename, GLenum image_format, GLint internal_format, GLint level, GLint border)
+	{
+		int width, height;
+		int nrChannels;
+		unsigned char* data;
+		GLuint gl_texID;
+
+		// load image file
+		data = stbi_load(filename, &width, &height, &nrChannels, 0);
+
+		if ((data == 0) || (width == 0) || (height == 0))
+			return -1;
+
+		//generate an OpenGL texture ID for this texture
+		glGenTextures(1, &gl_texID);
+		//store the texture ID mapping
+		m_texID.push_back(gl_texID);
+		//bind to the new texture ID
+		glBindTexture(GL_TEXTURE_2D, gl_texID);
+		//store the texture data for OpenGL use
+		glTexImage2D(GL_TEXTURE_2D, level, internal_format, width, height,
+			border, image_format, GL_UNSIGNED_BYTE, data);
+
+		stbi_image_free(data);
+
 		return gl_texID;
 	}
 

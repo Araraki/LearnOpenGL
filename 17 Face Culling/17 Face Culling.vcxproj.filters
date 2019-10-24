@@ -13,7 +13,7 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
+    <Filter Include="源文件\Shaders">
       <UniqueIdentifier>{4d036ce1-7b99-4c50-b369-58260080ef11}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -30,26 +30,29 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="base.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="base.vs">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="grass.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="grass.vs">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="window.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="window.vs">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

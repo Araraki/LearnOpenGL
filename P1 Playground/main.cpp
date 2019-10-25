@@ -1,8 +1,8 @@
 #include <iostream>
 //#define GLEW_STATIC
-//#include <gl\glew.h>
-#include <glad\glad.h>
-#include <glfw\glfw3.h>
+//#include <gl/glew.h>
+#include <glad/glad.h>
+#include <glfw/glfw3.h>
 
 #include "Shader.h"
 #include "Sprite.h"

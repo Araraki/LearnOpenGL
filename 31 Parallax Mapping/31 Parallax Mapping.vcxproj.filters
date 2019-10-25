@@ -13,7 +13,7 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
+    <Filter Include="源文件\Shaders">
       <UniqueIdentifier>{c9a538ab-dad5-4ea1-b6fe-38037d0fedbe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -56,20 +56,23 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="base.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="base.vert">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="lamp.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="lamp.vert">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

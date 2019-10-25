@@ -148,9 +148,9 @@ inline GLuint TextureFromFile(const char* path, std::string directory)
 	std::string filename = directory + '/' + std::string(path);
 	GLuint textureID;
 	if (filename.find(".png") != std::string::npos)
-		textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_BGRA, GL_RGBA, 0, 0);
+		textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_RGBA, GL_RGBA, 0, 0);
 	else if(filename.find(".jpg") != std::string::npos)
-		textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_BGR, GL_RGB, 0, 0);
+		textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_RGB, GL_RGB, 0, 0);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

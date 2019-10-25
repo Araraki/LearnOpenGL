@@ -16,16 +16,16 @@ TextureManager* TextureManager::Inst()
 {
 	if(!m_inst)
 		m_inst = new TextureManager();
-
+	stbi_set_flip_vertically_on_load(true);
 	return m_inst;
 }
 
 TextureManager::TextureManager()
 {
 	// call this ONLY when linking with FreeImage as a static library
-	#ifdef FREEIMAGE_LIB
-		FreeImage_Initialise();
-	#endif
+	//#ifdef FREEIMAGE_LIB
+	//	FreeImage_Initialise();
+	//#endif
 }
 
 //these should never be called
@@ -35,9 +35,9 @@ TextureManager::TextureManager()
 TextureManager::~TextureManager()
 {
 	// call this ONLY when linking with FreeImage as a static library
-	#ifdef FREEIMAGE_LIB
-		FreeImage_DeInitialise();
-	#endif
+	//#ifdef FREEIMAGE_LIB
+	//	FreeImage_DeInitialise();
+	//#endif
 
 	UnloadAllTextures();
 	m_inst = 0;

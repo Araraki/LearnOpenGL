@@ -13,44 +13,47 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
+    <Filter Include="源文件\Shaders">
       <UniqueIdentifier>{b8901ae4-dcf6-4db4-bc58-bcfa8d7a2f44}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="gbuffer.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="gbuffer.vert">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="lamp.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="lamp.vert">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="lighting.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="lighting.vert">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="ssao.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="ssao.vert">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="ssaoBlur.frag">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
     <None Include="ssaoBlur.vert">
-      <Filter>Shaders</Filter>
+      <Filter>源文件\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

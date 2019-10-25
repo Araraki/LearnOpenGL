@@ -4,7 +4,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <gl/glew.h>
+//#include <gl/glew.h>
+#include <glad/glad.h>
 
 class Shader
 {

@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 
-#include <gl/glew.h>
+//#include <gl/glew.h>
+#include <glad/glad.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -133,7 +134,7 @@ private:
 inline GLuint TextureFromFile(const char* path, std::string directory)
 {
 	std::string filename = directory + '/' + std::string(path);
-	GLuint textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_BGRA, GL_RGBA, 0, 0);
+	GLuint textureID = TextureManager::Inst()->LoadTexture(filename.c_str(), GL_RGBA, GL_RGBA, 0, 0);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

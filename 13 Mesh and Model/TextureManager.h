@@ -16,6 +16,7 @@ public:
 	{
 		if (!m_inst)
 			m_inst = new TextureManager();
+		stbi_set_flip_vertically_on_load(true);
 		return m_inst;
 	}
 	virtual ~TextureManager()
@@ -142,9 +143,9 @@ protected:
 	TextureManager()
 	{
 		// call this ONLY when linking with FreeImage as a static library
-		#ifdef FREEIMAGE_LIB
-		FreeImage_Initialise();
-		#endif
+		//#ifdef FREEIMAGE_LIB
+		//FreeImage_Initialise();
+		//#endif
 		m_inst = nullptr;
 	}
 	TextureManager(const TextureManager& tm)

@@ -261,10 +261,10 @@ void keysProcess()
 
 void RenderScene(Shader& shader)
 {
-	glm::mat4 model = glm::mat4();
+	glm::mat4 model = glm::mat4(1.0f);
 
 	// cube
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::rotate(model, glm::radians(currentTime * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
@@ -284,7 +284,7 @@ void RenderScene(Shader& shader)
 	// lamp
 	lampShader.Use();
 
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, lightPos);
 	model = glm::scale(model, glm::vec3(0.2f));
 

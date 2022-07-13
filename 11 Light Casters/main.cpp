@@ -214,8 +214,8 @@ int main(int argc, char* argv[])
 		cutOff = glm::cos(glm::radians(12.5f));
 		outerCutOff = glm::cos(glm::radians(17.5f));
 		// 观察/投影矩阵配置
-		view = glm::mat4();
-		proj = glm::mat4();
+		view = glm::mat4(1.0f);
+		proj = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
@@ -258,7 +258,7 @@ int main(int argc, char* argv[])
 		glBindVertexArray(cubeVAO);
 		for (int i = 0; i < 10; i++)
 		{
-			model = glm::mat4();
+			model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			model = glm::rotate(model, (glm::radians(lastFrame) * 20) + i, glm::vec3(1.0f, 0.5f, 0.2f));
 			glUniformMatrix4fv(glGetUniformLocation(depthShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -269,7 +269,7 @@ int main(int argc, char* argv[])
 		// lamp 绘制前配置
 		lampShader.Use();
 
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, lampPos);
 		model = glm::scale(model, glm::vec3(0.2f));
 

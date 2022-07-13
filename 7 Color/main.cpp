@@ -176,14 +176,14 @@ int main(int argc, char* argv[])
 		// cube 绘制前配置
 		depthShader.Use();
 
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, cubePositions[0]);
 		model = glm::rotate(model, glm::radians(GLfloat(glfwGetTime()) * 20.0f), glm::vec3(1.0f, 0.3f, 0.5f));
 
-		view = glm::mat4();
+		view = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 
-		proj = glm::mat4();
+		proj = glm::mat4(1.0f);
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
 		modelLoc = glGetUniformLocation(depthShader.Program, "model");
@@ -208,7 +208,7 @@ int main(int argc, char* argv[])
 		// lamp 绘制前配置
 		lampShader.Use();
 
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, lampPos);
 		model = glm::scale(model, glm::vec3(0.2f));
 

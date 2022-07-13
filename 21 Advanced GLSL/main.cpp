@@ -401,8 +401,8 @@ glm::mat4 model, view, proj;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 void DrawScene()
 {
-	proj = glm::mat4();
-	view = glm::mat4();
+	proj = glm::mat4(1.0f);
+	view = glm::mat4(1.0f);
 
 	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
@@ -416,7 +416,7 @@ void DrawScene()
 	// cube
 	baseShader.Use();
 
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::rotate(model, glm::radians(lastFrame) * 20, glm::vec3(1.0f, 0.2f, 0.5f));
 	glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
@@ -494,7 +494,7 @@ void DrawScene()
 
 
 
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, -dirLight*5.0f);
 	model = glm::scale(model, glm::vec3(0.2f));
 	// rotate
@@ -512,7 +512,7 @@ void DrawScene()
 	glUniform3f(glGetUniformLocation(lampShader.Program, "lampColor"), 1.0f, 1.0f, 1.0f);
 	for(int i = 1; i < 4 ; ++i)
 	{
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, lampPosition[i]);
 		model = glm::scale(model, glm::vec3(0.2f));
 		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));

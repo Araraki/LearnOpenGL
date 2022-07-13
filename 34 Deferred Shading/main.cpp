@@ -343,7 +343,7 @@ int main(int argc, char* argv[])
 			gbufferShader.Use();
 			for (GLuint i = 0; i < objectPositions.size(); i++)
 			{
-				model = glm::mat4();
+				model = glm::mat4(1.0f);
 				model = glm::translate(model, objectPositions[i]);
 				model = glm::scale(model, glm::vec3(0.25f));
 				glUniformMatrix4fv(glGetUniformLocation(gbufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -385,7 +385,7 @@ int main(int argc, char* argv[])
 		lampShader.Use();
 		for (int i = 0; i < NR_LIGHTS; i++)
 		{
-			model = glm::mat4();
+			model = glm::mat4(1.0f);
 			model = glm::translate(model, lightPositions[i]);
 			model = glm::scale(model, glm::vec3(0.2f));
 			glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));

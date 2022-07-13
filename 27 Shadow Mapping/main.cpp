@@ -256,24 +256,24 @@ int main(int argc, char* argv[])
 
 void RenderScene(Shader& shader)
 {
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	glActiveTexture(GL_TEXTURE0);
 	TextureManager::Inst()->BindTexture(groundTexture);
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderPlane();
 
 	// cube * 3
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
 
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
 
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
 	model = glm::rotate(model, 60.0f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	model = glm::scale(model, glm::vec3(0.5));
@@ -282,7 +282,7 @@ void RenderScene(Shader& shader)
 
 	// lamp
 	lampShader.Use();
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, directLightPos);
 	model = glm::scale(model, glm::vec3(0.02f));
 	glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));

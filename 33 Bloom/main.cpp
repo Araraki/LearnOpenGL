@@ -258,7 +258,7 @@ void RenderScene(Shader& shader)
 {
 	shader.Use();
 
-	glm::mat4 model = glm::mat4();
+	glm::mat4 model = glm::mat4(1.0f);
 
 	// shader.viewPos
 	glUniform3f(glGetUniformLocation(shader.Program, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
@@ -274,41 +274,41 @@ void RenderScene(Shader& shader)
 	glBindTexture(GL_TEXTURE_2D, woodTexture);
 
 	// - create one large cube that acts as the floor
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0));
 	model = glm::scale(model, glm::vec3(25.0f, 1.0f, 25.0f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
 	// - then create multiple cubes as the scenery
 	glBindTexture(GL_TEXTURE_2D, boxTexture);
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(-1.0f, -1.0f, 2.0));
 	model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	model = glm::scale(model, glm::vec3(2.0));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, 2.7f, 4.0));
 	model = glm::rotate(model, glm::radians(23.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	model = glm::scale(model, glm::vec3(2.5));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(-2.0f, 1.0f, -3.0));
 	model = glm::rotate(model, glm::radians(124.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	model = glm::scale(model, glm::vec3(2.0));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
 	RenderCube();
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 0.0));
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	RenderCube();
@@ -317,7 +317,7 @@ void RenderScene(Shader& shader)
 
 	for (GLuint i = 0; i < lightPositions.size(); ++i)
 	{
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPositions[i]);
 		model = glm::scale(model, glm::vec3(0.5f));
 		glUniform3fv(glGetUniformLocation(lampShader.Program, "lampColor"), 1, &lightColors[i][0]);

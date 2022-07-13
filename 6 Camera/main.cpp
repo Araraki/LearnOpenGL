@@ -212,7 +212,7 @@ void initTransform()
 
 void updateTransform(int index)
 {
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, cubePositions[index]);
 	model = glm::rotate(model, glm::radians(GLfloat(glfwGetTime()) * 20.0f * (index + 1)), glm::vec3(1.0f, 0.3f, 0.5f));
 	
@@ -249,10 +249,10 @@ int main(int argc, char* argv[])
 		// °ó¶¨äÖÈ¾µÄVAO
 		glBindVertexArray(VAO);
 
-		view = glm::mat4();
+		view = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 
-		proj = glm::mat4();
+		proj = glm::mat4(1.0f);
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));

@@ -225,9 +225,9 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 glm::mat4 model, view, proj;
 void DrawScene()
 {
-	view = glm::mat4();
-	proj = glm::mat4();
-	model = glm::mat4();
+	view = glm::mat4(1.0f);
+	proj = glm::mat4(1.0f);
+	model = glm::mat4(1.0f);
 	view = camera.GetViewMatrix();
 	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 

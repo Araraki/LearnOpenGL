@@ -392,13 +392,13 @@ int main(int argc, char* argv[])
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			gbufferShader.Use();
-			model = glm::mat4();
+			model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(0.0f, -1.0f, -0.0f));
 			model = glm::scale(model, glm::vec3(20.0f, 1.0f, 20.0f));
 			glUniformMatrix4fv(glGetUniformLocation(gbufferShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			RenderCube();
 
-			model = glm::mat4();
+			model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 5.0f));
 			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			model = glm::scale(model, glm::vec3(0.5f));
@@ -462,7 +462,7 @@ int main(int argc, char* argv[])
 
 		// draw lamp
 		lampShader.Use();
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPosition);
 		model = glm::scale(model, glm::vec3(0.2f));
 		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));

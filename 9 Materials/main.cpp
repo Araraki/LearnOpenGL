@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
 		diffuseColor = lightColor * glm::vec3(0.5f);
 		ambientColor = diffuseColor * glm::vec3(0.2f);
 
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, lampPos);
 		model = glm::scale(model, glm::vec3(0.2f));
 
@@ -217,10 +217,10 @@ int main(int argc, char* argv[])
 		// cube ªÊ÷∆«∞≈‰÷√
 		depthShader.Use();
 		// transform
-		view = glm::mat4();
+		view = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 
-		proj = glm::mat4();
+		proj = glm::mat4(1.0f);
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
 		viewLoc = glGetUniformLocation(depthShader.Program, "view");
@@ -251,7 +251,7 @@ int main(int argc, char* argv[])
 		glBindVertexArray(cubeVAO);
 		for (int i = 0; i < 10; i++)
 		{
-			model = glm::mat4();
+			model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			model = glm::rotate(model, glm::radians(GLfloat(glfwGetTime()) * 20.0f) + i, glm::vec3(1.0f, 0.3f, 0.5f));
 			modelLoc = glGetUniformLocation(depthShader.Program, "model");

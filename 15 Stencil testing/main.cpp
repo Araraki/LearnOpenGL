@@ -186,8 +186,8 @@ int main(int argc, char* argv[])
 		keysProcess();		
 
 		// matrix
-		view = glm::mat4();
-		proj = glm::mat4();
+		view = glm::mat4(1.0f);
+		proj = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
@@ -200,7 +200,7 @@ int main(int argc, char* argv[])
 
 		glBindVertexArray(planeVAO);
 		TextureManager::Inst()->BindTexture(tex1);
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
@@ -216,12 +216,12 @@ int main(int argc, char* argv[])
 
 		glBindVertexArray(cubeVAO);
 
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -239,13 +239,13 @@ int main(int argc, char* argv[])
 		glUniformMatrix4fv(glGetUniformLocation(outliningShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 
 		GLfloat scale = 1.1f;
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
 		model = glm::scale(model, glm::vec3(scale));
 		glUniformMatrix4fv(glGetUniformLocation(outliningShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(scale));
 		glUniformMatrix4fv(glGetUniformLocation(outliningShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));

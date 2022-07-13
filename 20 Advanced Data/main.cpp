@@ -380,9 +380,9 @@ glm::mat4 model, view, proj;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 void DrawScene()
 {
-	view = glm::mat4();
-	proj = glm::mat4();
-	model = glm::mat4();
+	view = glm::mat4(1.0f);
+	proj = glm::mat4(1.0f);
+	model = glm::mat4(1.0f);
 
 	view = camera.GetViewMatrix();
 	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
@@ -471,7 +471,7 @@ void DrawScene()
 
 	glBindVertexArray(lampVAO);
 
-	model = glm::mat4();
+	model = glm::mat4(1.0f);
 	model = glm::translate(model, -dirLight*5.0f);
 	model = glm::scale(model, glm::vec3(0.2f));
 	// rotate
@@ -488,7 +488,7 @@ void DrawScene()
 	
 	for(int i = 1; i < 4 ; ++i)
 	{
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, lampPosition[i]);
 		model = glm::scale(model, glm::vec3(0.2f));
 		

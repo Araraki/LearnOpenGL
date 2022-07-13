@@ -237,9 +237,9 @@ glm::mat4 model, view, proj;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 void DrawScene()
 {
-	proj = glm::mat4();
-	view = glm::mat4();
-	model = glm::mat4();
+	proj = glm::mat4(1.0f);
+	view = glm::mat4(1.0f);
+	model = glm::mat4(1.0f);
 
 	proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
@@ -282,7 +282,7 @@ void DrawScene()
 	glBindVertexArray(lampVAO);
 	for (int i = 0; i < 4; i++)
 	{
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, lampPosition + glm::vec3(-3.0f + 2.0f*i, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.02f));
 		glUniformMatrix4fv(glGetUniformLocation(lampShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));

@@ -32,7 +32,7 @@ glm::mat4 Camera::GetMyViewMatrix(glm::vec3 pos, glm::vec3 center, glm::vec3 up)
 	glm::vec3 xAxis = glm::normalize(glm::cross(glm::normalize(up), zAxis));
 	glm::vec3 yAxis = glm::cross(zAxis, xAxis);
 
-	glm::mat4 rotation = glm::mat4();
+	glm::mat4 rotation = glm::mat4(1.0f);
 	rotation[0][0] = xAxis.x;
 	rotation[1][0] = xAxis.y;
 	rotation[2][0] = xAxis.z;
@@ -43,7 +43,7 @@ glm::mat4 Camera::GetMyViewMatrix(glm::vec3 pos, glm::vec3 center, glm::vec3 up)
 	rotation[1][2] = zAxis.y;
 	rotation[2][2] = zAxis.z;
 
-	glm::mat4 translation = glm::mat4();
+	glm::mat4 translation = glm::mat4(1.0f);
 	translation[3][0] = -this->Position.x;
 	translation[3][1] = -this->Position.y;
 	translation[3][2] = -this->Position.z;

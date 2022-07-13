@@ -184,8 +184,8 @@ int main(int argc, char* argv[])
 		keysProcess();		
 
 		// ¹Û²ì/Í¶Ó°¾ØÕóÅäÖÃ
-		view = glm::mat4();
-		proj = glm::mat4();
+		view = glm::mat4(1.0f);
+		proj = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 
@@ -202,12 +202,12 @@ int main(int argc, char* argv[])
 		glBindVertexArray(cubeVAO);
 		glActiveTexture(GL_TEXTURE0);
 		TextureManager::Inst()->BindTexture(texID);
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
 		glUniformMatrix4fv(glGetUniformLocation(depthShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(depthShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -216,7 +216,7 @@ int main(int argc, char* argv[])
 		glBindVertexArray(planeVAO);
 		glActiveTexture(GL_TEXTURE0);
 		TextureManager::Inst()->BindTexture(texID);
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		glUniformMatrix4fv(glGetUniformLocation(depthShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);

@@ -270,9 +270,9 @@ int main(int argc, char* argv[])
 		keysProcess();		
 
 		// matrix
-		view = glm::mat4();
-		proj = glm::mat4();
-		model = glm::mat4();
+		view = glm::mat4(1.0f);
+		proj = glm::mat4(1.0f);
+		model = glm::mat4(1.0f);
 
 		view = camera.GetViewMatrix();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
@@ -303,12 +303,12 @@ int main(int argc, char* argv[])
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		model = glm::mat4();
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -327,7 +327,7 @@ int main(int argc, char* argv[])
 		glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 		for (GLuint i = 0; i < vegetation.size(); i++)
 		{
-			model = glm::mat4();
+			model = glm::mat4(1.0f);
 			model = glm::translate(model, vegetation[i] + glm::vec3(0.0f, 0.0f, 1.0f));
 			glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -354,7 +354,7 @@ int main(int argc, char* argv[])
 		}
 		for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
 		{
-			model = glm::mat4();
+			model = glm::mat4(1.0f);
 			model = glm::translate(model, it->second);
 			glUniformMatrix4fv(glGetUniformLocation(windowShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -87,9 +87,9 @@ int main(int argc, char* argv[])
 
 		lightingShader.Use();
 		
-		view = glm::mat4();
-		proj = glm::mat4();
-		model = glm::mat4();
+		view = glm::mat4(1.0f);
+		proj = glm::mat4(1.0f);
+		model = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 		proj = glm::perspective(camera.Zoom, float(screenWidth) / float(screenHeight), 0.1f, 100.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
